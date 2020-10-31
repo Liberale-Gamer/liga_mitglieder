@@ -1,0 +1,47 @@
+{% extends 'navbar.html' %}
+{% block body %}
+  <h2>Home</h2>
+  
+  <strong>Willkommen! Du bist angemeldet als {{current_user.name}}</strong>
+  
+  
+  <!-- Pretty Form -->
+  <style>
+  label {
+    display: inline-block;
+    width: 200px;
+    text-align: right;
+    }
+  </style>  
+  
+  <form action="{{ url_for('home') }}" method=post>
+    <dl>
+      <h5>Passwort ändern</h5>
+      <div class="block">
+        <label>Altes Passwort:</label>
+        <input type=password name=old_password>
+      </div>
+      <div class="block">
+        <label>Neues Passwort: </label> 
+        <input type=password name=new_password>
+      </div>
+      <div class="block">
+        <label>Neues Passwort bestätigen: </label>
+        <input type=password name=confirm_password>
+      </div>
+        <dd><input type=submit value=Aktualisieren>
+    </dl>
+  </form>
+  
+  <form action="{{ url_for('home') }}" method=post>
+    <dl>
+      <h5>Email ändern</h5>
+      <div class="block">
+        <label>Neue Email:</label>
+        <input type=text name=email>
+      </div>
+      <dd><input type=submit value=Aktualisieren>
+    </dl>
+  </form>
+  
+{% endblock %}

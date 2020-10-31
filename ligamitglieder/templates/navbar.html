@@ -1,0 +1,37 @@
+{% extends 'base.html'%}
+{% block nav %}
+  <!-- MENU -->
+<nav class="navbar  navbar-default  navbar-expand-lg">
+  <a class="navbar-brand" href="{{url_for('index')}}" style="font-size:18px !important">LiGa Mitgliederverwaltung</a>
+  
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon" style="background-image: url('https://mdbootstrap.com/img/svg/hamburger2.svg?color=123');"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link {% if request.path == '/login' or request.path == '/home' %} active {% endif %}" href={{url_for('login')}}>
+        {% if current_user.is_authenticated %} Home {% else %} Login {% endif %}
+        </a>
+      </li>
+	
+	
+	{% if current_user.is_authenticated %}  
+      <li class="nav-item dropdown">
+	    <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mitgliederverwaltung</a>
+	    <div class="dropdown-menu" id="navbardrop">
+    		  <a class="dropdown-item {% if request.path == '/database' %} active {% endif %}" href="{{url_for('database')}}">Mitgliederdatenbank</a>			
+		  <a class="dropdown-item {% if request.path == '/new' %} active {% endif %}" href="{{url_for('new')}}">Neues Mitglied</a>			
+            </div>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link {% if request.path == '/logout' %} active {% endif %}" href="{{url_for('logout')}}">Logout</a>
+      </li>
+	{% endif %}
+	  
+    </ul>	
+  </div> 
+</nav> 
+{% endblock %}   
