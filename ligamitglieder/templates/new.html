@@ -1,0 +1,41 @@
+{% extends 'navbar.html' %}
+
+
+{% block body %}
+
+
+<div class="container-fluid">
+
+  <div class="row">
+
+    <div class="col homebox centering">
+    <form action="{{ url_for('confirm_new') }}" method=post id="new">
+      </br>
+      <input type=text name=vorname placeholder=Vorname required> <input type=text name=name placeholder=Nachname required> </br>
+      </br>
+      Geschlecht:
+      <select id="sex" name="sex"><option value="0" required>männlich</option><option value="1">weiblich</option></select></br>
+      <input type=text name=strasse placeholder=Straße required><input type=text name=hausnummer placeholder=Hausnr.required> </br>
+      <input type=text name=plz placeholder=PLZ required><input type=text name=ort placeholder=Ort required> </br>   
+      </br>
+      <input type=text name=email placeholder=Email required> </br>
+      <input type=text name=mobil placeholder=Mobil> </br>
+      
+      Geburtsdatum:<input type=date name=geburtsdatum placeholder=Geburtsdatum required> </br>
+      </br>
+      <input name=new type=submit value=Absenden>
+    </div>
+  
+    <div class="col homebox centering">
+    <form action="{{ url_for('confirm_new') }}" method=post id="smartnew">   
+      </br>
+      <textarea id="smartreg" name="smartreg" form="smartnew" cols="50" rows="11" placeholder="Hier gesamte Email für automatische registrierung kopieren."></textarea>
+      </br>
+      <input name=smart type=submit value=Absenden>
+    </form>
+ 
+    </div>
+  </div>
+</div>
+
+{%endblock%}

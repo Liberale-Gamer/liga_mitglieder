@@ -1,0 +1,107 @@
+{% extends 'navbar.html' %}
+{% block body %}
+
+{% if delete==1 %}
+<h3>Löschen bestätigen</h3>
+
+<div class="container-fluid">
+
+  <div class="row">
+  
+    <div class="col">
+    <h6>Bisher:</h6> </br> 
+    Mitglied Nr. {{user.id}} </br>
+    {% if user.sex == 0%} Herr {% else %} Frau {% endif %} 
+    {{user.vorname}} {{user.name}} </br>
+    </br>
+    Wohnort: </br>
+    {{user.strasse}} {{user.hausnummer}} </br>
+    {{user.plz}} {{user.ort}} </br>
+    </br>
+    Kontaktdaten: </br>
+    Email: {{user.email}} </br>
+    Mobil: {{user.mobil}} </br>
+    </br>
+    Geburtsdatum: {{geburtsdatum}} </br>
+    Mitglied seit: {{erstellungsdatum}} 
+    
+    <form action="{{ url_for('confirm_edit') }}" method=post>
+    <input name=confirm_delete type=submit value="Löschen bestätigen">
+    </form>
+    
+    </div>
+</div>
+
+
+{% endif %}
+
+
+{% if edit==1 %}
+<h3>Änderung bestätigen</h3>
+
+<div class="container-fluid">
+
+  <div class="row">
+  
+    <div class="col">
+    <h6>Bisher:</h6> </br> 
+    Mitglied Nr. {{user.id}} </br>
+    {% if user.sex == 0%} Herr {% else %} Frau {% endif %} 
+    {{user_old.vorname}} {{user_old.name}} </br>
+    </br>
+    Wohnort: </br>
+    {{user_old.strasse}} {{user_old.hausnummer}} </br>
+    {{user_old.plz}} {{user_old.ort}} </br>
+    </br>
+    Kontaktdaten: </br>
+    Email: {{user_old.email}} </br>
+    Mobil: {{user_old.mobil}} </br>
+    </br>
+    Geburtsdatum: {{geburtsdatum}} </br>
+    Mitglied seit: {{erstellungsdatum}} 
+    
+    <form action="{{ url_for('confirm_edit') }}" method=post>
+   
+    <input type=hidden name=vorname value={{user.vorname}}> <input type=hidden name=name value={{user.name}}> 
+    
+    
+    <input type=hidden name=strasse value={{user.strasse}}><input type=hidden name=hausnummer value={{user.hausnummer}}> 
+    <input type=hidden name=plz value={{user.plz}}><input type=hidden name=ort value={{user.ort}}>   
+    
+    <input type=hidden name=email value={{user.email}}> 
+    <input type=hidden name=mobil value={{user.mobil}}> 
+    
+    <input name=confirm_edit type=submit value="Änderung bestätigen">
+    </form>
+    </div>
+    
+  
+    <div class="col">
+    <h6>Neu:</h6> </br> 
+    Mitglied Nr. {{user.id}} </br>
+    {% if user.sex == 0%} Herr {% else %} Frau {% endif %} 
+    {{user.vorname}} {{user.name}} </br>
+    </br>
+    Wohnort: </br>
+    {{user.strasse}} {{user.hausnummer}} </br>
+    {{user.plz}} {{user.ort}} </br>
+    </br>
+    Kontaktdaten: </br>
+    Email: {{user.email}} </br>
+    Mobil: {{user.mobil}} </br>
+    </br>
+    Geburtsdatum: {{geburtsdatum}} </br>
+    Mitglied seit: {{erstellungsdatum}} 
+    </div>
+    
+  </div>
+
+</div>
+
+
+{% endif %}
+
+
+
+
+{% endblock %}
