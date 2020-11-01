@@ -1,64 +1,54 @@
-{% extends 'navbar.html' %}
-{% block body %}
-
-
-{% if confirm==1 %}
+{% extends 'navbar.html' %} {% block body %} {% if confirm==1 %}
 <h3>Anlegen bestätigen</h3>
 
 <div class="container-fluid">
 
-  <div class="row">
-  
-    <div class="col">
-    <h6>Neues Mitglied:</h6> </br> 
-    {% if new.sex == "0"%} Herr {% else %} Frau {% endif %}
-    {{new.vorname}} {{new.name}} </br>
-    </br>
-    Wohnort: </br>
-    {{new.strasse}} {{new.hausnummer}} </br>
-    {{new.plz}} {{new.ort}} </br>
-    </br>
-    Kontaktdaten: </br>
-    Email: {{new.email}} </br>
-    Mobil: {{new.mobil}} </br>
-    </br>
-    Geburtsdatum: {{new.geburtsdatum}} </br>
-    Mitglied seit: {{new.erstellungsdatum}} 
-    
-    
-    
-    </form>
-    
+    <div class="row">
+
+        <div class="col">
+            <h6>Neues Mitglied:</h6>
+            </br>
+            {% if new.sex == "0"%} Herr {% else %} Frau {% endif %} {{new.vorname}} {{new.name}} </br>
+            </br>
+            Wohnort: </br>
+            {{new.strasse}} {{new.hausnummer}} </br>
+            {{new.plz}} {{new.ort}} </br>
+            </br>
+            Kontaktdaten: </br>
+            Email: {{new.email}} </br>
+            Mobil: {{new.mobil}} </br>
+            </br>
+            Geburtsdatum: {{new.geburtsdatum}} </br>
+            Mitglied seit: {{new.erstellungsdatum}}
+
+
+
+            </form>
+
+        </div>
     </div>
+
+
+
+
+    <form action="{{ url_for('confirm_new') }}" method=post>
+
+        <input type=hidden name=vorname value="{{new.vorname}}"> <input type=hidden name=name value="{{new.name}}">
+
+
+        <input type=hidden name=strasse value="{{new.strasse}}"><input type=hidden name=hausnummer value="{{new.hausnummer}}">
+        <input type=hidden name=plz value="{{new.plz}}"><input type=hidden name=ort value="{{new.ort}}">
+
+        <input type=hidden name=email value="{{new.email}}">
+        <input type=hidden name=mobil value="{{new.mobil}}">
+
+        <input type=hidden name=sex value="{{new.sex}}">
+        <input type=hidden name=geburtsdatum value="{{new.geburtsdatum}}">
+        <input type=hidden name=erstellungsdatum value="{{new.erstellungsdatum}}">
+
+
+        <input name=confirm_new type=submit value="Anlegen bestätigen">
+    </form>
 </div>
 
-
-
-   
-    <form action="{{ url_for('confirm_new') }}" method=post>
-   
-    <input type=hidden name=vorname value={{new.vorname}}> <input type=hidden name=name value={{new.name}}> 
-    
-    
-    <input type=hidden name=strasse value={{new.strasse}}><input type=hidden name=hausnummer value={{new.hausnummer}}> 
-    <input type=hidden name=plz value={{new.plz}}><input type=hidden name=ort value={{new.ort}}>   
-    
-    <input type=hidden name=email value={{new.email}}> 
-    <input type=hidden name=mobil value={{new.mobil}}> 
-    
-    <input type=hidden name=sex value={{new.sex}}>
-    <input type=hidden name=geburtsdatum value={{new.geburtsdatum}}>
-    <input type=hidden name=erstellungsdatum value={{new.erstellungsdatum}}>
-    
-    
-    <input name=confirm_new type=submit value="Anlegen bestätigen">
-    </form>
-    </div>
-    
-    {% endif %}
-    
-{% if created==1 %}
-New user created!
-{% endif %}
-
-{% endblock %}
+{% endif %} {% if created==1 %} New user created! {% endif %} {% endblock %}
