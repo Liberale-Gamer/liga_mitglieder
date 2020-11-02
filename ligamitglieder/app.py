@@ -241,7 +241,21 @@ def edit(user_id):
     return render_template('edit.html',user = user, geburtsdatum=geburtsdatum,\
     erstellungsdatum=erstellungsdatum)
     
+@app.route('/send_mail/<user_id>')
+@login_required
+def send_mail(user_id):
+    user = kunden.query.filter_by(id=user_id).first()
     
+
+    geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
+    erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
+    
+    session['user_id'] = user_id
+        
+    return render_template('send_mail.html',user = user, geburtsdatum=geburtsdatum,\
+    erstellungsdatum=erstellungsdatum)
+
+
 @app.route('/confirm_edit',methods=['GET','POST'])
 @login_required
 def confirm_edit():
