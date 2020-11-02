@@ -32,12 +32,17 @@
             Geburtsdatum: {{geburtsdatum}} </br>
             Mitglied seit: {{erstellungsdatum}}
 
+            <form action="{{ url_for('send_mail') }}" method="post">
+                <input name="send" type="submit" value="Mail versenden">
+            </form>
+            <a href="{{link}}">In Mail-Client öffnen</a>
         </div>
 
         <div class="col">
 
             <h6>Mail:</h6>
             </br>
+            <p><strong>{{subject|safe}}</strong></p>
             {{text|safe}}
 
         </div>
@@ -47,5 +52,4 @@
 
 
 </div>
-
 {% endblock %}
