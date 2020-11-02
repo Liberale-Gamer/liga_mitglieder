@@ -1,5 +1,4 @@
-{% extends 'navbar.html' %}
-{% block body %}
+{% extends 'navbar.html' %} {% block body %}
 
 <!-- Tabulator JavaScript -->
 <script type="text/javascript" src="{{ url_for('static',filename='js/tabulator/tabulator.min.js') }}"></script>
@@ -16,10 +15,10 @@
 <script src="https://unpkg.com/jspdf-autotable"></script>
 
 <div>
-<button id="download-csv">Download CSV</button>
-<button id="download-json">Download JSON</button>
-<button id="download-pdf">Download PDF</button>
-<button id="download-xlsx">Download XLSX</button>
+    <button id="download-csv">Download CSV</button>
+    <button id="download-json">Download JSON</button>
+    <button id="download-pdf">Download PDF</button>
+    <button id="download-xlsx">Download XLSX</button>
 </div>
 
 <div id="Mitglieder">
@@ -27,82 +26,132 @@
 </div>
 
 <script>
-var table = new Tabulator("#Mitglieder", {
-    height:"100%",           //height is 100% of screen
-    reactiveData:"True",
-    pagination:"local",       //paginate the data
-    paginationSize:20,         //allow 7 rows per page of data
-    columns:[
-    {title:"ID", field:"id"},
-    {title:"Vorname", field:"vorname", headerFilter:"input" },
-    {title:"Name", field:"name", editor:"input", headerFilter:"input"},
-    {title:"Geschlecht",field:"sex", headerFilter:"input" ,formatter:function(cell, formatterParams, onRendered){
-    if (cell.getValue() == 0) {s = "M"}
-    else {s = "W"}
+    var table = new Tabulator("#Mitglieder", {
+        height: "100%", //height is 100% of screen
+        reactiveData: "True",
+        pagination: "local", //paginate the data
+        paginationSize: 20, //allow 7 rows per page of data
+        initialSort: [ //set the initial sort order of the data
+            {
+                column: "name",
+                dir: "asc"
+            },
+        ],
+        columns: [{
+            title: "ID",
+            field: "id",
+            sorter: "number"
+        }, {
+            title: "Vorname",
+            field: "vorname",
+            headerFilter: "input"
+        }, {
+            title: "Name",
+            field: "name",
+            editor: "input",
+            headerFilter: "input"
+        }, {
+            title: "Geschlecht",
+            field: "sex",
+            headerFilter: "input",
+            formatter: function(cell, formatterParams, onRendered) {
+                if (cell.getValue() == 0) {
+                    s = "M"
+                } else {
+                    s = "W"
+                }
 
-    return s //return the contents of the cell;
-}},
-    {title:"Straße", field:"strasse"},
-    {title:"Hausnummer", field:"hausnummer"},
-    {title:"Plz", field:"plz", headerFilter:"input"},
-    {title:"Ort", field:"ort", headerFilter:"input"},
-    {title:"Geburtsdatum", field:"geburtsdatum", sorter:"number" ,formatter:"datetime", formatterParams:{
-    inputFormat:"X",
-    outputFormat:"DD/MM/YY",
-    invalidPlaceholder:"(invalid date)",
-    timezone:"Germany/Berlin",
-}},
-    {title:"Erstellungsdatum", field:"erstellungsdatum", formatter:"datetime", formatterParams:{
-    inputFormat:"X",
-    outputFormat:"DD/MM/YY",
-    invalidPlaceholder:"(invalid date)",
-    timezone:"Germany/Berlin",
-}},
-    {title:"Handynummer",field:"mobil"},
-    {title:"Email",field:"email"},
-    {title:"edit",field:"id",formatter:"link", formatterParams:{
-    label:"edit",
-    urlPrefix:"edit/"    
-    }}
-    ],
-});
-
-
-function replaceAll(string, search, replace) {
-  return string.split(search).join(replace);
-}
-
-//tableData = init()
-initvar = String("{{output}}").toString();
-initvar = replaceAll(initvar, '&#34;','\u0022');
-console.log(initvar);
-initvar = JSON.parse(JSON.stringify(initvar));
-console.log(initvar);
-table.setData(initvar);
-
-//trigger download of data.csv file
-$("#download-csv").click(function(){
-    table.download("csv", "data.csv");
-});
-
-//trigger download of data.json file
-$("#download-json").click(function(){
-    table.download("json", "data.json");
-});
-
-//trigger download of data.xlsx file
-$("#download-xlsx").click(function(){
-    table.download("xlsx", "data.xlsx", {sheetName:"My Data"});
-});
-
-//trigger download of data.pdf file
-$("#download-pdf").click(function(){
-    table.download("pdf", "data.pdf", {
-        orientation:"landscape", //set page orientation to portrait
-        title:"Example Report", //add title to report
+                return s //return the contents of the cell;
+            }
+        }, {
+            title: "Straße",
+            field: "strasse"
+        }, {
+            title: "Hausnummer",
+            field: "hausnummer"
+        }, {
+            title: "Plz",
+            field: "plz",
+            headerFilter: "input"
+        }, {
+            title: "Ort",
+            field: "ort",
+            headerFilter: "input"
+        }, {
+            title: "Geburtsdatum",
+            field: "geburtsdatum",
+            sorter: "number",
+            formatter: "datetime",
+            formatterParams: {
+                inputFormat: "X",
+                outputFormat: "DD/MM/YY",
+                invalidPlaceholder: "(invalid date)",
+                timezone: "Germany/Berlin",
+            }
+        }, {
+            title: "Erstellungsdatum",
+            field: "erstellungsdatum",
+            formatter: "datetime",
+            formatterParams: {
+                inputFormat: "X",
+                outputFormat: "DD/MM/YY",
+                invalidPlaceholder: "(invalid date)",
+                timezone: "Germany/Berlin",
+            }
+        }, {
+            title: "Handynummer",
+            field: "mobil"
+        }, {
+            title: "Email",
+            field: "email"
+        }, {
+            title: "edit",
+            field: "id",
+            formatter: "link",
+            formatterParams: {
+                label: "edit",
+                urlPrefix: "edit/"
+            }
+        }]
     });
-});
 
+
+    function replaceAll(string, search, replace) {
+        return string.split(search).join(replace);
+    }
+
+    //tableData = init()
+    initvar = String("{{output}}").toString();
+    initvar = replaceAll(initvar, '&#34;', '\u0022');
+    console.log(initvar);
+    initvar = JSON.parse(JSON.stringify(initvar));
+    console.log(initvar);
+    table.setData(initvar);
+
+    //trigger download of data.csv file
+    $("#download-csv").click(function() {
+        table.download("csv", "data.csv");
+    });
+
+    //trigger download of data.json file
+    $("#download-json").click(function() {
+        table.download("json", "data.json");
+    });
+
+    //trigger download of data.xlsx file
+    $("#download-xlsx").click(function() {
+        table.download("xlsx", "data.xlsx", {
+            sheetName: "My Data"
+        });
+    });
+
+    //trigger download of data.pdf file
+    $("#download-pdf").click(function() {
+        table.download("pdf", "data.pdf", {
+            orientation: "landscape", //set page orientation to portrait
+            title: "Example Report", //add title to report
+        });
+    });
 </script>
 
 {% endblock %}
