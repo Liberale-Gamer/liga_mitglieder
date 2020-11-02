@@ -22,8 +22,8 @@
             Geburtsdatum: {{geburtsdatum}} </br>
             Mitglied seit: {{erstellungsdatum}}
 
-            <form action="{{ url_for('confirm_edit') }}" method=post>
-                <input name=confirm_delete type=submit value="Löschen bestätigen">
+            <form action="{{ url_for('confirm_edit') }}" method="post">
+                <input name="confirm_delete" type="submit" value="Löschen bestätigen">
             </form>
 
         </div>
@@ -56,16 +56,16 @@
 
                 <form action="{{ url_for('confirm_edit') }}" method=post>
 
-                    <input type=hidden name=vorname value="{{user.vorname}}"> <input type=hidden name=name value="{{user.name}}">
+                    <input type="hidden" name="vorname" value="{{user.vorname}}"> <input type="hidden" name="name" value="{{user.name}}">
 
 
-                    <input type=hidden name=strasse value="{{user.strasse}}"><input type=hidden name=hausnummer value="{{user.hausnummer}}">
-                    <input type=hidden name=plz value="{{user.plz}}"><input type=hidden name=ort value="{{user.ort}}">
+                    <input type="hidden" name="strasse" value="{{user.strasse}}"><input type="hidden" name="hausnummer" value="{{user.hausnummer}}">
+                    <input type="hidden" name="plz" value="{{user.plz}}"><input type="hidden" name="ort" value="{{user.ort}}">
 
-                    <input type=hidden name=email value="{{user.email}}">
-                    <input type=hidden name=mobil value="{{user.mobil}}">
+                    <input type="hidden" name="email" value="{{user.email}}">
+                    <input type="hidden" name="mobil" value="{{user.mobil}}">
 
-                    <input name=confirm_edit type=submit value="Änderung bestätigen">
+                    <input name="confirm_edit" type="submit" value="Änderung bestätigen">
                 </form>
             </div>
 
