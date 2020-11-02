@@ -1,1 +1,0 @@
-Manchmal kann es vorkommen, dass nicht alle Schriftvarianten in Programmen wie MS Word zur Verfügung stehen. Dann kann die Installation der Merriweather-Regular.ttc helfen.
