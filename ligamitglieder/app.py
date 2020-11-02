@@ -219,7 +219,7 @@ def new():
 @login_required
 def database():
     
-    all_users = kunden.query.all()
+    all_users = kunden.query.order_by(-kunden.id)
     kundenschema = kundenSchema(many=True)
     output = kundenschema.dumps(all_users)
     data_json = jsonify({'name' : output})
@@ -289,8 +289,6 @@ def confirm_edit():
 @login_required
 def confirm_new():
     if "new" in request.form and request.method == 'POST':
-        flash('Standard new prompted')
-        flash(request.form["vorname"])
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
         geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
         erstellungsdatum_string = format(datetime.fromtimestamp(int(time.time())), '%d.%m.%Y')
@@ -300,7 +298,6 @@ def confirm_new():
         request.form["mobil"], request.form["email"], geburtsdatum_string, erstellungsdatum_string)
         return render_template('confirm_new.html', confirm=1, new=new)
     if "smart" in request.form and request.method == 'POST':
-        flash('Smart new prompted')
         return render_template('confirm_new.html', confirm=1, new=new)
         #TODO: Build a regex transcriber for the email
     if "confirm_new" in request.form and request.method == 'POST':
@@ -320,11 +317,12 @@ def confirm_new():
         user_add.forum_id = 1
         user_add.forum_username = request.form["vorname"]
         
-        
         db.session.add(user_add)
         db.session.commit()
         
-        return render_template('confirm_new.html', created=1)
+        newest_id = kunden.query.order_by(-kunden.id).first()
+        
+        return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
     return render_template('confirm_new.html')
     
