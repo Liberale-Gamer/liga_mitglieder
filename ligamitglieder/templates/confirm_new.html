@@ -31,23 +31,23 @@
 
 
 
-    <form action="{{ url_for('confirm_new') }}" method=post>
+    <form action="{{ url_for('confirm_new') }}" method="post">
 
-        <input type=hidden name=vorname value="{{new.vorname}}"> <input type=hidden name=name value="{{new.name}}">
-
-
-        <input type=hidden name=strasse value="{{new.strasse}}"><input type=hidden name=hausnummer value="{{new.hausnummer}}">
-        <input type=hidden name=plz value="{{new.plz}}"><input type=hidden name=ort value="{{new.ort}}">
-
-        <input type=hidden name=email value="{{new.email}}">
-        <input type=hidden name=mobil value="{{new.mobil}}">
-
-        <input type=hidden name=sex value="{{new.sex}}">
-        <input type=hidden name=geburtsdatum value="{{new.geburtsdatum}}">
-        <input type=hidden name=erstellungsdatum value="{{new.erstellungsdatum}}">
+        <input type="hidden" name="vorname" value="{{new.vorname}}"> <input type="hidden" name=name value="{{new.name}}">
 
 
-        <input name=confirm_new type=submit value="Anlegen bestätigen">
+        <input type="hidden" name="strasse" value="{{new.strasse}}"><input type="hidden" name="hausnummer" value="{{new.hausnummer}}">
+        <input type="hidden" name="plz" value="{{new.plz}}"><input type="hidden" name="ort" value="{{new.ort}}">
+
+        <input type="hidden" name="email" value="{{new.email}}">
+        <input type="hidden" name="mobil" value="{{new.mobil}}">
+
+        <input type="hidden" name="sex" value="{{new.sex}}">
+        <input type="hidden" name="geburtsdatum" value="{{new.geburtsdatum}}">
+        <input type="hidden" name="erstellungsdatum" value="{{new.erstellungsdatum}}">
+
+
+        <input name="confirm_new" type="submit" value="Anlegen bestätigen">
     </form>
 </div>
 

@@ -1,18 +1,16 @@
-{% extends 'navbar.html' %}
-{% block body %}
+{% extends 'navbar.html' %} {% block body %}
 <div class="logincontainer">
-  <h2>Login</h2>
-  {% if current_user.is_authenticated %} current user is {{ current_user.name }} {%endif%}
-  {% if error%} error: {{error}} {% endif %}
-  
-  <div class="loginbox">
-	  <form action="{{ url_for('login') }}" method=post>
-	    <dl>
-	      <dt>Username:
-	      <dd><input type=text name=username>
-	      <dt>Password:
-	      <dd><input type=password name=password>
-	      <dd><input type=submit value=Login>
+    <h2>Login</h2>
+    {% if current_user.is_authenticated %} current user is {{ current_user.name }} {%endif%} {% if error%} error: {{error}} {% endif %}
+
+    <div class="loginbox">
+        <form action="{{ url_for('login') }}" method=post>
+            <dl>
+                <dt>Benutzername:
+	      <dd><input type="text" name="username">
+	      <dt>Passwort:
+	      <dd><input type="password" name="password">
+	      <dd><input type="submit" value="Login">
 	    </dl>
 	  </form>
   </div>  
