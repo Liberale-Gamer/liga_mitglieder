@@ -51,4 +51,58 @@
     </form>
 </div>
 
-{% endif %} {% if created==1 %} New user created! {% endif %} {% endblock %}
+{% endif %} {% if created==1 %}
+<h3>Mitglied angelegt.</h3>
+<p>Die Mitgliedsnummer <a href="/edit/{{newest_id>}}">{{newest_id>}}</a> wurde vergeben.</p>
+<!--<textarea id="confirmationmail" name="confirmationmail" form="confirmationmail" cols="50" rows="11">Hallo {{new.vorname}},<br />&#10;<br />&#10;
+ich bin Marvin von den Liberalen Gamern und möchte dich bei uns herzlich willkommen heißen!<br />&#10;
+<br />&#10;
+Wir haben dich mit den folgenden Daten in unser Mitgliederverzeichnis aufgenommen &ndash; schau einmal, ob alles richtig ist:<br />&#10;
+<br />&#10;
+Vorname: {{new.vorname}}<br />&#10;
+Name: {{new.name}}<br />&#10;
+Anschrift: [Straße]&nbsp;[Hausnummer]<br />&#10;
+PLZ, Ort: [PLZ]&nbsp;[Stadt]<br />&#10;
+E-Mail-Adresse: [E-Mail]<br />&#10;
+Handynummer: [Handynummer]<br />&#10;
+Geburtsdatum: [Geburtsdatum]<br />&#10;
+Mitgliedsnummer: [ID]<br />&#10;
+<br />&#10;
+Hier noch ein paar hilfreiche Links rund um die LiGa:<br />&#10;
+<br />&#10;
+Unsere offiziellen Social-Media-Kanäle (gerne teilen und liken):<br />&#10;
+<a href='https://www.facebook.com/liberalegamer'>https://www.facebook.com/liberalegamer</a><br />&#10;
+<a href='https://twitter.com/LiberaleGamer'>https://twitter.com/LiberaleGamer</a><br />&#10;
+<a href='https://www.instagram.com/LiberaleGamer'>https://www.instagram.com/LiberaleGamer</a><br />&#10;
+<br />&#10;
+Unsere verbandsinternen Dokumente wie Beschlüsse, Satzung oder Geschäftsordnung dokumentieren wir in unserem Wiki: <a href='https://wiki.liberale-gamer.gg'>https://wiki.liberale-gamer.gg</a><br />&#10;
+<br />&#10;
+Unsere geschlossene Facebook-Gruppe: <a href='https://www.facebook.com/groups/433296140360035/'>https://www.facebook.com/groups/433296140360035/</a><br />&#10;
+Unserer geschlossenen WhatsApp-Gruppe kann ich dich hinzufügen, wenn du mir dafür auf WhatsApp eine kurze Nachricht schreibst &ndash; mit <a
+href='https://api.whatsapp.com/send?phone=4917657517450&text=Hallo+Marvin%2C+bitte+f%C3%BCge+mich+der+LiGa-WhatsApp-Gruppe+hinzu%21+{{new.vorname}}+{{new.name}}+%28Mitgliedsnummer+[ID]%29%2E%20Ich+bin+damit+einverstanden%2C+dass+mit+Hinzuf%C3%BCgen+in+diese+Gruppe+meine+Handynummer+an+WhatsApp+und+alle+Mitglieder+in+der+Gruppe+weitergegeben+wird%2E'>diesem Link</a> geht das ganz einfach. Dazu ein notwendiger Hinweis zum Datenschutz: Wenn du uns mitteilst, dass du zu unserer LiGa-WhatsApp-Gruppe hinzugefügt werden möchtest, erklärst du dich damit einverstanden, dass mit Hinzufügen in diese Gruppe deine Handynummer an WhatsApp und alle Mitglieder in der Gruppe weitergegeben wird.<br />&#10;
+<br />&#10;
+Noch ein kurzer Hinweis zu der WhatsApp-Gruppe: Diese ist ausschließlich für Vereins- und Gaming-Themen gedacht. Du findest in der Gruppenbeschreibung aber auch einen Link zur LiGa-Talk-Gruppe, in der über alles Mögliche diskutiert werden kann. Auch haben wir weitere Gruppen speziell für einzelne Spiele eingerichtet. Eine Liste mit Einladungslinks dazu findest du ebenfalls in der Gruppenbeschreibung.<br />&#10;
+<br />&#10;
+Falls du irgendwelche Fragen hast, kannst du dich jederzeit gerne an mich wenden.<br />&#10;
+<br />&#10;
+Liebe Grüße<br />&#10;
+<br />&#10;
+Marvin Ruder
+<br />&#10;
+<br />&#10;
+<br />&#10;
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;<br />&#10;
+<br />&#10;
+Liberale Gamer e.V.<br />&#10;
+<br />&#10;
+Marvin Ruder<br />&#10;
+Mitgliederbetreuung<br />&#10;
+<br />&#10;
+Tel.:&#9;06224 9266995<br />&#10;
+Fax:&#9;06224 9282579<br />&#10;
+Mobil:&#9;0176 57517450<br />&#10;
+<br />&#10;
+<a href='mailto:marvin.ruder@liberale-gamer.gg'>marvin.ruder@liberale-gamer.gg</a><br />&#10;
+<a href='https://www.liberale-gamer.gg'>www.liberale-gamer.gg</a><br />&#10;
+</textarea> -->
+{% endif %} {% endblock %}
