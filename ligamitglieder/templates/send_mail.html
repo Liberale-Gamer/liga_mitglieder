@@ -1,0 +1,54 @@
+{% extends 'navbar.html' %} {% block body %}
+<h2 style="padding:15px;">Aufnahmemail senden</h2>
+
+
+<!-- Pretty Form -->
+<style>
+    label {
+        display: inline-block;
+        width: 200px;
+        text-align: right;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col">
+            <h6>Mitgliedsdaten:</h6>
+            </br>
+            Mitglied Nr. {{user.id}} </br>
+            {% if user.sex == 0%} Herr {% else %} Frau {% endif %} {{user.vorname}} {{user.name}} </br>
+            </br>
+            Wohnort: </br>
+            {{user.strasse}} {{user.hausnummer}} </br>
+            {{user.plz}} {{user.ort}} </br>
+            </br>
+            Kontaktdaten: </br>
+            E-Mail: {{user.email}} </br>
+            Mobil: {{user.mobil}} </br>
+            </br>
+            Geburtsdatum: {{geburtsdatum}} </br>
+            Mitglied seit: {{erstellungsdatum}}
+
+	    <form action="{{ url_for('send_mail', user_id=user.id) }}" method="post">
+                <input name="send" type="submit" value="Mail versenden">
+            </form>
+        </div>
+
+        <div class="col">
+
+            <h6>Mail:</h6>
+            </br>
+            <p><strong>{{subject|safe}}</strong></p>
+            {{text|safe}}
+
+        </div>
+
+
+    </div>
+
+
+</div>
+{% endblock %}
