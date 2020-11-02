@@ -1,31 +1,41 @@
-.logincontainer{   text-align:center;
-position: relative;
-top: 20vh;
+.logincontainer {
+    text-align: center;
+    position: relative;
+    top: 20vh;
 }
 
-.homecontainer{text-align:center;
-position: relative;
-top: 10vh;
+.homecontainer {
+    text-align: center;
+    position: relative;
+    top: 10vh;
 }
 
-.loginbox {background-color:#fff; 
-           margin:auto;
-           border-radius:10px;
-           display:inline-block;
-           padding:1.5vh;
-           position:relative;}
-           
-.homebox {background-color:#fff; 
-           margin: 1vw;
-           border-radius:10px;
-           display:inline-block;
-           padding:0.5vh;
-           position:relative;}
-           
-.centering {text-align:center;
+.loginbox {
+    background-color: #fff;
+    margin: auto;
+    border-radius: 10px;
+    display: inline-block;
+    padding: 5vh;
+    position: relative;
+    text-align: left;
 }
 
-textarea#smartreg { 	width: 95%;
-        height: 86%;
-	padding: 0.1vw;
+.homebox {
+    background-color: #fff;
+    margin: 1vw;
+    border-radius: 10px;
+    display: inline-block;
+    padding: 5vh;
+    position: relative;
+    text-align: left;
+}
+
+.centering {
+    text-align: center;
+}
+
+textarea#smartreg {
+    width: 95%;
+    height: 86%;
+    padding: 0.1vw;
 }
