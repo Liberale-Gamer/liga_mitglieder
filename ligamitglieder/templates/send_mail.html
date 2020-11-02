@@ -32,10 +32,9 @@
             Geburtsdatum: {{geburtsdatum}} </br>
             Mitglied seit: {{erstellungsdatum}}
 
-            <form action="{{ url_for('send_mail') }}" method="post">
+	    <form action="{{ url_for('send_mail', user_id=user.id) }}" method="post">
                 <input name="send" type="submit" value="Mail versenden">
             </form>
-            <a href="{{link}}">In Mail-Client öffnen</a>
         </div>
 
         <div class="col">
