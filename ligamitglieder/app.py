@@ -30,7 +30,8 @@ login_manager.init_app(app)
 
 class new_user():
   def __init__(self, vorname, name, sex, strasse, hausnummer,\
-  plz, ort, geburtsdatum, erstellungsdatum, mobil, email):
+  plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
+  geburtsdatum_string, erstellungsdatum_string):
     self.vorname = vorname
     self.name = name
     self.sex = sex
@@ -42,6 +43,8 @@ class new_user():
     self.erstellungsdatum = erstellungsdatum
     self.mobil = mobil
     self.email = email
+    self.geburtsdatum_string = geburtsdatum_string
+    self.erstellungsdatum_string = erstellungsdatum_string
 
 class kunden(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -289,10 +292,12 @@ def confirm_new():
         flash('Standard new prompted')
         flash(request.form["vorname"])
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
+        geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
+        erstellungsdatum_string = format(datetime.fromtimestamp(int(time.time())), '%d.%m.%Y')
         new = new_user(request.form["vorname"],request.form["name"], request.form["sex"],\
         request.form["strasse"], request.form["hausnummer"],request.form["plz"],\
         request.form["ort"], geburtsdatum,int(time.time()),\
-        request.form["mobil"], request.form["email"])
+        request.form["mobil"], request.form["email"], geburtsdatum_string, erstellungsdatum_string)
         return render_template('confirm_new.html', confirm=1, new=new)
     if "smart" in request.form and request.method == 'POST':
         flash('Smart new prompted')
