@@ -51,4 +51,7 @@
     </form>
 </div>
 
-{% endif %} {% if created==1 %} New user created! {% endif %} {% endblock %}
+{% endif %} {% if created==1 %}
+<h3>Mitglied angelegt.</h3>
+<p>Die Mitgliedsnummer <a href="/edit/{{newest_id.id}}">{{newest_id.id}}</a> wurde vergeben.</p>
+{% endif %} {% endblock %}
