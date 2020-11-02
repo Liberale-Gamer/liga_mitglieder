@@ -289,6 +289,8 @@ def confirm_new():
         flash('Standard new prompted')
         flash(request.form["vorname"])
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
+        geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
+        erstellungsdatum_string = format(datetime.fromtimestamp(int(time.time())), '%d.%m.%Y')
         new = new_user(request.form["vorname"],request.form["name"], request.form["sex"],\
         request.form["strasse"], request.form["hausnummer"],request.form["plz"],\
         request.form["ort"], geburtsdatum,int(time.time()),\
