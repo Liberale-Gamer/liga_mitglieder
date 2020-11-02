@@ -8,8 +8,94 @@
 
 
 @font-face {
-  font-family: Montserrat;
-  src: url('fonts/Montserrat/Montserrat-Bold.ttf');
+  font-family: "sol-pro";
+  src: url("fonts/SolPro-900.woff") format("woff"), url("fonts/SolPro-900.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "sol-pro";
+  src: url("fonts/SolPro-700.woff") format("woff"), url("fonts/SolPro-700.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "sol-pro";
+  src: url("fonts/SolPro-500.woff") format("woff"), url("fonts/SolPro-500.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "sol-pro";
+  src: url("fonts/SolPro-400.woff") format("woff"), url("fonts/SolPro-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "sol-pro";
+  src: url("fonts/SolPro-300.woff") format("woff"), url("fonts/SolPro-300.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 100;
+  src: local('Montserrat Hairline'), local('Montserrat-Hairline'), url(fonts/Montserrat-Hairline.woff2) format('woff2'), url(fonts/Montserrat-Hairline.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 200;
+  src: local('Montserrat Ultra Light'), local('Montserrat-UltraLight'), url(fonts/Montserrat-UltraLight.woff2) format('woff2'), url(fonts/Montserrat-UltraLight.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Montserrat Light'), local('Montserrat-Light'), url(fonts/Montserrat-Light.woff2) format('woff2'), url(fonts/Montserrat-Light.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), url(fonts/Montserrat-Regular.woff2) format('woff2'), url(fonts/Montserrat-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Montserrat Semi Bold'), local('Montserrat-SemiBold'), url(fonts/Montserrat-SemiBold.woff2) format('woff2'), url(fonts/Montserrat-SemiBold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Montserrat Bold'), local('Montserrat-Bold'), url(fonts/Montserrat-Bold.woff2) format('woff2'), url(fonts/Montserrat-Bold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 800;
+  src: local('Montserrat Extra Bold'), local('Montserrat-ExtraBold'), url(fonts/Montserrat-ExtraBold.woff2) format('woff2'), url(fonts/Montserrat-ExtraBold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 900;
+  src: local('Montserrat Black'), local('Montserrat-Black'), url(fonts/Montserrat-Black.woff2) format('woff2'), url(fonts/Montserrat-Black.woff) format('woff');
 }
 
 body {  background-color: #009ee3;
