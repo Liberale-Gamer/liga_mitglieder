@@ -35,6 +35,7 @@
             <form action="{{ url_for('confirm_edit') }}" method="post">
                 <input name="delete" type="submit" value="Mitglied löschen">
             </form>
+            <a href="/send_mail/{{user.id}}">Bestätigungsmail senden</a>
 
         </div>
 
