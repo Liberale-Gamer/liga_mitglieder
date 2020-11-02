@@ -219,7 +219,7 @@ def new():
 @login_required
 def database():
     
-    all_users = kunden.query.all()
+    all_users = kunden.query.order_by(-kunden.id)
     kundenschema = kundenSchema(many=True)
     output = kundenschema.dumps(all_users)
     data_json = jsonify({'name' : output})
@@ -320,9 +320,9 @@ def confirm_new():
         db.session.add(user_add)
         db.session.commit()
         
-        newest_id = kunden.query().order_by(id.desc()).first()
-
-        return render_template('confirm_new.html', created=1, newest_id = newest_id)
+        newest_id = kunden.query.order_by(-kunden.id).first()
+        
+        return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
     return render_template('confirm_new.html')
     
