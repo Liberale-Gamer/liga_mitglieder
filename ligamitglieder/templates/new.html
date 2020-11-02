@@ -1,11 +1,12 @@
 {% extends 'navbar.html' %} {% block body %}
+<h2 style="padding:15px;">Neues Mitglied</h2>
 
 
 <div class="container-fluid">
 
     <div class="row">
 
-        <div class="col homebox centering">
+        <div class="col">
             <form action="{{ url_for('confirm_new') }}" method=post id="new">
                 </br>
                 <input type="text" name="vorname" placeholder="Vorname" required> <input type="text" name="name" placeholder="Nachname" required> </br>
