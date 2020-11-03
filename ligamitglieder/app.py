@@ -3,6 +3,7 @@
 
 from flask import Flask , request, render_template, session, flash, redirect, url_for, g, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
 from flask_marshmallow import Marshmallow
 from marshmallow_sqlalchemy import SQLAlchemySchema
@@ -423,8 +424,12 @@ def confirm_new():
 @app.route('/set_counter', methods=['GET','POST'])
 @login_required
 def set_counter():
+    engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+    with engine.connect() as con:
+        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
+        newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
     if request.method == 'GET':
-        return render_template('set_counter.html', new_counter=-1)
+        return render_template('set_counter.html', old_counter=old_counter,newest_member=newest_member,new_counter=-1)
     if request.method == 'POST':
         return render_template('set_counter.html', new_counter=request.form["new_counter"])
 
