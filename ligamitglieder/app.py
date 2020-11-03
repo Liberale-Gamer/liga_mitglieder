@@ -106,7 +106,11 @@ def load_user(user_id):
 @app.route('/')
 def show_entries():
     return redirect(url_for('login'))
-    
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect('https://liberale-gamer.gg/favicon.ico')
+
 @app.route('/index.html')
 def index():
     return redirect(url_for('login'))   
