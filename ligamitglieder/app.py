@@ -429,9 +429,17 @@ def set_counter():
         old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
         newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
     if request.method == 'GET':
-        return render_template('set_counter.html', old_counter=old_counter,newest_member=newest_member,new_counter=-1)
+        return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
     if request.method == 'POST':
-        return render_template('set_counter.html', new_counter=request.form["new_counter"])
+        if request.form["new_counter"].isnumeric():
+            with engine.connect() as con:
+                con.execute("ALTER TABLE kunden AUTO_INCREMENT = " + request.form["new_counter"])
+                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
+                newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+        else:
+            flash("Bitte gib eine Zahl ein")
+        return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
+            
 
 @app.route('/logout')
 @login_required

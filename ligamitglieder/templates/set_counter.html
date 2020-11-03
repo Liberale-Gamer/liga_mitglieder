@@ -16,12 +16,11 @@
     <div class="homebox">
         <p style="padding-top: 16px;">Alter Wert: {{old_counter}}</p>
         <p>Neuestes Mitglied: {{newest_member}}</p>
-        <p style="padding-bottom: 16px;">Neuer Wert: {{new_counter}}</p>
         <form action="{{ url_for('set_counter') }}" method="post">
             <dl>
                 <div class="block">
                     <label>Neuer Wert:</label>
-                    <input type="text" name="new_counter">
+		    <input type="text" name="new_counter" {% if newest_member != None and newest_member != '' %} value="{{newest_member + 1}}" {% endif %}>
                 </div>
                 <dd><input type="submit" value="Setzen">
             </dl>
