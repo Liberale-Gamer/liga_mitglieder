@@ -22,6 +22,7 @@
                 <div class="dropdown-menu" id="navbardrop">
                     <a class="dropdown-item {% if request.path == '/database' %} active {% endif %}" href="{{url_for('database')}}">Mitgliederdatenbank</a>
                     <a class="dropdown-item {% if request.path == '/new' %} active {% endif %}" href="{{url_for('new')}}">Neues Mitglied</a>
+                    <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
                 </div>
             </li>
 
