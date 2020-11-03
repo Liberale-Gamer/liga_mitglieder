@@ -121,17 +121,21 @@ def login():
     if request.method == 'POST':
         user = verkaeufer.query.filter_by(kuerzel=request.form['username']).first()
         if user == None:
-            error = 'username does not exist'
+            error = 'Dieser Benutzer existiert nicht'
             return render_template('login.html',error=error)
         password = hashlib.sha3_256(str(request.form['password']).encode('utf-8')).hexdigest()
         if password == user.passwort:
             login_user(user,remember=True,duration=timedelta(300))
+            if request.args.get('next') != '' and request.args.get('next') != None:
+                return redirect(request.args.get('next'))
             return render_template('home.html',error=error)
         else:
-            error = 'wrong password'
+            error = 'Das Passwort ist falsch'
     else:
         password = None
         pass
+    if request.args.get('next') != '' and request.args.get('next') != None:
+        return render_template('login.html',error=error,next=request.args.get('next'))
     return render_template('login.html',error=error)
 
     
@@ -142,7 +146,7 @@ def home():
         if "old_password" in request.form:
             password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
             if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
-                flash('Password aktualisiert')
+                flash('Passwort aktualisiert')
                 new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
                 current_user.passwort = new_pw
                 db.session.commit()
