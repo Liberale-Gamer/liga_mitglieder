@@ -356,7 +356,11 @@ def confirm_edit():
             user_old = copy.copy(user)
             for item in user.__dict__:      
                 try:    
-                    if vars(user)[item] != request.form[item] and request.form[item] != "":
+                    if request.form[item] == "-":
+                        continue
+                    if request.form[item] == "-":
+                        request.form[item] = ""
+                    if vars(user)[item] != request.form[item]:
                         vars(user)[item] = request.form[item]
                 except:
                     pass        
@@ -415,7 +419,15 @@ def confirm_new():
         return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
     return render_template('confirm_new.html')
-    
+
+@app.route('/set_counter', methods=['GET','POST'])
+@login_required
+def set_counter():
+    if request.method == 'GET':
+        return render_template('set_counter.html', new_counter=-1)
+    if request.method == 'POST':
+        return render_template('set_counter.html', new_counter=request.form["new_counter"])
+
 @app.route('/logout')
 @login_required
 def logout():
