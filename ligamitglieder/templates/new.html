@@ -50,8 +50,8 @@
                     var element_value = find_data(textfield, "Geburtsdatum: ");
                     document.getElementsByName("geburtsdatum")[0].value = element_value;
                     var element_value = find_data(textfield, "Straße: ");
-                    document.getElementsByName("strasse")[0].value = element_value.substring(0, element_value.search("[0 - 9]"));
-                    document.getElementsByName("hausnummer")[0].value = element_value.substring(element_value.search("[0 - 9]") + 1);
+                    document.getElementsByName("strasse")[0].value = element_value.substring(0, element_value.search("[0-9]"));
+                    document.getElementsByName("hausnummer")[0].value = element_value.substring(element_value.search("[0-9]") + 1);
                     var element_value = find_data(textfield, "Postleitzahl: ");
                     document.getElementsByName("plz")[0].value = element_value;
                     var element_value = find_data(textfield, "Wohnort: ");
