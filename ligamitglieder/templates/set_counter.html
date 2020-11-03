@@ -1,0 +1,33 @@
+{% extends 'navbar.html' %} {% block body %}
+
+<div class="homecontainer">
+    <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
+    <h2>Zähler für Mitgliedsnummer setzen</h2>
+
+    <!-- Pretty Form -->
+    <style>
+        label {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+        }
+    </style>
+
+    <div class="homebox">
+        <p style="padding-top: 16px;">Alter Wert: {{old_counter}}</p>
+        <p>Neuestes Mitglied: {{newest_member}}</p>
+        <form action="{{ url_for('set_counter') }}" method="post">
+            <dl>
+                <div class="block">
+                    <label>Neuer Wert:</label>
+		    <input type="text" name="new_counter" {% if newest_member != None and newest_member != '' %} value="{{newest_member + 1}}" {% endif %}>
+                </div>
+                <dd><input type="submit" value="Setzen">
+            </dl>
+        </form>
+    </div>
+
+
+</div>
+
+{% endblock %}

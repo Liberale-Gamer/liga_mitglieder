@@ -3,6 +3,7 @@
 
 from flask import Flask , request, render_template, session, flash, redirect, url_for, g, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
 from flask_marshmallow import Marshmallow
 from marshmallow_sqlalchemy import SQLAlchemySchema
@@ -419,7 +420,27 @@ def confirm_new():
         return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
     return render_template('confirm_new.html')
-    
+
+@app.route('/set_counter', methods=['GET','POST'])
+@login_required
+def set_counter():
+    engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+    with engine.connect() as con:
+        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
+        newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+    if request.method == 'GET':
+        return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
+    if request.method == 'POST':
+        if request.form["new_counter"].isnumeric():
+            with engine.connect() as con:
+                con.execute("ALTER TABLE kunden AUTO_INCREMENT = " + request.form["new_counter"])
+                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
+                newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+        else:
+            flash("Bitte gib eine Zahl ein")
+        return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
+            
+
 @app.route('/logout')
 @login_required
 def logout():
