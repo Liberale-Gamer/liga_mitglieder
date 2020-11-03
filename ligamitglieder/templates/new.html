@@ -25,12 +25,44 @@
         </div>
 
         <div class="col homebox centering">
-            <form action="{{ url_for('confirm_new') }}" method="post" id="smartnew">
-                </br>
-                <textarea id="smartreg" name="smartreg" form="smartnew" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
-                </br>
-                <input name="smart" type="submit" value="Absenden">
-            </form>
+            <script>
+                function find_data(textfield, element_name) {
+                    start = textfield.search(element_name);
+                    textfield_substring = textfield.substring(start);
+                    length = textfield_substring.search("\n");
+                    element_value = textfield.substring(start + element_name.length, start + length);
+                    textfield = textfield.substring(start + length + 1);
+                    if (start == -1 || length == -1) {
+                        return "";
+                    } else {
+                        return element_value;
+                    }
+                }
+
+                function fill_fields() {
+                    var textfield = document.getElementById("emailtext").value;
+                    var element_value = find_data(textfield, "Vorname: ");
+                    document.getElementsByName("vorname")[0].value = element_value;
+                    var element_value = find_data(textfield, "Nachname: ");
+                    document.getElementsByName("name")[0].value = element_value;
+                    var element_value = find_data(textfield, "E-Mail: ");
+                    document.getElementsByName("email")[0].value = element_value;
+                    var element_value = find_data(textfield, "Geburtsdatum: ");
+                    document.getElementsByName("geburtsdatum")[0].value = element_value;
+                    var element_value = find_data(textfield, "Straße: ");
+                    document.getElementsByName("strasse")[0].value = element_value.substring(0, element_value.search("[0-9]"));
+                    document.getElementsByName("hausnummer")[0].value = element_value.substring(element_value.search("[0-9]"));
+                    var element_value = find_data(textfield, "Postleitzahl: ");
+                    document.getElementsByName("plz")[0].value = element_value;
+                    var element_value = find_data(textfield, "Wohnort: ");
+                    document.getElementsByName("ort")[0].value = element_value;
+                    var element_value = find_data(textfield, "Telefonnummer: ");
+                    document.getElementsByName("mobil")[0].value = element_value;
+                }
+            </script>
+            <textarea id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
+            <br />
+            <button type="button" name="do_smartfill" onclick="fill_fields()">Daten übertragen</button>
 
         </div>
     </div>

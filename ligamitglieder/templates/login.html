@@ -1,7 +1,9 @@
-{% extends 'navbar.html' %} {% block body %}
+{% extends 'navbar.html' %} {% block body %} {% if current_user.is_authenticated %}
+<div class="flash">Der aktuelle Benutzer ist {{ current_user.name }}</div> {%endif%} {% if error%}
+<div class="flash">Fehler: {{error}}</div> {% endif %}
 <div class="logincontainer">
+
     <h2>Login</h2>
-    {% if current_user.is_authenticated %} current user is {{ current_user.name }} {%endif%} {% if error%} error: {{error}} {% endif %}
 
     <div class="loginbox">
         <form action="{{ url_for('login') }}" method=post>
