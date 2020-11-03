@@ -26,18 +26,25 @@
 
         <div class="col homebox centering">
             <script>
+                function find_data(textfield, element_name) {
+                    start = textfield.search(element_name);
+                    textfield_substring = textfield.substring(start);
+                    length = textfield_substring.search("\n");
+                    return [start, start + length];
+                }
+
                 function fill_fields() {
-                    var textfield = document.getElementById(emailtext).value;
-                    document.getElementsByName(vorname).value = textfield.substring(0, 3)
+                    var textfield = document.getElementById("emailtext").value;
+                    var [start, end] = find_data(textfield, "Vorname: ");
+                    print(start);
+                    print(end);
+                    print(textfield.substring(start, end));
+                    document.getElementsByName("vorname").value = textfield.substring(start, end);
                 }
             </script>
-
-            <form onsubmit="fill_fields();" id="smartfill">
-                </br>
-                <textarea id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
-                </br>
-                <input name="do_smartfill" type="submit" value="Absenden">
-            </form>
+            <textarea id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
+            <br />
+            <button type="button" name="do_smartfill" onclick="fill_fields()">Absenden</button>
 
         </div>
     </div>
