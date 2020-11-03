@@ -289,11 +289,32 @@ button:hover {
 
 input {
     border-color: transparent;
+    background-color: #eeeeee;
+    border-radius: 10px;
+    padding: 4px;
+    margin: 4px;
+}
+
+.tabulator {
+    text-align: center !important;
+}
+
+.tabulator,
+.tabulator-header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    width: unset !important;
+}
+
+.tabulator-cell {
+    border-right: none !important;
+    text-align: left;
 }
 
 .tabulator-col {
     background-color: #009ee3 !important;
     color: #ffffff;
+    border-right: none !important;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort=desc] .tabulator-col-content .tabulator-arrow {
@@ -312,7 +333,9 @@ input {
 }
 
 .tabulator-footer {
-    background-color: #ffffff !important;
+    background-color: transparent !important;
+    border-top: none !important;
+    text-align: center !important;
 }
 
 .tabulator-paginator button {
