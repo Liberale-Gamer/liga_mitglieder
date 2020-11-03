@@ -139,7 +139,7 @@ def login():
         password = None
         pass
     if request.args.get('next') != '' and request.args.get('next') != None:
-        return render_template('login.html',error=error,next=request.args.get('next'))
+        return render_template('login.html',error=error,next=request.args.get('next'),null=request.args.get('null'))
     return render_template('login.html',error=error)
 
     
