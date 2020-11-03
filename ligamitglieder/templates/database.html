@@ -14,14 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/jspdf-autotable"></script>
 
-<div style="padding-top:15px;">
-    <button id="download-csv">Download CSV</button>
-    <button id="download-json">Download JSON</button>
-    <button id="download-pdf">Download PDF</button>
-    <button id="download-xlsx">Download XLSX</button>
-</div>
-
-<div id="Mitglieder">
+<div id="Mitglieder" style="padding-top:15px;">
 
 </div>
 
@@ -45,7 +38,7 @@
             editor: "input",
             headerFilter: "input"
         }, {
-            title: "Geschlecht",
+            title: "W/M",
             field: "sex",
             headerFilter: "input",
             formatter: function(cell, formatterParams, onRendered) {
@@ -61,10 +54,10 @@
             title: "Straße",
             field: "strasse"
         }, {
-            title: "Hausnummer",
+            title: "Hausnr.",
             field: "hausnummer"
         }, {
-            title: "Plz",
+            title: "PLZ",
             field: "plz",
             headerFilter: "input"
         }, {
@@ -72,23 +65,23 @@
             field: "ort",
             headerFilter: "input"
         }, {
-            title: "Geburtsdatum",
+            title: "Geb.-Datum",
             field: "geburtsdatum",
             sorter: "number",
             formatter: "datetime",
             formatterParams: {
                 inputFormat: "X",
-                outputFormat: "DD/MM/YY",
+                outputFormat: "DD.MM.YY",
                 invalidPlaceholder: "(invalid date)",
                 timezone: "Germany/Berlin",
             }
         }, {
-            title: "Erstellungsdatum",
+            title: "seit",
             field: "erstellungsdatum",
             formatter: "datetime",
             formatterParams: {
                 inputFormat: "X",
-                outputFormat: "DD/MM/YY",
+                outputFormat: "DD.MM.YY",
                 invalidPlaceholder: "(invalid date)",
                 timezone: "Germany/Berlin",
             }
@@ -96,17 +89,12 @@
             title: "Handynummer",
             field: "mobil"
         }, {
-            title: "Email",
+            title: "E-Mail",
             field: "email"
-        }, {
-            title: "edit",
-            field: "id",
-            formatter: "link",
-            formatterParams: {
-                label: "edit",
-                urlPrefix: "edit/"
-            }
-        }]
+        }],
+        rowClick: function(e, row) {
+            window.location.href = "/edit/" + row.getData().id;
+        },
     });
 
 
@@ -147,5 +135,14 @@
         });
     });
 </script>
+
+<div style="padding:15px;">
+    Herunterladen als:&nbsp;
+    <button id="download-csv">CSV</button>
+    <button id="download-json">JSON</button>
+    <button id="download-pdf">PDF</button>
+    <button id="download-xlsx">XLSX</button>
+</div>
+
 
 {% endblock %}
