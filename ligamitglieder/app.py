@@ -142,22 +142,22 @@ def home():
         if "old_password" in request.form:
             password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
             if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
-                flash('Password updated successfully')
+                flash('Password aktualisiert')
                 new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
                 current_user.passwort = new_pw
                 db.session.commit()
                 return render_template('home.html') 
             else:
                 if password != current_user.passwort:
-                    flash('wrong old password')
+                    flash('Altes Passwort falsch')
                 if request.form['new_password'] != request.form['confirm_password']:
-                    flash('entered two different passwords')
+                    flash('Passwörter stimmen nicht überein')
                 if request.form['new_password'] == '':
-                    flash('Please enter a new password')
+                    flash('Bitte gib ein neues Passwort ein')
         if "email" in request.form:
             current_user.email = request.form['email']
             db.session.commit()
-            flash('new email set')
+            flash('E-Mail aktualisiert')
             return render_template('home.html')
     else:
         pass
@@ -187,7 +187,7 @@ Der Link zum zurücksetzen deines Passworts lautet: {}""".format(user.name,"http
 
 
         mailer.send_email(sender, email, "Password reset", text)
-        flash('Reset Email sent to {}'.format(email))
+        flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
     
 #Actually reset the password
@@ -195,7 +195,7 @@ Der Link zum zurücksetzen deines Passworts lautet: {}""".format(user.name,"http
 def reset_pw(token):
     user = verkaeufer.query.filter_by(token=token).first()
     if user.tokenttl < int(time.time()):
-        flash('This token has expired')
+        flash('Dein Token ist abgelaufen')
         return redirect(url_for('login'))
     else:
         if request.method == 'POST':
@@ -206,9 +206,9 @@ def reset_pw(token):
                 return render_template('login.html')
             else:
                 if request.form['new_password'] != request.form['confirm_password']:
-                    flash('entered two different passwords')
+                    flash('Passwörter stimmen nicht überein')
                 if request.form['new_password'] == '':
-                    flash('Please enter a new password')            
+                    flash('Bitte gib ein neues Passwort ein')            
     return render_template('reset_pw.html',token=token)
 
 
@@ -216,7 +216,6 @@ def reset_pw(token):
 @app.route('/new')
 @login_required
 def new():
-    
     return render_template('new.html')
 
     
@@ -369,7 +368,6 @@ def confirm_edit():
         
             flash('Änderungen übernommen')
             return redirect(url_for('edit',user_id=str(user.id)))
-        flash(request.form)
     return render_template('confirm_edit.html')
     
 @app.route('/confirm_new',methods=['GET','POST'])
@@ -384,9 +382,6 @@ def confirm_new():
         request.form["ort"], geburtsdatum,int(time.time()),\
         request.form["mobil"], request.form["email"], geburtsdatum_string, erstellungsdatum_string)
         return render_template('confirm_new.html', confirm=1, new=new)
-    if "smart" in request.form and request.method == 'POST':
-        return render_template('confirm_new.html', confirm=1, new=new)
-        #TODO: Build a regex transcriber for the email
     if "confirm_new" in request.form and request.method == 'POST':
         
         user_add = kunden()
