@@ -10834,3 +10834,7 @@ h2 {
     border-radius: .5rem;
     max-width: 300px;
 }
+
+.col {
+    padding: 15px;
+}
