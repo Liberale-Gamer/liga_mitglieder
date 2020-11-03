@@ -13,7 +13,8 @@
     margin: 5vh;
     border-radius: 10px;
     display: inline-block;
-    padding: 5vh;
+    padding-left: 16px;
+    padding-right: 16px;
     position: relative;
     text-align: left;
 }
@@ -23,9 +24,16 @@
     margin: 1vw;
     border-radius: 10px;
     display: inline-block;
-    padding: 5vh;
+    padding-left: 16px;
+    padding-right: 16px;
     position: relative;
     text-align: left;
+}
+
+.loginbox dl,
+.homebox dl {
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .centering {

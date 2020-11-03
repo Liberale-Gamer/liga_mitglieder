@@ -4,9 +4,8 @@
 <div class="logincontainer">
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
     <h2>Login</h2>
-
     <div class="loginbox">
-        <form action="{% if next == None %} {{ url_for('login') }} {% else %} {{ url_for('login', next=next) }} {% endif %}" method=post>
+        <form action="{% if next == None or next == '' or next == null %} {{ url_for('login') }} {% else %} {{ url_for('login', next=next) }} {% endif %}" method=post>
             <dl>
                 <dt>Benutzername:
 	      <dd><input type="text" name="username">
