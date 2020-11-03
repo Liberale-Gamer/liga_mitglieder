@@ -6,7 +6,7 @@
     <h2>Login</h2>
 
     <div class="loginbox">
-        <form action="{{ url_for('login') }}" method=post>
+	    <form action="{% if next == None %} {{ url_for('login') }} {% else %} {{ url_for('login', next=next) }} {% endif %}" method=post>
             <dl>
                 <dt>Benutzername:
 	      <dd><input type="text" name="username">
