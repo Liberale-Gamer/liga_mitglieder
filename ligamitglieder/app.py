@@ -355,8 +355,12 @@ def confirm_edit():
         if "aktualisieren" in request.form:
             user_old = copy.copy(user)
             for item in user.__dict__:      
-                try:    
-                    if vars(user)[item] != request.form[item] and request.form[item] != "":
+                try:
+                    if request.form[item] == "":
+                        continue
+                    if request.form[item] == "-":
+                        vars(user)[item] = ""
+                    elif vars(user)[item] != request.form[item]:
                         vars(user)[item] = request.form[item]
                 except:
                     pass        
