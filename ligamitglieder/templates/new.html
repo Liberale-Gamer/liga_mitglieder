@@ -25,11 +25,18 @@
         </div>
 
         <div class="col homebox centering">
-            <form action="{{ url_for('confirm_new') }}" method="post" id="smartnew">
+            <script>
+                function fill_fields() {
+                    var textfield = document.getElementById(emailtext).value;
+                    document.getElementsByName(vorname).value = textfield.substring(0, 3)
+                }
+            </script>
+
+            <form onsubmit="fill_fields();" id="smartfill">
                 </br>
-                <textarea id="smartreg" name="smartreg" form="smartnew" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
+                <textarea id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
                 </br>
-                <input name="smart" type="submit" value="Absenden">
+                <input name="do_smartfill" type="submit" value="Absenden">
             </form>
 
         </div>
