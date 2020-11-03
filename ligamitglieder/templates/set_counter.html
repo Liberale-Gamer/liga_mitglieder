@@ -14,7 +14,9 @@
     </style>
 
     <div class="homebox">
-        <p>Neuer Wert: {{new_counter}}</p>
+        <p style="padding-top: 16px;">Alter Wert: {{old_counter}}</p>
+        <p>Neuestes Mitglied: {{newest_member}}</p>
+        <p style="padding-bottom: 16px;">Neuer Wert: {{new_counter}}</p>
         <form action="{{ url_for('set_counter') }}" method="post">
             <dl>
                 <div class="block">
