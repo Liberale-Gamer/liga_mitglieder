@@ -64,8 +64,14 @@
                 </form>
                 {% else %}
                 <form action="" method="post">
-                    <input name="reopen" type="submit" value="Abstimmung fortsetzen">
+                    <select name="action">
+                        <option value="delete">Löschen</option>
+                    </select>
+                    <input name="end" type="submit" value="Abstimmung beenden">
                 </form><br />
+                <form action="" method="post">
+                    <input name="reopen" type="submit" value="Abstimmung fortsetzen">
+                </form>
                 {% endif %}
             </div>
         </div>
