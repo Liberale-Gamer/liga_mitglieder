@@ -283,14 +283,14 @@ def abstimmung_list():
         antrag_add.status = 1
         db.session.add(antrag_add)
         db.session.commit()
-        subject = f"Neuer Antrag: {abstimmung['titel']}"
-        abstimmung['text'].replace('\n', '<br>')
+        subject = f"Neuer Antrag: {antrag_add.titel}"
+        antrag_add.text.replace('\n', '<br>')
         text = f"""
 Der nachfolgende Antrag wurde gestellt:<br />
 <br />
-<strong>{abstimmung['titel']}</strong><br />
+<strong>{antrag_add.titel}</strong><br />
 <br />
-{abstimmung['text']}<br />
+{antrag_add.text}<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt abstimmen</a>"""
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
