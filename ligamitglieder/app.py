@@ -308,7 +308,14 @@ def abstimmung(abstimmung_id):
                 abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
                 return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da, zust=zust, enth=enth, abl=abl)
             if request.method == 'POST':
-                if 'end' in request.form:
+                if 'reopen' in request.form:
+                    abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                    abstimmung_changes.status = 1
+                    db.session.commit()
+                    flash('Abstimmung fortgesetzt')
+                    return redirect(url_for('abstimmung_list'))
+
+                elif 'end' in request.form:
                     if request.form['action'] == 'delete':
                         antrag = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         db.session.delete(antrag)
@@ -334,7 +341,7 @@ Abgegebene Stimmen:<br />
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
-                       flash('Mail versendet')
+                        flash('Antrag ' + request.form['action'])
                     return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
