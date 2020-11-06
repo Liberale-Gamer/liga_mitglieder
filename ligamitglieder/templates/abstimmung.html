@@ -32,10 +32,10 @@
                 {% endfor %}
             </table>
             <form action="" method="post">
-                <input type="submit" name="Zustimmung" value="Zustimmung" />
-                <input type="submit" name="Enthaltung" value="Enthaltung" />
-                <input type="submit" name="Ablehnung" value="Ablehnung" />
-                <input type="submit" name="clear" value="Votum zurücknehmen" />
+                <button type="submit" name="votum" value="Zustimmung">Zustimmung</button>
+                <button type="submit" name="votum" value="Enthaltung">Enthaltung</button>
+                <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
+                <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
             </form>
             {{votum}}
         </div>
