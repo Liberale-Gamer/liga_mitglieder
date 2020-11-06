@@ -25,7 +25,7 @@
         </div>
 
         <div class="col homebox centering">
-            <form action="/new" method="post" style="width: inherit;">
+            <form action="/new" method="post">
                 <select name="antrags_id">
                 {% for id, antrag in ids_subjects %}
 		            <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
