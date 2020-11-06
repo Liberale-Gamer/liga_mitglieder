@@ -274,6 +274,20 @@ def abstimmung():
     abstimmungen = ast.literal_eval(output)
     return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
     
+@app.route('/abstimmung/<abstimmung_id>')
+# @login_required
+def abstimmung(abstimmung_id):
+    all_abstimmungen = abstimmung_intern.query
+    abstimmungschema = abstimmung_internSchema(many=True)
+    output = abstimmungschema.dumps(all_abstimmungen)
+    abstimmungen = ast.literal_eval(output)
+    for abstimmung in abstimmungen:
+        if abstimmung.get('id') == abstimmung_id:
+            abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
+            return render_template('abstimmung.html', abstimmung=abstimmung)
+    flash('Abstimmung nicht gefunden.')
+    return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
+    
 @app.route('/edit/<user_id>')
 @login_required
 def edit(user_id):
