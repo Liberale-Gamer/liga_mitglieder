@@ -36,7 +36,7 @@
             </div>
             <div class="col homebox">
                 <h3>Neue Abstimmung</h3>
-                <form action="/abstimmung" method="post">
+                <form action="/abstimmung" method="post" style="width: inherit;">
                     <select name="antrags_id">
                     {% for id, antrag in ids_subjects %}
                         <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
