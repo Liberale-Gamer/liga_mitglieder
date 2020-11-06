@@ -4,7 +4,7 @@
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
     <h2>Abstimmungen</h2>
 
-    <p> <strong>Du kannst abstimmen als {{current_user.name}}.</strong> </p>
+    <p>Du kannst abstimmen als <strong>{{current_user.name}}</strong>.</p>
 
 
 
@@ -24,13 +24,13 @@
                 <h4>Offene Abstimmungen</h4>
                 {% for abstimmung in abstimmungen %}
                 {% if abstimmung.get('status') == 0 %}
-                <p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a></p>
                 {% endif %}
                 {% endfor %}
                 <h4>Geschlossene Abstimmungen</h4>
                 {% for abstimmung in abstimmungen %}
                 {% if abstimmung.get('status') == 0 %}
-                <p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a></p>
                 {% endif %}
                 {% endfor %}
             </div>
@@ -38,6 +38,7 @@
                 <h3>Neue Abstimmung</h3>
                 <form action="/abstimmung" method="post">
                     <input type="text" name="titel" placeholder="Antragstitel"> </br>
+                    <p>Der Vorstand wolle beschließen:</p>
                     <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext"></textarea>
                     <input name="erstellen" type="submit" value="Erstellen">
                 </form>

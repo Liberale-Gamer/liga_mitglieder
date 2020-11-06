@@ -4,7 +4,7 @@
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
     <h2>Abstimmung {{abstimmung.get('id')}}</h2>
 
-    <p> <strong>Du kannst abstimmen als {{current_user.name}}.</strong> </p>
+    <p>Du kannst abstimmen als <strong>{{current_user.name}}</strong>.</p>
 
 
 
@@ -50,8 +50,19 @@
                     <button type="submit" name="votum" value="Enthaltung">Enthaltung</button>
                     <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
                     <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
-                </form>
+                </form><br />
                 {% endif %}
+                <form action="" method="post">
+                    <select name="action">
+                        {% if zust > abl %}
+                        <option value="adopt">Annehmen</option>
+                        {% else %}
+                        <option value="reject">Ablehnen</option>
+                        {% endif %}
+                        <option value="delete" {% if !alle_da %} selected {% endif %}>Löschen</option>
+                    </select>
+                    <input name="end" type="submit" value="Abstimmung beenden">
+                </form>
             </div>
         </div>
 
