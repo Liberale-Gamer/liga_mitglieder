@@ -83,6 +83,19 @@ class kundenSchema(ma.SQLAlchemyAutoSchema):
         model = kunden
         load_instance = True  
 
+class abstimmung_intern(UserMixin, db.Model):
+    id = db.Column(db.String(30), primary_key = True)
+    titel = db.Column(db.String(250))
+    text = db.Column(db.Text(4294000000))
+    stimmen = db.Column(db.String(250), default="NULL")
+    status = db.Column(db.Integer)
+    
+class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = abstimmung_intern
+        load_instance = True  
+
+
 
 class verkaeufer(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -243,13 +256,21 @@ def new():
 @app.route('/database')
 @login_required
 def database():
-    
     all_users = kunden.query.order_by(-kunden.id)
     kundenschema = kundenSchema(many=True)
     output = kundenschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
     #return output
+
+
+@app.route('/abstimmung')
+@login_required
+def database():
+    all_abstimmungen = abstimmung_intern.query
+    abstimmungschema = abstimmung_internSchema(many=True)
+    output = abstimmungschema.dumps(all_abstimmungen)
+    return render_template('abstimmung.html',output = output)
     
 @app.route('/edit/<user_id>')
 @login_required
