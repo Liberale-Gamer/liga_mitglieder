@@ -238,7 +238,7 @@ def reset_pw(token):
    
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
-def new():
+def new(antrags_id=None):
     subjects=getmail.get_subjects()
     subjects.reverse()
     ids = []
@@ -246,6 +246,8 @@ def new():
         ids.append(re.findall('\d+', subject)[0])
     ids_subjects = zip(ids, subjects)
     if request.method == 'GET':
+        if antrags_id != None:
+            return render_template('new.html', ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(antrags_id), antrags_id=antrags_id)
         return render_template('new.html', ids_subjects=ids_subjects)
     if request.method == 'POST':
         if request.form["antrags_id"].isnumeric():
@@ -374,6 +376,8 @@ Abgegebene Stimmen:<br />
                         abstimmung_changes.status = 0
                         db.session.commit()
                         flash('Antrag ' + request.form['action'])
+                        if len(str(abstimmung['id'])) <= 6 and request.form['action'] == 'angenommen':
+                            redirect(url_for('new', abstimmung_id=abstimmung_id))
                     return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
