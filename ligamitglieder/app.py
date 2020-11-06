@@ -16,7 +16,7 @@ import json
 import copy
 import sqlconfig
 import urllib
-import sendmail
+import sendmail, getmail
 
 
 app = Flask(__name__)
@@ -222,10 +222,16 @@ def reset_pw(token):
 
 
    
-@app.route('/new')
+@app.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
-    return render_template('new.html')
+    if request.method == 'GET':
+        return render_template('new.html')
+    if request.method == 'POST':
+        if request.form["antrags_id"].isnumeric():
+            return render_template('new.html', imap_antrag=getmail.getmail(request.form["antrags_id"]))
+        else:
+            return render_template('new.html')
 
     
 @app.route('/database')
