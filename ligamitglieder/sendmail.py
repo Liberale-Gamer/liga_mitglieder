@@ -9,7 +9,7 @@ mail_server = "liberale-gamer.gg"
 login = "mitgliedsantrag@liberale-gamer.gg"
 password = "***REMOVED***"
 
-def send_email(sender, receiver, replyto=None, subject, text):
+def send_email(sender, receiver, subject, text, replyto=None):
 	message = MIMEMultipart('alternative')
 	message['from'] = sender
 	message['to'] = receiver
