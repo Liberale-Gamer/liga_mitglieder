@@ -274,7 +274,7 @@ def abstimmung_list():
     abstimmungen = ast.literal_eval(output)
     return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
     
-@app.route('/abstimmung/<abstimmung_id>')
+@app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
 # @login_required
 def abstimmung(abstimmung_id):
     all_abstimmungen = abstimmung_intern.query
@@ -284,9 +284,12 @@ def abstimmung(abstimmung_id):
     for abstimmung in abstimmungen:
         if abstimmung.get('id') == abstimmung_id:
             abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
-            return render_template('abstimmung.html', abstimmung=abstimmung)
+            if request.method == 'GET':
+                return render_template('abstimmung.html', abstimmung=abstimmung)
+            if request.method == 'POST':
+                return render_template('abstimmung.html', abstimmung=abstimmung, votum=request.form)
     flash('Abstimmung nicht gefunden.')
-    return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
+    return redirect(url_for('abstimmung_list'))
     
 @app.route('/edit/<user_id>')
 @login_required
