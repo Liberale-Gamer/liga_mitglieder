@@ -316,7 +316,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-        receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
+        receiver='<vorstand@liberale-gamer.gg>',\
         subject=subject, text=text)
         return redirect(url_for('abstimmung_list'))
     
@@ -371,7 +371,7 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
+                        receiver='<vorstand@liberale-gamer.gg>',\
                         subject=subject, text=text)
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
