@@ -21,13 +21,14 @@
                 Geburtsdatum: <input type="date" name="geburtsdatum" placeholder="Geburtsdatum" required> </br>
                 </br>
                 <input name="new" type="submit" value="Absenden">
+            </form>
         </div>
 
         <div class="col homebox centering">
             <form action="/new" method="post">
-                <input type="text" name="antrags_id" placeholder="Antrags-Identifikationsnummer"> </br>
+                <input type="text" name="antrags_id" placeholder="Antrags-ID"> </br>
                 <button name="get_antrag" type="submit">Antrag abrufen</button>
-            </form>
+	    </form><br />
             <script>
                 function find_data(textfield, element_name) {
                     start = textfield.search(element_name);
