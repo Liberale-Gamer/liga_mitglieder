@@ -17,12 +17,33 @@
         }
     </style>
 
-    <div class="homebox">
-    {% for abstimmung in abstimmungen %}
-    	<p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
-    {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col homebox">
+                <h3>Abstimmungen</h3>
+                <h4>Offene Abstimmungen</h4>
+                {% for abstimmung in abstimmungen %}
+                {% if abstimmung.get('status') == 0 %}
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
+                {% endif %}
+                {% endfor %}
+                <h4>Geschlossene Abstimmungen</h4>
+                {% for abstimmung in abstimmungen %}
+                {% if abstimmung.get('status') == 0 %}
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col homebox">
+                <h3>Neue Abstimmung</h3>
+                <form action="/abstimmung" method="post">
+                    <input type="text" name="titel" placeholder="Antragstitel"> </br>
+                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext"></textarea>
+                    <input name="erstellen" type="submit" value="Erstellen">
+                </form>
+            </div>
+        </div>
     </div>
-
 
 </div>
 

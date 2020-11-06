@@ -264,15 +264,6 @@ h2 {
     padding: 15px;
 }
 
-button {
-    border-radius: 300px;
-    background-color: #009ee3;
-    color: #ffffff;
-    border-color: transparent;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
 input[type=submit],
 button {
     border-radius: 300px;
@@ -281,6 +272,7 @@ button {
     border-color: transparent;
     padding-left: 10px;
     padding-right: 10px;
+    margin: 8px;
 }
 
 input[type=submit]:hover,

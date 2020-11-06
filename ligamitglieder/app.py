@@ -265,14 +265,24 @@ def database():
     #return output
 
 
-@app.route('/abstimmung')
+@app.route('/abstimmung', methods=['GET', 'POST'])
 @login_required
 def abstimmung_list():
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
     abstimmungen = ast.literal_eval(output)
-    return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
+    if request.method == 'GET':
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
+    if request.method == 'POST':
+        antrag_add = abstimmung_intern()
+        antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
+        antrag_add.titel = request.form['titel']
+        antrag_add.text = request.form['text']
+        antrag_add.stimmen = "{}"
+        antrag_add.status = 1
+        db.session.add(user_add)
+        db.session.commit()
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
 @login_required
