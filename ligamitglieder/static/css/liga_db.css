@@ -98,6 +98,11 @@ a {
     color: #009ee3;
 }
 
+a:hover {
+    color: #e5007d;
+    text-decoration: none;
+}
+
 h2 {
     color: #e5007d;
     font-family: 'sol-pro', 'Montserrat';
