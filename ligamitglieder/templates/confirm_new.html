@@ -49,5 +49,5 @@
 
 {% endif %} {% if created==1 %}
 <h3 style="padding:15px;">Mitglied angelegt.</h3>
-<p style="padding:15px;">Die Mitgliedsnummer <a href="/edit/{{newest_id.id}}">{{newest_id.id}}</a> wurde vergeben.</p>
+<p style="padding:15px;">Die Mitgliedsnummer <a href="/edit/{{newest_id.id}}">{{newest_id.id}}</a> wurde vergeben. <a href="/send_mail/{{newest_id.id}}">Bestätigungsmail senden</a></p>
 {% endif %} {% endblock %}
