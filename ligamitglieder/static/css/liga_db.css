@@ -284,7 +284,8 @@ button:hover {
     background-color: #009ee3;
 }
 
-input {
+input,
+textarea {
     border-color: transparent;
     background-color: #eeeeee;
     border-radius: 10px;

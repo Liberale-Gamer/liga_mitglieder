@@ -278,11 +278,12 @@ def abstimmung_list():
         antrag_add = abstimmung_intern()
         antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
         antrag_add.titel = request.form['titel']
-        antrag_add.text = request.form['text']
+        antrag_add.text = "Der Vorstand wolle beschließen:\n\n" + request.form['text']
         antrag_add.stimmen = "{}"
         antrag_add.status = 1
-        db.session.add(user_add)
+        db.session.add(antrag_add)
         db.session.commit()
+        return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
 @login_required
@@ -306,6 +307,14 @@ def abstimmung(abstimmung_id):
                 abl = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
                 return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da, zust=zust, enth=enth, abl=abl)
             if request.method == 'POST':
+                if 'end' in request.form:
+                    if request.form['action'] = 'delete':
+                        antrag = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                        db.session.delete(antrag)
+                        db.session.commit()
+                        flash('Antrag gelöscht')
+                        return redirect(url_for('abstimmung_list'))
+
                 if request.form['votum'] == 'clear':
                     if current_user.name in abstimmung['stimmen']:
                         abstimmung['stimmen'].pop(current_user.name)
