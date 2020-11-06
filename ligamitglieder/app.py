@@ -18,6 +18,7 @@ import sqlconfig
 import urllib
 import sendmail, getmail
 import re
+import ast
 
 app = Flask(__name__)
 
@@ -265,12 +266,13 @@ def database():
 
 
 @app.route('/abstimmung')
-@login_required
-def database():
+# @login_required
+def abstimmung():
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
-    return render_template('abstimmung.html',output = output)
+    abstimmungen = ast.literal_eval(output)
+    return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
     
 @app.route('/edit/<user_id>')
 @login_required

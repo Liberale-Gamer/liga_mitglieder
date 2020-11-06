@@ -18,7 +18,9 @@
     </style>
 
     <div class="homebox">
-        {{output}}
+    {% for abstimmung in abstimmungen %}
+    	<p><a href="/abstimmung/{{abstimmung.get('id')}}">{{abstimmung.get('titel')}}</a></p>
+    {% endfor %}
     </div>
 
 
