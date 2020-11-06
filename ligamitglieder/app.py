@@ -283,6 +283,19 @@ def abstimmung_list():
         antrag_add.status = 1
         db.session.add(antrag_add)
         db.session.commit()
+        subject = f"Neuer Antrag: {abstimmung['titel']}"
+        abstimmung['text'].replace('\n', '<br>')
+        text = f"""
+Der nachfolgende Antrag wurde gestellt:<br />
+<br />
+<strong>{abstimmung['titel']}</strong><br />
+<br />
+{abstimmung['text']}<br />
+<br />
+<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt abstimmen</a>"""
+        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
+        receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
+        subject=subject, text=text)
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
