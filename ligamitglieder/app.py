@@ -305,15 +305,31 @@ def abstimmung(abstimmung_id):
                 zust = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Zustimmung')
                 enth = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Enthaltung')
                 abl = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
+                abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
                 return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da, zust=zust, enth=enth, abl=abl)
             if request.method == 'POST':
                 if 'end' in request.form:
-                    if request.form['action'] = 'delete':
+                    if request.form['action'] == 'delete':
                         antrag = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         db.session.delete(antrag)
                         db.session.commit()
                         flash('Antrag gelöscht')
-                        return redirect(url_for('abstimmung_list'))
+                    else:
+                        subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
+                        text = f"""
+Der nachfolgende Antrag wurde {request.form['action']}:<br />
+<br />
+<strong>{abstimmung['titel']}</strong><br />
+<br />
+{abstimmung['text'].replace('\n', '<br>')}<br />
+<br />
+Abgegebene Stimmen:<br />
+{str(abstimmung['stimmen'])}"""
+                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
+                        receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
+                        subject=subject, text=text)
+                        flash('Mail versendet')
+                    return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
                     if current_user.name in abstimmung['stimmen']:

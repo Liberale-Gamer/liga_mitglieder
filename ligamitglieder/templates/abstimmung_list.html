@@ -23,7 +23,7 @@
                 <h3>Abstimmungen</h3>
                 <h4>Offene Abstimmungen</h4>
                 {% for abstimmung in abstimmungen %}
-                {% if abstimmung.get('status') == 0 %}
+                {% if abstimmung.get('status') == 1 %}
                 <p><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a></p>
                 {% endif %}
                 {% endfor %}
@@ -39,7 +39,7 @@
                 <form action="/abstimmung" method="post">
                     <input type="text" name="titel" placeholder="Antragstitel"> </br>
                     <p>Der Vorstand wolle beschließen:</p>
-                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext"></textarea>
+                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext"></textarea><br />
                     <input name="erstellen" type="submit" value="Erstellen">
                 </form>
             </div>

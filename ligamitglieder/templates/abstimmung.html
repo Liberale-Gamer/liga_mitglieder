@@ -21,8 +21,8 @@
         <div class="row">
 
             <div class="col homebox">
-                <h3>{{abstimmung.get('titel')}}</h3>
-                <p>{{abstimmung.get('text')}}</p>
+                <h3>{{abstimmung.get('titel')|safe}}</h3>
+                <p>{{abstimmung.get('text')|safe}}</p>
             </div>
         
             <div class="col homebox">
@@ -55,11 +55,11 @@
                 <form action="" method="post">
                     <select name="action">
                         {% if zust > abl %}
-                        <option value="adopt">Annehmen</option>
+                        <option value="angenommen">Annehmen</option>
                         {% else %}
-                        <option value="reject">Ablehnen</option>
+                        <option value="abgelehnt">Ablehnen</option>
                         {% endif %}
-                        <option value="delete" {% if !alle_da %} selected {% endif %}>Löschen</option>
+                        <option value="delete" {% if not alle_da %} selected {% endif %}>Löschen</option>
                     </select>
                     <input name="end" type="submit" value="Abstimmung beenden">
                 </form>
