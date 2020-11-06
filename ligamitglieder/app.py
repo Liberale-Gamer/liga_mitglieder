@@ -316,19 +316,25 @@ def abstimmung(abstimmung_id):
                         flash('Antrag gelöscht')
                     else:
                         subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
+                        abstimmung['text'].replace('\n', '<br>')
+                        abstimmung['stimmen'] = str(abstimmung['stimmen'])\
+                        .replace(',', '<br>').replace('{', '').replace('}', '')
                         text = f"""
 Der nachfolgende Antrag wurde {request.form['action']}:<br />
 <br />
 <strong>{abstimmung['titel']}</strong><br />
 <br />
-{abstimmung['text'].replace('\n', '<br>')}<br />
+{abstimmung['text']}<br />
 <br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
                         receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
                         subject=subject, text=text)
-                        flash('Mail versendet')
+                        abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                        abstimmung_changes.status = 0
+                        db.session.commit()
+                       flash('Mail versendet')
                     return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
@@ -438,7 +444,7 @@ Mobil:  0176 57517450<br />
     
     if request.method == 'POST':
         if "send" in request.form:
-            sendmail.send_email('Marvin Ruder <mitgliedsantrag@liberale-gamer.gg>', receiver, 'Marvin Ruder <marvin.ruder@liberale-gamer.gg>', subject, text)
+            sendmail.send_email('Marvin Ruder <mitgliedsantrag@liberale-gamer.gg>', receiver, subject, text, 'Marvin Ruder <marvin.ruder@liberale-gamer.gg>')
             flash('Mail versendet')
             return redirect(url_for('edit',user_id=str(user_id)))
         return redirect(url_for('edit',user_id=str(user_id)))
