@@ -287,8 +287,18 @@ def abstimmung(abstimmung_id):
             if request.method == 'GET':
                 return render_template('abstimmung.html', abstimmung=abstimmung)
             if request.method == 'POST':
-                return render_template('abstimmung.html', abstimmung=abstimmung, votum=request.form)
-    flash('Abstimmung nicht gefunden.')
+                if request.form['votum'] == clear:
+                    if current_user.name in abstimmung['stimmen']:
+                        abstimmung['stimmen'].pop(current_user.name)
+                        flash('Dein Votum wurde zurückgesetzt')
+                else:
+                    abstimmung['stimmen'][current_user.name] = request.form['votum']
+                    flash('Dein Votum wurde erfasst')
+                abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                abstimmung_changes.stimmen = str(abstimmung['stimmen'])
+                db.session.commit()
+                return redirect(url_for('abstimmung_list', abstimmung_id=abstimmung_id))
+    flash('Abstimmung nicht gefunden')
     return redirect(url_for('abstimmung_list'))
     
 @app.route('/edit/<user_id>')
