@@ -279,13 +279,13 @@ def abstimmung_list():
     output = abstimmungschema.dumps(all_abstimmungen)
     abstimmungen = ast.literal_eval(output)
     if request.method == 'GET':
-        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects)
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None)
     if request.method == 'POST':
         if 'antrags_id' in request.form:
             if request.form["antrags_id"].isnumeric():
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"] ids_subjects[])
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"])
             else:
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects)
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None)
         antrag_add = abstimmung_intern()
         antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
         antrag_add.titel = request.form['titel']
