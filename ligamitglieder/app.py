@@ -17,7 +17,7 @@ import copy
 import sqlconfig
 import urllib
 import sendmail, getmail
-
+import re
 
 app = Flask(__name__)
 
@@ -225,13 +225,19 @@ def reset_pw(token):
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
+    subjects=getmail.get_subjects()
+    subjects.reverse()
+    ids = []
+    for subject in subjects:
+        ids.append(re.findall('\d+', subject)[0])
+    ids_subjects = zip(ids, subjects)
     if request.method == 'GET':
-        return render_template('new.html', subjects=getmail.get_subjects())
+        return render_template('new.html', ids_subjects=ids_subjects)
     if request.method == 'POST':
         if request.form["antrags_id"].isnumeric():
-            return render_template('new.html', subjects=getmail.get_subjects(), imap_antrag=getmail.get_mail(request.form["antrags_id"]))
+            return render_template('new.html', ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"])
         else:
-            return render_template('new.html', subjects=getmail.get_subjects())
+            return render_template('new.html', ids_subjects=ids_subjects)
 
     
 @app.route('/database')
