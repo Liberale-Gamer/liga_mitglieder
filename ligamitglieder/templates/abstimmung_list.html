@@ -36,10 +36,23 @@
             </div>
             <div class="col homebox">
                 <h3>Neue Abstimmung</h3>
+                <form action="/new" method="post">
+                    <select name="antrags_id">
+                    {% for id, antrag in ids_subjects %}
+                        <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
+                    {% endfor %}
+                    </select>
+                    <button name="get_antrag" type="submit">Antrag abrufen</button>
+                </form><br />    
                 <form action="/abstimmung" method="post">
-                    <input type="text" name="titel" placeholder="Antragstitel"> </br>
+                    <input type="text" name="titel" placeholder="Antragstitel" {% if imap_antrag != '' %} value="Mitgliedsantrag" {% endif %}> </br>
                     <p>Der Vorstand wolle beschließen:</p>
-                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext"></textarea><br />
+                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext">
+                        {% if imap_antrag != '' %} Dem nachfolgenden Mitgliedsantrag wird zugestimmt:
+
+                        {{imap_antrag}}
+                        {% endif %}
+                    </textarea><br />
                     <input name="erstellen" type="submit" value="Erstellen">
                 </form>
             </div>
