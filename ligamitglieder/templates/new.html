@@ -24,6 +24,10 @@
         </div>
 
         <div class="col homebox centering">
+            <form action="/new" method="post">
+                <input type="text" name="antrags_id" placeholder="Antrags-Identifikationsnummer"> </br>
+                <button name="get_antrag" type="submit">Antrag abrufen</button>
+            </form>
             <script>
                 function find_data(textfield, element_name) {
                     start = textfield.search(element_name);
@@ -59,7 +63,7 @@
                     document.getElementsByName("mobil")[0].value = element_value;
                 }
             </script>
-            <textarea style="width: inherit;" id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren."></textarea>
+            <textarea style="width: inherit;" id="emailtext" name="emailtext" form="smartfill" cols="50" rows="11" placeholder="Hier gesamte E-Mail für automatische Registrierung kopieren.">{{imap_antrag}}</textarea>
             <br />
             <button type="button" name="do_smartfill" onclick="fill_fields()">Daten übertragen</button>
 
