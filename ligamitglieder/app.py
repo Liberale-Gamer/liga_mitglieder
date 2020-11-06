@@ -239,6 +239,9 @@ def reset_pw(token):
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     antrags_id = request.args.get('antrags_id')
     subjects=getmail.get_subjects()
     subjects.reverse()
@@ -260,6 +263,9 @@ def new():
 @app.route('/database')
 @login_required
 def database():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     all_users = kunden.query.order_by(-kunden.id)
     kundenschema = kundenSchema(many=True)
     output = kundenschema.dumps(all_users)
@@ -398,6 +404,10 @@ Abgegebene Stimmen:<br />
 @app.route('/edit/<user_id>')
 @login_required
 def edit(user_id):
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+
     user = kunden.query.filter_by(id=user_id).first()
     
 
@@ -413,6 +423,10 @@ def edit(user_id):
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required
 def send_mail(user_id):
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+
     user = kunden.query.filter_by(id=user_id).first()
         
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
@@ -497,6 +511,9 @@ Mobil:  0176 57517450<br />
 @app.route('/confirm_edit',methods=['GET','POST'])
 @login_required
 def confirm_edit():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     if request.method == 'POST':
         user = kunden.query.filter_by(id=session["user_id"]).first()
         geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
@@ -542,6 +559,9 @@ def confirm_edit():
 @app.route('/confirm_new',methods=['GET','POST'])
 @login_required
 def confirm_new():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     if "new" in request.form and request.method == 'POST':
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
         geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
@@ -580,6 +600,9 @@ def confirm_new():
 @app.route('/set_counter', methods=['GET','POST'])
 @login_required
 def set_counter():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
     with engine.connect() as con:
         old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
