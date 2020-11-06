@@ -2,6 +2,7 @@ import getpass, imaplib, email
 from bs4 import BeautifulSoup
 
 def getmail(id):
+
     M = imaplib.IMAP4()
     M.login("mitgliedsantrag@liberale-gamer.gg", "***REMOVED***")
     M.select()
@@ -11,12 +12,10 @@ def getmail(id):
 
     for part in msg.walk():
         if part.get_content_type() == "text/html":
-            body = part.get_payload(decode=True)
-            body = body.decode('latin-1')
-            print(BeautifulSoup(body, features="html.parser").get_text(separator="\n"))
+            body = part.get_payload(decode=False)
         else:
             continue
 
     M.close()
     M.logout()
-    return body
+    return BeautifulSoup(body, features="html.parser").get_text(separator="\n")
