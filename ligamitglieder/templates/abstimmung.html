@@ -17,16 +17,21 @@
         }
     </style>
 
-    <div class="homebox">
-        <h3>{{abstimmung.get('titel')}}</h3>
-        <p>{{abstimmung.get('text')}}</p>
-    </div>
+    <div style="display: inline-flex; align-items: top;">
+        <div class="homebox">
+            <h3>{{abstimmung.get('titel')}}</h3>
+            <p>{{abstimmung.get('text')}}</p>
+        </div>
+    
+        <div class="homebox">
+            <h3>Abstimmen</h3>
 
-    <div class="homebox">
-        <h3>Abstimmen</h3>
-        {% for person in abstimmung.get('stimmen') %}
-        <p><strong>{{person}}</strong>{{abstimmung.get('stimmen')[person]}}</p>
-        {% endfor %}
+            <table>
+                {% for person in abstimmung.get('stimmen') %}
+                <tr><td><strong>{{person}}</strong></td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 </div>

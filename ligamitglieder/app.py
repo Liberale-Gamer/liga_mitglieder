@@ -267,7 +267,7 @@ def database():
 
 @app.route('/abstimmung')
 # @login_required
-def abstimmung():
+def abstimmung_list():
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
