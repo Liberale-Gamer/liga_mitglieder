@@ -106,6 +106,7 @@ class verkaeufer(UserMixin, db.Model):
     email = db.Column(db.String(50))
     token = db.Column(db.String(50))
     tokenttl = db.Column(db.Integer)
+    rechte = db.Column(db.Integer)
     
 #Redirect if trying to access protected page
 login_manager.login_view = "login" 
