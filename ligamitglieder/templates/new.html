@@ -26,9 +26,9 @@
 
         <div class="col homebox centering">
             <form action="/new" method="post">
-                <select name="antrags_id" style="margin: 8px;">
+                <select name="antrags_id">
                 {% for id, antrag in ids_subjects %}
-		    <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
+		            <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
                 {% endfor %}
                 </select>
                 <button name="get_antrag" type="submit">Antrag abrufen</button>
