@@ -226,12 +226,12 @@ def reset_pw(token):
 @login_required
 def new():
     if request.method == 'GET':
-        return render_template('new.html')
+        return render_template('new.html', subjects=getmail.get_subjects())
     if request.method == 'POST':
         if request.form["antrags_id"].isnumeric():
-            return render_template('new.html', imap_antrag=getmail.getmail(request.form["antrags_id"]))
+            return render_template('new.html', subjects=getmail.get_subjects(), imap_antrag=getmail.get_mail(request.form["antrags_id"]))
         else:
-            return render_template('new.html')
+            return render_template('new.html', subjects=getmail.get_subjects())
 
     
 @app.route('/database')

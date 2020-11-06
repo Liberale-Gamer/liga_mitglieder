@@ -26,6 +26,11 @@
 
         <div class="col homebox centering">
             <form action="/new" method="post">
+                <select>
+                {% for antrag in subjects %}
+                    <option>{{antrag}}</option>
+                {% endfor %}
+                </select>
                 <input type="text" name="antrags_id" placeholder="Antrags-ID"> </br>
                 <button name="get_antrag" type="submit">Antrag abrufen</button>
 	    </form><br />
