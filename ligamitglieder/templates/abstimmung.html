@@ -51,7 +51,6 @@
                     <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
                     <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
                 </form><br />
-                {% endif %}
                 <form action="" method="post">
                     <select name="action">
                         {% if zust > abl %}
@@ -63,6 +62,11 @@
                     </select>
                     <input name="end" type="submit" value="Abstimmung beenden">
                 </form>
+                {% else %}
+                <form action="" method="post">
+                    <input name="reopen" type="submit" value="Abstimmung fortsetzen">
+                </form><br />
+                {% endif %}
             </div>
         </div>
 
