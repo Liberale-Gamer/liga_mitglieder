@@ -26,7 +26,11 @@
 
         <div class="col homebox centering">
             <form action="/new" method="post">
-                <input type="text" name="antrags_id" placeholder="Antrags-ID"> </br>
+                <select name="antrags_id">
+                {% for id, antrag in ids_subjects %}
+		    <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
+                {% endfor %}
+                </select>
                 <button name="get_antrag" type="submit">Antrag abrufen</button>
 	    </form><br />
             <script>
@@ -44,7 +48,7 @@
                 }
 
                 function fill_fields() {
-                    var textfield = document.getElementById("emailtext").value;
+                    var textfield = document.getElementById("emailtext").value.replace(': \n', ': ');
                     var element_value = find_data(textfield, "Vorname: ");
                     document.getElementsByName("vorname")[0].value = element_value;
                     var element_value = find_data(textfield, "Nachname: ");
