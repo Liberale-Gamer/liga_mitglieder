@@ -266,7 +266,7 @@ def database():
 
 
 @app.route('/abstimmung')
-# @login_required
+@login_required
 def abstimmung_list():
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
@@ -275,7 +275,7 @@ def abstimmung_list():
     return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def abstimmung(abstimmung_id):
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
@@ -285,9 +285,15 @@ def abstimmung(abstimmung_id):
         if abstimmung.get('id') == abstimmung_id:
             abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
             if request.method == 'GET':
-                return render_template('abstimmung.html', abstimmung=abstimmung)
+                engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+                with engine.connect() as con:
+                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM verkaeufer")
+                alle_da = False
+                if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
+                    alle_da = True
+                return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da)
             if request.method == 'POST':
-                if request.form['votum'] == clear:
+                if request.form['votum'] == 'clear':
                     if current_user.name in abstimmung['stimmen']:
                         abstimmung['stimmen'].pop(current_user.name)
                         flash('Dein Votum wurde zurückgesetzt')
@@ -297,7 +303,7 @@ def abstimmung(abstimmung_id):
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                 abstimmung_changes.stimmen = str(abstimmung['stimmen'])
                 db.session.commit()
-                return redirect(url_for('abstimmung_list', abstimmung_id=abstimmung_id))
+                return redirect(url_for('abstimmung', abstimmung_id=abstimmung_id))
     flash('Abstimmung nicht gefunden')
     return redirect(url_for('abstimmung_list'))
     

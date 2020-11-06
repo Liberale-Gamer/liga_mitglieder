@@ -31,13 +31,15 @@
                 <tr><td><strong>{{person}}</strong>&emsp;</td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
                 {% endfor %}
             </table>
+            {% if abstimmung.get('status') == '1' %}
             <form action="" method="post">
                 <button type="submit" name="votum" value="Zustimmung">Zustimmung</button>
                 <button type="submit" name="votum" value="Enthaltung">Enthaltung</button>
                 <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
                 <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
             </form>
-            {{votum}}
+            {% endif %}
+            {{alle_da}}
         </div>
     </div>
 
