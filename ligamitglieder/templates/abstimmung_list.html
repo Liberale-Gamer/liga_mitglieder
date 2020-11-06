@@ -45,7 +45,7 @@
                     <button name="get_antrag" type="submit">Antrag abrufen</button>
                 </form><br />    
                 <form action="/abstimmung" method="post">
-                    <input type="text" name="titel" placeholder="Antragstitel" {% if imap_antrag != None %} value="Mitgliedsantrag" {% endif %}> </br>
+                    <input type="text" name="titel" placeholder="Antragstitel" {% if name != "" %} value="{{antrags_id}} Mitgliedsantrag {{name}}" {% endif %}> </br>
                     <p>Der Vorstand wolle beschließen:</p>
                     <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext">{% if imap_antrag != None %}Dem nachfolgenden Mitgliedsantrag wird zugestimmt:
 

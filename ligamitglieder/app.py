@@ -283,19 +283,27 @@ def abstimmung_list():
     if request.method == 'POST':
         if 'antrags_id' in request.form:
             if request.form["antrags_id"].isnumeric():
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"])
+                name=""
+                for subject in subjects:
+                    if subject.find(request.form["antrags_id"]) != -1:
+                        name=subject.substr(subject.find("] ") + 2)
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"], name=name)
             else:
                 return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None)
         antrag_add = abstimmung_intern()
-        antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
-        antrag_add.titel = request.form['titel']
+        if request.form['titel'].substr(0,request.form['titel'].find(' ')).isnumeric():
+            antrag_add.id = request.form['titel'].substr(0,request.form['titel'].find(' '))
+            antrag_add.titel = request.form['titel'].substr(equest.form['titel'].find(' ') + 1)
+        else:
+            antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
+            antrag_add.titel = request.form['titel']
         antrag_add.text = "Der Vorstand wolle beschließen:\n\n" + request.form['text']
         antrag_add.stimmen = "{}"
         antrag_add.status = 1
         db.session.add(antrag_add)
         db.session.commit()
         subject = f"Neuer Antrag: {antrag_add.titel}"
-        antrag_add = antrag_add.text.replace('\n', '<br>')
+        antrag_add.text = antrag_add.text.replace('\n', '<br>')
         text = f"""
 Der nachfolgende Antrag wurde gestellt:<br />
 <br />
