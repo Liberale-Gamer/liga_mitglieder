@@ -19,3 +19,4 @@ def getmail(id):
 
     M.close()
     M.logout()
+    return body
