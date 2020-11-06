@@ -238,7 +238,8 @@ def reset_pw(token):
    
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
-def new(antrags_id=None):
+def new():
+    antrags_id = request.args.get('antrags_id')
     subjects=getmail.get_subjects()
     subjects.reverse()
     ids = []
@@ -377,7 +378,7 @@ Abgegebene Stimmen:<br />
                         db.session.commit()
                         flash('Antrag ' + request.form['action'])
                         if len(str(abstimmung['id'])) <= 6 and request.form['action'] == 'angenommen':
-                            redirect(url_for('new', abstimmung_id=abstimmung_id))
+                            return redirect(url_for('new', antrags_id=abstimmung_id))
                     return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
