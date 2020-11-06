@@ -25,6 +25,7 @@ def get_subjects():
     M.login("mitgliedsantrag@liberale-gamer.gg", "***REMOVED***")
     M.select()
     typ, data = M.search(None, 'Subject', '[ID ')
+    subjects = []
     for num in data[0].split():
         typ, data = M.fetch(num, '(RFC822)')
         for response_part in data:
