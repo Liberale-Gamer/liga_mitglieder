@@ -28,9 +28,16 @@
 
             <table>
                 {% for person in abstimmung.get('stimmen') %}
-                <tr><td><strong>{{person}}</strong></td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
+                <tr><td><strong>{{person}}</strong>&emsp;</td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
                 {% endfor %}
             </table>
+            <form action="" method="post">
+                <input type="submit" name="Zustimmung" value="Zustimmung" />
+                <input type="submit" name="Enthaltung" value="Enthaltung" />
+                <input type="submit" name="Ablehnung" value="Ablehnung" />
+                <input type="submit" name="clear" value="Votum zurücknehmen" />
+            </form>
+            {{votum}}
         </div>
     </div>
 
