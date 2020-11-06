@@ -279,21 +279,21 @@ def abstimmung_list():
     output = abstimmungschema.dumps(all_abstimmungen)
     abstimmungen = ast.literal_eval(output)
     if request.method == 'GET':
-        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None)
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
     if request.method == 'POST':
         if 'antrags_id' in request.form:
             if request.form["antrags_id"].isnumeric():
                 name=""
                 for subject in subjects:
                     if subject.find(request.form["antrags_id"]) != -1:
-                        name=subject.substr(subject.find("] ") + 2)
+                        name=subject[subject.find("] ") + 2:]
                 return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"], name=name)
             else:
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None)
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
         antrag_add = abstimmung_intern()
-        if request.form['titel'].substr(0,request.form['titel'].find(' ')).isnumeric():
-            antrag_add.id = request.form['titel'].substr(0,request.form['titel'].find(' '))
-            antrag_add.titel = request.form['titel'].substr(equest.form['titel'].find(' ') + 1)
+        if request.form['titel'][0:request.form['titel'].find(' ')].isnumeric():
+            antrag_add.id = request.form['titel'][0:request.form['titel'].find(' ')]
+            antrag_add.titel = request.form['titel'][request.form['titel'].find(' ') + 1:]
         else:
             antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
             antrag_add.titel = request.form['titel']
