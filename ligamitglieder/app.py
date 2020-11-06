@@ -268,13 +268,24 @@ def database():
 @app.route('/abstimmung', methods=['GET', 'POST'])
 @login_required
 def abstimmung_list():
+    subjects=getmail.get_subjects()
+    subjects.reverse()
+    ids = []
+    for subject in subjects:
+        ids.append(re.findall('\d+', subject)[0])
+    ids_subjects = zip(ids, subjects)
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
     abstimmungen = ast.literal_eval(output)
     if request.method == 'GET':
-        return render_template('abstimmung_list.html', abstimmungen=abstimmungen)
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects)
     if request.method == 'POST':
+        if 'antrags_id' in request.form:
+            if request.form["antrags_id"].isnumeric():
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"] ids_subjects[])
+            else:
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects)
         antrag_add = abstimmung_intern()
         antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
         antrag_add.titel = request.form['titel']
@@ -284,7 +295,7 @@ def abstimmung_list():
         db.session.add(antrag_add)
         db.session.commit()
         subject = f"Neuer Antrag: {antrag_add.titel}"
-        antrag_add.text.replace('\n', '<br>')
+        antrag_add = antrag_add.text.replace('\n', '<br>')
         text = f"""
 Der nachfolgende Antrag wurde gestellt:<br />
 <br />
@@ -292,7 +303,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 <br />
 {antrag_add.text}<br />
 <br />
-<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt abstimmen</a>"""
+<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
         receiver='Marvin Ruder <marvin.ruder@liberale-gamer.gg>',\
         subject=subject, text=text)
@@ -336,7 +347,7 @@ def abstimmung(abstimmung_id):
                         flash('Antrag gelöscht')
                     else:
                         subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
-                        abstimmung['text'].replace('\n', '<br>')
+                        abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
                         abstimmung['stimmen'] = str(abstimmung['stimmen'])\
                         .replace(',', '<br>').replace('{', '').replace('}', '')
                         text = f"""
