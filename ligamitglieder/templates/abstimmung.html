@@ -26,12 +26,16 @@
         <div class="homebox">
             <h3>Abstimmen</h3>
 
-            <table>
+            <table><tr><td><table>
                 {% for person in abstimmung.get('stimmen') %}
                 <tr><td><strong>{{person}}</strong>&emsp;</td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
                 {% endfor %}
-            </table>
-            {% if abstimmung.get('status') == '1' %}
+            </table></td><td><table>
+                <tr><td>Zustimmungen:</td><td>{{zust}}</td></tr>
+                <tr><td>Enthaltungen:</td><td>{{enth}}</td></tr>
+                <tr><td>Ablehnungen:</td><td>{{abl}}</td></tr>
+            </table></td></tr></table>
+            {% if abstimmung.get('status') == 1 %}
             <form action="" method="post">
                 <button type="submit" name="votum" value="Zustimmung">Zustimmung</button>
                 <button type="submit" name="votum" value="Enthaltung">Enthaltung</button>
@@ -39,7 +43,6 @@
                 <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
             </form>
             {% endif %}
-            {{alle_da}}
         </div>
     </div>
 

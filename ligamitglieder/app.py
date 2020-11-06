@@ -287,11 +287,14 @@ def abstimmung(abstimmung_id):
             if request.method == 'GET':
                 engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
                 with engine.connect() as con:
-                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM verkaeufer")
+                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM verkaeufer").fetchone()[0]
                 alle_da = False
                 if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
                     alle_da = True
-                return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da)
+                zust = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Zustimmung')
+                enth = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Enthaltung')
+                abl = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
+                return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da, zust=zust, enth=enth, abl=abl)
             if request.method == 'POST':
                 if request.form['votum'] == 'clear':
                     if current_user.name in abstimmung['stimmen']:
