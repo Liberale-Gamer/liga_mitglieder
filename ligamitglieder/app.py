@@ -558,6 +558,7 @@ def confirm_edit():
             user.ort = request.form["ort"]
             user.email = request.form["email"]
             user.mobil = request.form["mobil"]
+            user.rechte = request.form["rechte"]
         
             db.session.commit()
         
