@@ -24,19 +24,19 @@
             <div class="col homebox">
                 <h4>Deine Mitgliedsdaten</h4>
                 </br>
-                Mitglied Nr. {{user.id}} </br>
-                {% if user.sex == 0%} Herr {% else %} Frau {% endif %} {{user.vorname}} {{user.name}} </br>
+                Mitglied Nr. {{current_user.id}} </br>
+                {% if current_user.sex == 0%} Herr {% else %} Frau {% endif %} {{current_user.vorname}} {{current_user.name}} </br>
                 </br>
                 Wohnort: </br>
-                {{user.strasse}} {{user.hausnummer}} </br>
-                {{user.plz}} {{user.ort}} </br>
+                {{current_user.strasse}} {{current_user.hausnummer}} </br>
+                {{current_user.plz}} {{current_user.ort}} </br>
                 </br>
                 Kontaktdaten: </br>
-                E-Mail: {{user.email}} </br>
-                Mobil: {{user.mobil}} </br>
+                E-Mail: {{current_user.email}} </br>
+                Mobil: {{current_user.mobil}} </br>
                 </br>
-                Geburtsdatum: {{geburtsdatum}} </br>
-                Mitglied seit: {{erstellungsdatum}}
+                Geburtsdatum: {{current_user.geburtsdatum}} </br>
+                Mitglied seit: {{current_user.erstellungsdatum}}
 
             </div>
 
