@@ -114,8 +114,8 @@ login_manager.login_view = "login"
 ran = np.random.randint(9999999999) * np.random.randint(9999999999)
 app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
-abstimmung_mail = "marvin.ruder@liberale-gamer.gg"
-
+abstimmung_mail = "vorstand@liberale-gamer.gg"
+abstimmung_mail_dev = "marvin.ruder@liberale-gamer.gg"
 @login_manager.user_loader
 def load_user(user_id):
     return verkaeufer.query.get(int(user_id))  
@@ -134,6 +134,9 @@ def index():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.host == "localhost:5000":
+        abstimmung_mail = abstimmung_mail_dev
+    print("Development mode, sending motion mails to " + abstimmung_mail)
     error = None
     if current_user.is_authenticated == True:
         return redirect('/home')
