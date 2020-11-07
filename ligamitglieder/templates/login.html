@@ -1,5 +1,5 @@
 {% extends 'navbar.html' %} {% block body %} {% if current_user.is_authenticated %}
-<div class="flash">Der aktuelle Benutzer ist {{ current_user.name }}</div> {%endif%} {% if error%}
+<div class="flash">Der aktuelle Benutzer ist {{current_user.vorname}} {{current_user.name}}</div> {%endif%} {% if error%}
 <div class="flash">Fehler: {{error}}</div> {% endif %}
 <div class="logincontainer">
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
