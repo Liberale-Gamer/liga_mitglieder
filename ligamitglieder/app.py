@@ -53,7 +53,7 @@ class new_user():
     self.geburtsdatum_string = geburtsdatum_string
     self.erstellungsdatum_string = erstellungsdatum_string
 
-class kunden(UserMixin, db.Model):
+class mitglieder(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     vorname = db.Column(db.String(30)) 
     name = db.Column(db.String(30))
@@ -79,9 +79,9 @@ class kunden(UserMixin, db.Model):
     longitude = db.Column(db.String(30), default="NULL")
     last_aktivity = db.Column(db.String(30), default=0)
     
-class kundenSchema(ma.SQLAlchemyAutoSchema):
+class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = kunden
+        model = mitglieder
         load_instance = True  
 
 class abstimmung_intern(UserMixin, db.Model):
@@ -98,7 +98,7 @@ class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
 
 
 
-class verkaeufer(UserMixin, db.Model):
+class vorstand(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(30), unique = True)
     kuerzel = db.Column(db.String(2))
@@ -118,7 +118,7 @@ abstimmung_mail = "vorstand@liberale-gamer.gg"
 abstimmung_mail_dev = "marvin.ruder@liberale-gamer.gg"
 @login_manager.user_loader
 def load_user(user_id):
-    return verkaeufer.query.get(int(user_id))  
+    return vorstand.query.get(int(user_id))  
     
 @app.route('/')
 def show_entries():
@@ -140,7 +140,7 @@ def login():
     else:
         pass    
     if request.method == 'POST':
-        user = verkaeufer.query.filter_by(kuerzel=request.form['username']).first()
+        user = vorstand.query.filter_by(kuerzel=request.form['username']).first()
         if user == None:
             error = 'Dieser Benutzer existiert nicht'
             return render_template('login.html',error=error)
@@ -196,7 +196,7 @@ def reset():
         token = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         token2 = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         
-        user = verkaeufer.query.filter_by(email=request.form['email']).first()
+        user = vorstand.query.filter_by(email=request.form['email']).first()
         user.token = token + token2
         user.tokenttl = int(time.time()) + 300
         db.session.commit()
@@ -218,7 +218,7 @@ Der Link zum zurücksetzen deines Passworts lautet: {}""".format(user.name,"http
 #Actually reset the password
 @app.route('/reset/<token>', methods=['GET', 'POST'])
 def reset_pw(token):
-    user = verkaeufer.query.filter_by(token=token).first()
+    user = vorstand.query.filter_by(token=token).first()
     if user.tokenttl < int(time.time()):
         flash('Dein Token ist abgelaufen')
         return redirect(url_for('login'))
@@ -268,9 +268,9 @@ def database():
     if current_user.rechte == 0:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
-    all_users = kunden.query.order_by(-kunden.id)
-    kundenschema = kundenSchema(many=True)
-    output = kundenschema.dumps(all_users)
+    all_users = mitglieder.query.order_by(-mitglieder.id)
+    mitgliederschema = mitgliederSchema(many=True)
+    output = mitgliederschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
     #return output
@@ -343,7 +343,7 @@ def abstimmung(abstimmung_id):
             if request.method == 'GET':
                 engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
                 with engine.connect() as con:
-                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM verkaeufer").fetchone()[0]
+                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM vorstand").fetchone()[0]
                 alle_da = False
                 if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
                     alle_da = True
@@ -414,7 +414,7 @@ def edit(user_id):
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
-    user = kunden.query.filter_by(id=user_id).first()
+    user = mitglieder.query.filter_by(id=user_id).first()
     
 
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
@@ -433,7 +433,7 @@ def send_mail(user_id):
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
-    user = kunden.query.filter_by(id=user_id).first()
+    user = mitglieder.query.filter_by(id=user_id).first()
         
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
     erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
@@ -521,7 +521,7 @@ def confirm_edit():
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     if request.method == 'POST':
-        user = kunden.query.filter_by(id=session["user_id"]).first()
+        user = mitglieder.query.filter_by(id=session["user_id"]).first()
         geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
         erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
         if "delete" in request.form:
@@ -579,7 +579,7 @@ def confirm_new():
         return render_template('confirm_new.html', confirm=1, new=new)
     if "confirm_new" in request.form and request.method == 'POST':
         
-        user_add = kunden()
+        user_add = mitglieder()
         user_add.name = request.form["name"]
         user_add.vorname = request.form["vorname"]
         user_add.sex = request.form["sex"]
@@ -597,7 +597,7 @@ def confirm_new():
         db.session.add(user_add)
         db.session.commit()
         
-        newest_id = kunden.query.order_by(-kunden.id).first()
+        newest_id = mitglieder.query.order_by(-mitglieder.id).first()
         
         return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
@@ -611,16 +611,16 @@ def set_counter():
         return redirect(url_for('home'))
     engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
     with engine.connect() as con:
-        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
-        newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'mitglieder'")
+        newest_member = con.execute("SELECT id FROM mitglieder WHERE id = (SELECT max(id) FROM mitglieder);")
     if request.method == 'GET':
         return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
     if request.method == 'POST':
         if request.form["new_counter"].isnumeric():
             with engine.connect() as con:
-                con.execute("ALTER TABLE kunden AUTO_INCREMENT = " + request.form["new_counter"])
-                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
-                newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+                con.execute("ALTER TABLE mitglieder AUTO_INCREMENT = " + request.form["new_counter"])
+                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'mitglieder'")
+                newest_member = con.execute("SELECT id FROM mitglieder WHERE id = (SELECT max(id) FROM mitglieder);")
         else:
             flash("Bitte gib eine Zahl ein")
         return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
