@@ -108,9 +108,6 @@ login_manager.login_view = "login"
 ran = np.random.randint(9999999999) * np.random.randint(9999999999)
 app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
-abstimmung_mail = emails.vorstand
-abstimmung_mail_dev = emails.developer
-
 @login_manager.user_loader
 def load_user(user_id):
     return vorstand.query.get(int(user_id))  
@@ -319,11 +316,11 @@ Der nachfolgende Antrag wurde gestellt:<br />
 {antrag_add.text}<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
-        if request.host == "localhost:5000":
-            abstimmung_mail = abstimmung_mail_dev
-            print("Development mode, sending motion mails to " + abstimmung_mail)
+        if request.host.find("localhost") != -1:
+            emails.vorstand = emails.developer
+            print("Development mode, sending motion mails to " + emails.vorstand)
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-        receiver=abstimmung_mail, subject=subject, text=text)
+        receiver=emails.vorstand, subject=subject, text=text)
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
@@ -376,11 +373,11 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 <br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
-                        if request.host == "localhost:5000":
-                            abstimmung_mail = abstimmung_mail_dev
-                            print("Development mode, sending motion mails to " + abstimmung_mail)
+                        if request.host.find("localhost") != -1:
+                            emails.vorstand = emails.developer
+                            print("Development mode, sending motion mails to " + emails.vorstand)
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=abstimmung_mail, subject=subject, text=text)
+                        receiver=emails.vorstand, subject=subject, text=text)
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
@@ -413,7 +410,7 @@ Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten 
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt Abstimmung beenden</a>"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=abstimmung_mail, subject=subject, text=text)                        
+                        receiver=receiver, subject=subject, text=text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                 abstimmung_changes.stimmen = str(abstimmung['stimmen'])
                 db.session.commit()
