@@ -160,26 +160,28 @@ def login():
 @login_required
 def home():
     if request.method == 'POST':
-        if "old_password" in request.form:
-            password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
-            if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
-                flash('Passwort aktualisiert')
-                new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
-                current_user.passwort = new_pw
-                db.session.commit()
-                return render_template('home.html') 
-            else:
-                if password != current_user.passwort:
-                    flash('Altes Passwort falsch')
-                if request.form['new_password'] != request.form['confirm_password']:
-                    flash('Passwörter stimmen nicht überein')
-                if request.form['new_password'] == '':
-                    flash('Bitte gib ein neues Passwort ein')
-        if "email" in request.form:
-            current_user.email = request.form['email']
-            db.session.commit()
-            flash('E-Mail aktualisiert')
-            return render_template('home.html')
+        print(request.form)
+        return renter_template('home.html')
+        # if "old_password" in request.form:
+        #     password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
+        #     if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
+        #         flash('Passwort aktualisiert')
+        #         new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
+        #         current_user.passwort = new_pw
+        #         db.session.commit()
+        #         return render_template('home.html') 
+        #     else:
+        #         if password != current_user.passwort:
+        #             flash('Altes Passwort falsch')
+        #         if request.form['new_password'] != request.form['confirm_password']:
+        #             flash('Passwörter stimmen nicht überein')
+        #         if request.form['new_password'] == '':
+        #             flash('Bitte gib ein neues Passwort ein')
+        # if "email" in request.form:
+        #     current_user.email = request.form['email']
+        #     db.session.commit()
+        #     flash('E-Mail aktualisiert')
+        #     return render_template('home.html')
     else:
         pass
     return render_template('home.html')
