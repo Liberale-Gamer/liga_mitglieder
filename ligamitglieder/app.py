@@ -335,7 +335,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 {antrag_add.text}<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
-        if request.host.find("localhost") != -1:
+        if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
@@ -395,7 +395,7 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 <br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
-                        if request.host.find("localhost") != -1:
+                        if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
