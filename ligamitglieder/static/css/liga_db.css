@@ -98,6 +98,11 @@ a {
     color: #009ee3;
 }
 
+a:hover {
+    color: #e5007d;
+    text-decoration: none;
+}
+
 h2 {
     color: #e5007d;
     font-family: 'sol-pro', 'Montserrat';
@@ -138,7 +143,8 @@ h2 {
 }
 
 .navbar .navbar-nav .nav-link:not(.disabled):hover,
-.navbar .navbar-nav .nav-link:not(.disabled):focus {
+.navbar .navbar-nav .nav-link:not(.disabled):focus,
+.navbar .navbar-nav .nav-link.active {
     color: #e5007d;
 }
 
@@ -259,15 +265,6 @@ h2 {
     padding: 15px;
 }
 
-button {
-    border-radius: 300px;
-    background-color: #009ee3;
-    color: #ffffff;
-    border-color: transparent;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
 input[type=submit],
 button {
     border-radius: 300px;
@@ -276,6 +273,7 @@ button {
     border-color: transparent;
     padding-left: 10px;
     padding-right: 10px;
+    margin: 8px;
 }
 
 input[type=submit]:hover,
@@ -287,7 +285,8 @@ button:hover {
     background-color: #009ee3;
 }
 
-input {
+input,
+textarea {
     border-color: transparent;
     background-color: #eeeeee;
     border-radius: 10px;

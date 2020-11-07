@@ -1,0 +1,83 @@
+{% extends 'navbar.html' %} {% block body %}
+
+<div class="homecontainer">
+    <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
+    <h2>Abstimmung {{abstimmung.get('id')}}</h2>
+
+    <p>Du kannst abstimmen als <strong>{{current_user.name}}</strong>.</p>
+
+
+
+    <!-- Pretty Form -->
+    <style>
+        label {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+        }
+    </style>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col homebox">
+                <h3>{{abstimmung.get('titel')|safe}}</h3>
+                <p>{{abstimmung.get('text')|safe}}</p>
+            </div>
+        
+            <div class="col homebox">
+                <h3>Abstimmen</h3>
+
+                <div class="row">
+                    <div class="col">
+                        <table>
+                            {% for person in abstimmung.get('stimmen') %}
+                            <tr><td><strong>{{person}}</strong>&emsp;</td><td>{{abstimmung.get('stimmen')[person]}}</td></tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table>
+                            <tr><td>Zustimmungen:&emsp;</td><td>{{zust}}</td></tr>
+                            <tr><td>Enthaltungen:&emsp;</td><td>{{enth}}</td></tr>
+                            <tr><td>Ablehnungen:&emsp;</td><td>{{abl}}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                {% if abstimmung.get('status') == 1 %}
+                <form action="" method="post">
+                    <button type="submit" name="votum" value="Zustimmung">Zustimmung</button>
+                    <button type="submit" name="votum" value="Enthaltung">Enthaltung</button>
+                    <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
+                    <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
+                </form><br />
+                {% if current_user.rechte == 1 %}
+                <form action="" method="post">
+                    <select name="action">
+                        {% if zust > abl %}
+                        <option value="angenommen">Annehmen</option>
+                        {% else %}
+                        <option value="abgelehnt">Ablehnen</option>
+                        {% endif %}
+                        <option value="delete" {% if not alle_da %} selected {% endif %}>Löschen</option>
+                    </select>
+                    <input name="end" type="submit" value="Abstimmung beenden">
+                </form>
+                {% endif %}
+                {% elif current_user.rechte == 1 %}
+                <form action="" method="post">
+                    <select name="action" style="display: none;">
+                        <option value="delete">Löschen</option>
+                    </select>
+                    <input name="end" type="submit" value="Antrag löschen">
+                </form><br />
+                <form action="" method="post">
+                    <input name="reopen" type="submit" value="Abstimmung fortsetzen">
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+</div>
+
+{% endblock %}

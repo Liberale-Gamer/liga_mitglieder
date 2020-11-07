@@ -18,6 +18,7 @@ import sqlconfig
 import urllib
 import sendmail, getmail
 import re
+import ast
 
 app = Flask(__name__)
 
@@ -52,7 +53,7 @@ class new_user():
     self.geburtsdatum_string = geburtsdatum_string
     self.erstellungsdatum_string = erstellungsdatum_string
 
-class kunden(UserMixin, db.Model):
+class mitglieder(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     vorname = db.Column(db.String(30)) 
     name = db.Column(db.String(30))
@@ -66,25 +67,32 @@ class kunden(UserMixin, db.Model):
     mobil = db.Column(db.String(30))
     email = db.Column(db.String(50))
     #Ab hier leere Inhalte
-    telefon = db.Column(db.String(30), default="NULL")
-    fax = db.Column(db.String(30), default="NULL")
     #sonstiges = db.Column(db.String(30), default="NULL")
     passwort = db.Column(db.String(30), default="12345")
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
     forum_passwort = db.Column(db.String(30), default="12345")
-    #stichworte = db.Column(db.String(30), default="NULL")
-    latitude = db.Column(db.String(30), default="NULL")
-    longitude = db.Column(db.String(30), default="NULL")
-    last_aktivity = db.Column(db.String(30), default=0)
     
-class kundenSchema(ma.SQLAlchemyAutoSchema):
+class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = kunden
+        model = mitglieder
+        load_instance = True  
+
+class abstimmung_intern(UserMixin, db.Model):
+    id = db.Column(db.String(30), primary_key = True)
+    titel = db.Column(db.String(250))
+    text = db.Column(db.Text(4294000000))
+    stimmen = db.Column(db.String(250), default="NULL")
+    status = db.Column(db.Integer)
+    
+class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = abstimmung_intern
         load_instance = True  
 
 
-class verkaeufer(UserMixin, db.Model):
+
+class vorstand(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(30), unique = True)
     kuerzel = db.Column(db.String(2))
@@ -92,6 +100,7 @@ class verkaeufer(UserMixin, db.Model):
     email = db.Column(db.String(50))
     token = db.Column(db.String(50))
     tokenttl = db.Column(db.Integer)
+    rechte = db.Column(db.Integer)
     
 #Redirect if trying to access protected page
 login_manager.login_view = "login" 
@@ -99,10 +108,11 @@ login_manager.login_view = "login"
 ran = np.random.randint(9999999999) * np.random.randint(9999999999)
 app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
-
+abstimmung_mail = "vorstand@liberale-gamer.gg"
+abstimmung_mail_dev = "marvin.ruder@liberale-gamer.gg"
 @login_manager.user_loader
 def load_user(user_id):
-    return verkaeufer.query.get(int(user_id))  
+    return vorstand.query.get(int(user_id))  
     
 @app.route('/')
 def show_entries():
@@ -124,7 +134,7 @@ def login():
     else:
         pass    
     if request.method == 'POST':
-        user = verkaeufer.query.filter_by(kuerzel=request.form['username']).first()
+        user = vorstand.query.filter_by(kuerzel=request.form['username']).first()
         if user == None:
             error = 'Dieser Benutzer existiert nicht'
             return render_template('login.html',error=error)
@@ -180,29 +190,30 @@ def reset():
         token = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         token2 = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         
-        user = verkaeufer.query.filter_by(email=request.form['email']).first()
+        user = vorstand.query.filter_by(email=request.form['email']).first()
         user.token = token + token2
         user.tokenttl = int(time.time()) + 300
         db.session.commit()
         
-        sender = "LiGa Mitgliederdatenbank <reset@liberale-gamer.gg>"
+        sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
 
-       
+        tokenttl = format(datetime.fromtimestamp(user.tokenttl), '%d.%m.%Y um %H:%M Uhr')
 
         text = """\
 Hallo {},
 
-Der Link zum zurücksetzen deines Passworts lautet: {}""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/"+"reset/"+user.token) 
+Der Link zum Zurücksetzen deines Passworts lautet: 
+{}
 
-
-        mailer.send_email(sender, email, "Password reset", text)
+Der Link ist gültig bis zum {}.""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
+        mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
     
 #Actually reset the password
 @app.route('/reset/<token>', methods=['GET', 'POST'])
 def reset_pw(token):
-    user = verkaeufer.query.filter_by(token=token).first()
+    user = vorstand.query.filter_by(token=token).first()
     if user.tokenttl < int(time.time()):
         flash('Dein Token ist abgelaufen')
         return redirect(url_for('login'))
@@ -225,6 +236,10 @@ def reset_pw(token):
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+    antrags_id = request.args.get('antrags_id')
     subjects=getmail.get_subjects()
     subjects.reverse()
     ids = []
@@ -232,6 +247,8 @@ def new():
         ids.append(re.findall('\d+', subject)[0])
     ids_subjects = zip(ids, subjects)
     if request.method == 'GET':
+        if antrags_id != None:
+            return render_template('new.html', ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(antrags_id), antrags_id=antrags_id)
         return render_template('new.html', ids_subjects=ids_subjects)
     if request.method == 'POST':
         if request.form["antrags_id"].isnumeric():
@@ -243,18 +260,156 @@ def new():
 @app.route('/database')
 @login_required
 def database():
-    
-    all_users = kunden.query.order_by(-kunden.id)
-    kundenschema = kundenSchema(many=True)
-    output = kundenschema.dumps(all_users)
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+    all_users = mitglieder.query.order_by(-mitglieder.id)
+    mitgliederschema = mitgliederSchema(many=True)
+    output = mitgliederschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
     #return output
+
+
+@app.route('/abstimmung', methods=['GET', 'POST'])
+@login_required
+def abstimmung_list():
+    subjects=getmail.get_subjects()
+    subjects.reverse()
+    ids = []
+    for subject in subjects:
+        ids.append(re.findall('\d+', subject)[0])
+    ids_subjects = zip(ids, subjects)
+    all_abstimmungen = abstimmung_intern.query
+    abstimmungschema = abstimmung_internSchema(many=True)
+    output = abstimmungschema.dumps(all_abstimmungen)
+    abstimmungen = ast.literal_eval(output)
+    if request.method == 'GET':
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
+    if request.method == 'POST':
+        if 'antrags_id' in request.form:
+            if request.form["antrags_id"].isnumeric():
+                name=""
+                for subject in subjects:
+                    if subject.find(request.form["antrags_id"]) != -1:
+                        name=subject[subject.find("] ") + 2:]
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"], redact = True), antrags_id=request.form["antrags_id"], name=name)
+            else:
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
+        antrag_add = abstimmung_intern()
+        if request.form['titel'][0:request.form['titel'].find(' ')].isnumeric():
+            antrag_add.id = request.form['titel'][0:request.form['titel'].find(' ')]
+            antrag_add.titel = request.form['titel'][request.form['titel'].find(' ') + 1:]
+        else:
+            antrag_add.id = datetime.now().strftime("%Y%m%d%H%M%S")
+            antrag_add.titel = request.form['titel']
+        antrag_add.text = "Der Vorstand wolle beschließen:\n\n" + request.form['text']
+        antrag_add.stimmen = "{}"
+        antrag_add.status = 1
+        db.session.add(antrag_add)
+        db.session.commit()
+        subject = f"Neuer Antrag: {antrag_add.titel}"
+        antrag_add.text = antrag_add.text.replace('\n', '<br>')
+        text = f"""
+Der nachfolgende Antrag wurde gestellt:<br />
+<br />
+<strong>{antrag_add.titel}</strong><br />
+<br />
+{antrag_add.text}<br />
+<br />
+<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
+        if request.host == "localhost:5000":
+            abstimmung_mail = abstimmung_mail_dev
+            print("Development mode, sending motion mails to " + abstimmung_mail)
+        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
+        receiver=abstimmung_mail, subject=subject, text=text)
+        return redirect(url_for('abstimmung_list'))
+    
+@app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
+@login_required
+def abstimmung(abstimmung_id):
+    all_abstimmungen = abstimmung_intern.query
+    abstimmungschema = abstimmung_internSchema(many=True)
+    output = abstimmungschema.dumps(all_abstimmungen)
+    abstimmungen = ast.literal_eval(output)
+    for abstimmung in abstimmungen:
+        if abstimmung.get('id') == abstimmung_id:
+            abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
+            if request.method == 'GET':
+                engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+                with engine.connect() as con:
+                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM vorstand").fetchone()[0]
+                alle_da = False
+                if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
+                    alle_da = True
+                zust = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Zustimmung')
+                enth = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Enthaltung')
+                abl = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
+                abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
+                return render_template('abstimmung.html', abstimmung=abstimmung, alle_da=alle_da, zust=zust, enth=enth, abl=abl)
+            if request.method == 'POST':
+                if 'reopen' in request.form:
+                    abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                    abstimmung_changes.status = 1
+                    db.session.commit()
+                    flash('Abstimmung fortgesetzt')
+                    return redirect(url_for('abstimmung_list'))
+
+                elif 'end' in request.form:
+                    if request.form['action'] == 'delete':
+                        antrag = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                        db.session.delete(antrag)
+                        db.session.commit()
+                        flash('Antrag gelöscht')
+                    else:
+                        subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
+                        abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
+                        abstimmung['stimmen'] = str(abstimmung['stimmen'])\
+                        .replace(',', '<br>').replace('{', '').replace('}', '')
+                        text = f"""
+Der nachfolgende Antrag wurde {request.form['action']}:<br />
+<br />
+<strong>{abstimmung['titel']}</strong><br />
+<br />
+{abstimmung['text']}<br />
+<br />
+Abgegebene Stimmen:<br />
+{str(abstimmung['stimmen'])}"""
+                        if request.host == "localhost:5000":
+                            abstimmung_mail = abstimmung_mail_dev
+                            print("Development mode, sending motion mails to " + abstimmung_mail)
+                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
+                        receiver=abstimmung_mail, subject=subject, text=text)
+                        abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                        abstimmung_changes.status = 0
+                        db.session.commit()
+                        flash('Antrag ' + request.form['action'])
+                        if len(str(abstimmung['id'])) <= 6 and request.form['action'] == 'angenommen':
+                            return redirect(url_for('new', antrags_id=abstimmung_id))
+                    return redirect(url_for('abstimmung_list'))
+
+                if request.form['votum'] == 'clear':
+                    if current_user.name in abstimmung['stimmen']:
+                        abstimmung['stimmen'].pop(current_user.name)
+                        flash('Dein Votum wurde zurückgesetzt')
+                else:
+                    abstimmung['stimmen'][current_user.name] = request.form['votum']
+                    flash('Dein Votum wurde erfasst')
+                abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
+                abstimmung_changes.stimmen = str(abstimmung['stimmen'])
+                db.session.commit()
+                return redirect(url_for('abstimmung', abstimmung_id=abstimmung_id))
+    flash('Abstimmung nicht gefunden')
+    return redirect(url_for('abstimmung_list'))
     
 @app.route('/edit/<user_id>')
 @login_required
 def edit(user_id):
-    user = kunden.query.filter_by(id=user_id).first()
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+
+    user = mitglieder.query.filter_by(id=user_id).first()
     
 
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
@@ -269,7 +424,11 @@ def edit(user_id):
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required
 def send_mail(user_id):
-    user = kunden.query.filter_by(id=user_id).first()
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+
+    user = mitglieder.query.filter_by(id=user_id).first()
         
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
     erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
@@ -344,7 +503,7 @@ Mobil:  0176 57517450<br />
     
     if request.method == 'POST':
         if "send" in request.form:
-            sendmail.send_email('Marvin Ruder <mitgliedsantrag@liberale-gamer.gg>', receiver, 'Marvin Ruder <marvin.ruder@liberale-gamer.gg>', subject, text)
+            sendmail.send_email('Marvin Ruder <mitgliedsantrag@liberale-gamer.gg>', receiver, subject, text, 'Marvin Ruder <marvin.ruder@liberale-gamer.gg>')
             flash('Mail versendet')
             return redirect(url_for('edit',user_id=str(user_id)))
         return redirect(url_for('edit',user_id=str(user_id)))
@@ -353,8 +512,11 @@ Mobil:  0176 57517450<br />
 @app.route('/confirm_edit',methods=['GET','POST'])
 @login_required
 def confirm_edit():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     if request.method == 'POST':
-        user = kunden.query.filter_by(id=session["user_id"]).first()
+        user = mitglieder.query.filter_by(id=session["user_id"]).first()
         geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
         erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
         if "delete" in request.form:
@@ -398,6 +560,9 @@ def confirm_edit():
 @app.route('/confirm_new',methods=['GET','POST'])
 @login_required
 def confirm_new():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     if "new" in request.form and request.method == 'POST':
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
         geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
@@ -409,7 +574,7 @@ def confirm_new():
         return render_template('confirm_new.html', confirm=1, new=new)
     if "confirm_new" in request.form and request.method == 'POST':
         
-        user_add = kunden()
+        user_add = mitglieder()
         user_add.name = request.form["name"]
         user_add.vorname = request.form["vorname"]
         user_add.sex = request.form["sex"]
@@ -427,7 +592,7 @@ def confirm_new():
         db.session.add(user_add)
         db.session.commit()
         
-        newest_id = kunden.query.order_by(-kunden.id).first()
+        newest_id = mitglieder.query.order_by(-mitglieder.id).first()
         
         return render_template('confirm_new.html', created=1, newest_id=newest_id)
     
@@ -436,18 +601,21 @@ def confirm_new():
 @app.route('/set_counter', methods=['GET','POST'])
 @login_required
 def set_counter():
+    if current_user.rechte == 0:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
     with engine.connect() as con:
-        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
-        newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+        old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'mitglieder'")
+        newest_member = con.execute("SELECT id FROM mitglieder WHERE id = (SELECT max(id) FROM mitglieder);")
     if request.method == 'GET':
         return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])
     if request.method == 'POST':
         if request.form["new_counter"].isnumeric():
             with engine.connect() as con:
-                con.execute("ALTER TABLE kunden AUTO_INCREMENT = " + request.form["new_counter"])
-                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'kunden'")
-                newest_member = con.execute("SELECT id FROM kunden WHERE id = (SELECT max(id) FROM kunden);")
+                con.execute("ALTER TABLE mitglieder AUTO_INCREMENT = " + request.form["new_counter"])
+                old_counter = con.execute("SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'liga_intern_de' AND TABLE_NAME = 'mitglieder'")
+                newest_member = con.execute("SELECT id FROM mitglieder WHERE id = (SELECT max(id) FROM mitglieder);")
         else:
             flash("Bitte gib eine Zahl ein")
         return render_template('set_counter.html', old_counter=old_counter.fetchone()[0],newest_member=newest_member.fetchone()[0])

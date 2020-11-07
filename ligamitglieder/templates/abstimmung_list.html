@@ -1,0 +1,61 @@
+{% extends 'navbar.html' %} {% block body %}
+
+<div class="homecontainer">
+    <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
+    <h2>Abstimmungen</h2>
+
+    <p>Du kannst abstimmen als <strong>{{current_user.name}}</strong>.</p>
+
+
+
+    <!-- Pretty Form -->
+    <style>
+        label {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+        }
+    </style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col homebox">
+                <h3>Abstimmungen</h3>
+                <h4>Offene Abstimmungen</h4>
+                {% for abstimmung in abstimmungen %}
+                {% if abstimmung.get('status') == 1 %}
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a></p>
+                {% endif %}
+                {% endfor %}
+                <h4>Geschlossene Abstimmungen</h4>
+                {% for abstimmung in abstimmungen %}
+                {% if abstimmung.get('status') == 0 %}
+                <p><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a></p>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col homebox">
+                <h3>Neue Abstimmung</h3>
+                <form action="/abstimmung" method="post">
+                    <select name="antrags_id">
+                    {% for id, antrag in ids_subjects %}
+                        <option value={{id}} {% if id == antrags_id %} selected {% endif %} >{{antrag}}</option>
+                    {% endfor %}
+                    </select>
+                    <button name="get_antrag" type="submit">Antrag abrufen</button>
+                </form><br />    
+                <form action="/abstimmung" method="post" style="width: inherit;">
+                    <input type="text" name="titel" placeholder="Antragstitel" {% if name != "" %} value="{{antrags_id}} Mitgliedsantrag {{name}}" {% endif %}> </br>
+                    <p>Der Vorstand wolle beschließen:</p>
+                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Antragstext">{% if imap_antrag != None %}Dem nachfolgenden Mitgliedsantrag wird zugestimmt:
+
+{{imap_antrag}}{% endif %}</textarea><br />
+                    <input name="erstellen" type="submit" value="Erstellen">
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

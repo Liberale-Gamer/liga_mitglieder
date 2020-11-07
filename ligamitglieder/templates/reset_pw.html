@@ -12,20 +12,24 @@
   </style>  
   
 
-  
-  <form action="" method=post>
-    <dl>
-      <h5>Passwort zurücksetzen</h5>
-      <div class="block">
-        <label>Neues Passwort: </label> 
-        <input type=password name=new_password>
-      </div>
-      <div class="block">
-        <label>Neues Passwort bestätigen: </label>
-        <input type=password name=confirm_password>
-      </div>
-        <dd><input type=submit value=Aktualisieren>
-    </dl>
-  </form>
+  <div class="logincontainer">
+    <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
+    <h2>Neues Passwort setzen</h2>
+    <div class="loginbox">
+      <form action="" method=post>
+        <dl>
+          <div class="block">
+            <label>Neues Passwort: </label> 
+            <input type=password name=new_password>
+          </div>
+          <div class="block">
+            <label>Neues Passwort bestätigen: </label>
+            <input type=password name=confirm_password>
+          </div>
+            <dd><input type=submit value=Aktualisieren>
+        </dl>
+      </form>
+    </div>  
+</div>
   
 {% endblock %}

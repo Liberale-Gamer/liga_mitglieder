@@ -9,11 +9,12 @@ mail_server = "liberale-gamer.gg"
 login = "mitgliedsantrag@liberale-gamer.gg"
 password = "***REMOVED***"
 
-def send_email(sender, receiver, replyto, subject, text):
+def send_email(sender, receiver, subject, text, replyto=None):
 	message = MIMEMultipart('alternative')
 	message['from'] = sender
 	message['to'] = receiver
-	message['reply-to'] = replyto
+	if replyto != None:
+		message['reply-to'] = replyto
 	message['Subject'] = subject
 	text = MIMEText(text, 'html')
 	message.attach(text)
