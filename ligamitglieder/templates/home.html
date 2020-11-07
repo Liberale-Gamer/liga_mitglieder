@@ -35,8 +35,8 @@
                 E-Mail: {{current_user.email}} </br>
                 Mobil: {{current_user.mobil}} </br>
                 </br>
-                Geburtsdatum: {{current_user.geburtsdatum}} </br>
-                Mitglied seit: {{current_user.erstellungsdatum}}
+                Geburtsdatum: {{geburtsdatum}} </br>
+                Mitglied seit: {{erstellungsdatum}}
 
             </div>
 
@@ -53,7 +53,7 @@
                     <input type="text" name="email" placeholder="E-Mail"> </br>
                     <input type="text" name="mobil" placeholder="Handynummer"> </br>
                     </br>
-                    <input name="aktualisieren" type="submit" value="Aktualisieren">
+                    <input name="change_data" type="submit" value="Aktualisieren">
                 </form>
                 <form action="{{ url_for('home') }}" method=post>
                     <dl>
@@ -70,7 +70,7 @@
                             <label>Neues Passwort bestätigen: </label>
                             <input type="password" name="confirm_password">
                         </div>
-                        <dd><input type="submit" value="Passwort ändern">
+                        <dd><input name="change_password" type="submit" value="Passwort ändern">
                     </dl>
                 </form>
         

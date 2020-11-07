@@ -159,32 +159,43 @@ def login():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+    geburtsdatum = format(datetime.fromtimestamp(current_user.geburtsdatum+7200), '%d.%m.%Y')
+    erstellungsdatum = format(datetime.fromtimestamp(current_user.erstellungsdatum), '%d.%m.%Y')
     if request.method == 'POST':
-        print(request.form)
-        return renter_template('home.html')
-        # if "old_password" in request.form:
-        #     password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
-        #     if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
-        #         flash('Passwort aktualisiert')
-        #         new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
-        #         current_user.passwort = new_pw
-        #         db.session.commit()
-        #         return render_template('home.html') 
-        #     else:
-        #         if password != current_user.passwort:
-        #             flash('Altes Passwort falsch')
-        #         if request.form['new_password'] != request.form['confirm_password']:
-        #             flash('Passwörter stimmen nicht überein')
-        #         if request.form['new_password'] == '':
-        #             flash('Bitte gib ein neues Passwort ein')
-        # if "email" in request.form:
-        #     current_user.email = request.form['email']
-        #     db.session.commit()
-        #     flash('E-Mail aktualisiert')
-        #     return render_template('home.html')
+        if "change_password" in request.form:
+            password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
+            if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
+                flash('Passwort aktualisiert')
+                new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
+                current_user.passwort = new_pw
+                db.session.commit()
+                return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum) 
+            else:
+                if password != current_user.passwort:
+                    flash('Altes Passwort falsch')
+                if request.form['new_password'] != request.form['confirm_password']:
+                    flash('Passwörter stimmen nicht überein')
+                if request.form['new_password'] == '':
+                    flash('Bitte gib ein neues Passwort ein')
+        if "change_data" in request.form:
+            if request.form['strasse'] != '':
+                current_user.strasse = request.form['strasse']
+            if request.form['hausnummer'] != '':
+                current_user.hausnummer = request.form['hausnummer']
+            if request.form['plz'] != '':
+                current_user.plz = request.form['plz']
+            if request.form['ort'] != '':
+                current_user.ort = request.form['ort']
+            if request.form['email'] != '':
+                current_user.email = request.form['email']
+            if request.form['mobil'] != '':
+                current_user.mobil = request.form['mobil']
+            db.session.commit()
+            flash('Daten aktualisiert')
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
     else:
         pass
-    return render_template('home.html')
+    return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
 
 #Routine for forgotten password
 @app.route('/reset', methods=['GET', 'POST'])
