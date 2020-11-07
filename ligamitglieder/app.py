@@ -203,13 +203,15 @@ def reset():
         
         sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
 
-       
+        tokenttl = format(datetime.fromtimestamp(user.tokenttl), '%d.%m.%Y um %H:%M Uhr')
 
         text = """\
 Hallo {},
 
 Der Link zum Zurücksetzen deines Passworts lautet: 
-{}""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token) 
+{}
+
+Der Link ist gültig bis zum {}.""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
         mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
