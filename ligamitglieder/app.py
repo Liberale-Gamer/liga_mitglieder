@@ -408,7 +408,7 @@ Abgegebene Stimmen:<br />
                         text = f"""
 Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten abgestimmt.<br />
 <br />
-<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt Abstimmung beenden</a>"""
+<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt Abstimmung beenden</a>"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
                         receiver=receiver, subject=subject, text=text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
