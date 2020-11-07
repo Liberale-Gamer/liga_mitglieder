@@ -17,6 +17,12 @@
 <div id="Mitglieder" style="padding-top:15px;">
 
 </div>
+<div style="padding:15px;">
+    Herunterladen als:&nbsp;
+    <button id="download-csv">CSV</button>
+    <button id="download-json">JSON</button>
+    <button id="download-xlsx">XLSX</button>
+</div>
 
 <script>
     var table = new Tabulator("#Mitglieder", {
@@ -105,9 +111,7 @@
     //tableData = init()
     initvar = String("{{output}}").toString();
     initvar = replaceAll(initvar, '&#34;', '\u0022');
-    console.log(initvar);
     initvar = JSON.parse(JSON.stringify(initvar));
-    console.log(initvar);
     table.setData(initvar);
 
     //trigger download of data.csv file
@@ -123,26 +127,10 @@
     //trigger download of data.xlsx file
     $("#download-xlsx").click(function() {
         table.download("xlsx", "data.xlsx", {
-            sheetName: "My Data"
+            sheetName: "LiGa-Mitglieder"
         });
     });
 
-    //trigger download of data.pdf file
-    $("#download-pdf").click(function() {
-        table.download("pdf", "data.pdf", {
-            orientation: "landscape", //set page orientation to portrait
-            title: "Example Report", //add title to report
-        });
-    });
 </script>
-
-<div style="padding:15px;">
-    Herunterladen als:&nbsp;
-    <button id="download-csv">CSV</button>
-    <button id="download-json">JSON</button>
-    <button id="download-pdf">PDF</button>
-    <button id="download-xlsx">XLSX</button>
-</div>
-
 
 {% endblock %}
