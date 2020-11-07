@@ -67,17 +67,11 @@ class mitglieder(UserMixin, db.Model):
     mobil = db.Column(db.String(30))
     email = db.Column(db.String(50))
     #Ab hier leere Inhalte
-    telefon = db.Column(db.String(30), default="NULL")
-    fax = db.Column(db.String(30), default="NULL")
     #sonstiges = db.Column(db.String(30), default="NULL")
     passwort = db.Column(db.String(30), default="12345")
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
     forum_passwort = db.Column(db.String(30), default="12345")
-    #stichworte = db.Column(db.String(30), default="NULL")
-    latitude = db.Column(db.String(30), default="NULL")
-    longitude = db.Column(db.String(30), default="NULL")
-    last_aktivity = db.Column(db.String(30), default=0)
     
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
