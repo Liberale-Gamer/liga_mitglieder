@@ -91,7 +91,7 @@
                 Geburtsdatum: {{geburtsdatum}} </br>
                 Mitglied seit: {{erstellungsdatum}} </br>
                 </br>
-                Rechte:{% if user.rechte == 2 %} Mitgliederverwaltung {% elif user.rechte == 1 %} Vorstand {% else %} Mitglied {% endif %}
+                Rechte:{% if user.rechte == '2' %} Mitgliederverwaltung {% elif user.rechte == '1' %} Vorstand {% else %} Mitglied {% endif %}
 
             </div>
 
