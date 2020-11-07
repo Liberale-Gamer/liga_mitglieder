@@ -7,7 +7,7 @@
     <div class="loginbox">
         <form action="{% if next == None or next == '' or next == null %} {{ url_for('login') }} {% else %} {{ url_for('login', next=next) }} {% endif %}" method=post>
             <dl>
-                <dt>Benutzername:
+                <dt>E-Mail-Adresse:
 	      <dd><input type="text" name="username">
 	      <dt>Passwort:
 	      <dd><input type="password" name="password">

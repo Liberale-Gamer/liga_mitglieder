@@ -55,7 +55,13 @@
                 <input type="text" name="email" placeholder="E-Mail"> </br>
                 <input type="text" name="mobil" placeholder="Handynummer"> </br>
                 </br>
+                <select name="rechte">
+                  <option name="0" {% if user.rechte == 0 %} selected {% endif %}>Mitglied</option>
+                  <option name="1" {% if user.rechte == 1 %} selected {% endif %}>Vorstand</option>
+                  <option name="2" {% if user.rechte == 2 %} selected {% endif %}>Mitgliederverwaltung</option>
+                </select>
                 <input name="aktualisieren" type="submit" value="Aktualisieren">
+            </form>
 
         </div>
 

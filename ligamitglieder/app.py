@@ -207,7 +207,7 @@ Hallo {},
 Der Link zum Zurücksetzen deines Passworts lautet: 
 {}
 
-Der Link ist gültig bis zum {}.""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
+Der Link ist gültig bis zum {}.""".format(user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
         mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
