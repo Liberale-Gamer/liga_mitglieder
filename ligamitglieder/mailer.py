@@ -3,11 +3,12 @@ from email.message import Message
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.parser import Parser
+import passwords
 
 port = 465  # For SSL
 mail_server = "liberale-gamer.gg"
 login = "reset@liberale-gamer.gg"
-password = "***REMOVED***"
+password = passwords.reset
 
 def send_email(sender, receiver, subject, text):
 	message = MIMEMultipart('alternative')
@@ -26,15 +27,3 @@ def send_email(sender, receiver, subject, text):
 
 	    server.send_message(message)
 	    
-if __name__ == '__main__':
-#Beispielmail
-
-    sender = "LiGa Mitgliederdatenbank <reset@liberale-gamer.gg>"
-    receiver = "communicationbel@gmail.com"
-    subject = "Testbetreff"
-    text = """\
-Subject: Hi there
-
-This message is sent from Python."""
-
-    send_email(sender, receiver, subject, text)

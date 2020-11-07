@@ -23,7 +23,6 @@ import ast
 app = Flask(__name__)
 
 #MySQL Verbindung
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://liga_mitglieder:***REMOVED***@localhost/liga_intern_de'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,\
 sqlconfig.sql_config.db)
 

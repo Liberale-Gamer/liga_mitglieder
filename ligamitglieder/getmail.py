@@ -1,10 +1,11 @@
 import getpass, imaplib, email
 from email.header import decode_header
 from bs4 import BeautifulSoup
+import passwords
 
 def get_mail(id, redact = False):
     M = imaplib.IMAP4()
-    M.login("mitgliedsantrag@liberale-gamer.gg", "***REMOVED***")
+    M.login("mitgliedsantrag@liberale-gamer.gg", passwords.mitgliedsantrag)
     M.select()
     typ, data = M.search(None, 'Subject', str(id))
     typ, data = M.fetch(data[0].split()[-1], '(RFC822)')
@@ -34,7 +35,7 @@ def get_mail(id, redact = False):
 
 def get_subjects():
     M = imaplib.IMAP4()
-    M.login("mitgliedsantrag@liberale-gamer.gg", "***REMOVED***")
+    M.login("mitgliedsantrag@liberale-gamer.gg", passwords.mitgliedsantrag)
     M.select()
     typ, data = M.search(None, 'Subject', '[ID ')
     subjects = []

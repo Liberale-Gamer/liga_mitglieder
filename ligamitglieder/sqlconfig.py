@@ -1,3 +1,5 @@
+import passwords
+
 class sql_config:
     def __init__(self, user, pw, db):
         self.user = user 
@@ -5,5 +7,5 @@ class sql_config:
         self.db = db 
         
 sql_config.user = 'liga_mitglieder'
-sql_config.pw = '***REMOVED***'
+sql_config.pw = passwords.sql
 sql_config.db = 'liga_intern_de'
