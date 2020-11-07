@@ -131,7 +131,7 @@ def index():
 def login():
     error = None
     if current_user.is_authenticated == True:
-        return redirect('/home')
+        return redirect(url_for('home'))
     else:
         pass    
     if request.method == 'POST':
@@ -144,7 +144,7 @@ def login():
             login_user(user,remember=True,duration=timedelta(300))
             if request.args.get('next') != '' and request.args.get('next') != None:
                 return redirect(request.args.get('next'))
-            return render_template('home.html',error=error)
+            return redirect(url_for('home'))
         else:
             error = 'Das Passwort ist falsch'
     else:
