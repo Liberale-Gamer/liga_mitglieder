@@ -114,6 +114,7 @@ login_manager.login_view = "login"
 ran = np.random.randint(9999999999) * np.random.randint(9999999999)
 app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
+abstimmung_mail = "marvin.ruder@liberale-gamer.gg"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -297,7 +298,7 @@ def abstimmung_list():
                 for subject in subjects:
                     if subject.find(request.form["antrags_id"]) != -1:
                         name=subject[subject.find("] ") + 2:]
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"]), antrags_id=request.form["antrags_id"], name=name)
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"], redact = True), antrags_id=request.form["antrags_id"], name=name)
             else:
                 return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
         antrag_add = abstimmung_intern()
@@ -323,8 +324,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-        receiver='<vorstand@liberale-gamer.gg>',\
-        subject=subject, text=text)
+        receiver=abstimmung_mail, subject=subject, text=text)
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
@@ -378,8 +378,7 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver='<vorstand@liberale-gamer.gg>',\
-                        subject=subject, text=text)
+                        receiver=abstimmung_mail, subject=subject, text=text)
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
