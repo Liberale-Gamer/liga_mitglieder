@@ -19,6 +19,7 @@ import urllib
 import sendmail, getmail
 import re
 import ast
+import emails
 
 app = Flask(__name__)
 
@@ -107,8 +108,9 @@ login_manager.login_view = "login"
 ran = np.random.randint(9999999999) * np.random.randint(9999999999)
 app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
-abstimmung_mail = "vorstand@liberale-gamer.gg"
-abstimmung_mail_dev = "marvin.ruder@liberale-gamer.gg"
+abstimmung_mail = emails.vorstand
+abstimmung_mail_dev = emails.developer
+
 @login_manager.user_loader
 def load_user(user_id):
     return vorstand.query.get(int(user_id))  
@@ -394,6 +396,24 @@ Abgegebene Stimmen:<br />
                 else:
                     abstimmung['stimmen'][current_user.name] = request.form['votum']
                     flash('Dein Votum wurde erfasst')
+                    engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+                    with engine.connect() as con:
+                        abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM mitglieder WHERE rechte > 0").fetchone()[0]
+                    alle_da = False
+                    if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
+                        alle_da = True
+                    if alle_da:
+                        if len(str(abstimmung['id'])) <= 6:
+                            receiver = emails.mitgliederbetreuung
+                        else:
+                            receiver = emails.vorsitz
+                        subject = f"Alle Stimmen abgegeben: {abstimmung['titel']}"
+                        text = f"""
+Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten abgestimmt.<br />
+<br />
+<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt Abstimmung beenden</a>"""
+                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
+                        receiver=abstimmung_mail, subject=subject, text=text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                 abstimmung_changes.stimmen = str(abstimmung['stimmen'])
                 db.session.commit()
@@ -502,7 +522,7 @@ Mobil:  0176 57517450<br />
     
     if request.method == 'POST':
         if "send" in request.form:
-            sendmail.send_email('Marvin Ruder <mitgliedsantrag@liberale-gamer.gg>', receiver, subject, text, 'Marvin Ruder <marvin.ruder@liberale-gamer.gg>')
+            sendmail.send_email(emails.mitgliederbetreuung_mitgliedsantrag, receiver, subject, text, emails.mitgliederbetreuung)
             flash('Mail versendet')
             return redirect(url_for('edit',user_id=str(user_id)))
         return redirect(url_for('edit',user_id=str(user_id)))
