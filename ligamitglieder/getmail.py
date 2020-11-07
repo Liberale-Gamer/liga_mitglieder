@@ -28,6 +28,7 @@ def get_mail(id, redact = False):
         for line in body.splitlines(True):
             if line[:line.find(':')] not in to_be_redacted:
                 body_redacted += line
+        body = body_redacted
     return body
 
 

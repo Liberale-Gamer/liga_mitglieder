@@ -64,7 +64,7 @@
                     <input name="end" type="submit" value="Abstimmung beenden">
                 </form>
                 {% endif %}
-                {% else if current_user.rechte == 1 %}
+                {% elif current_user.rechte == 1 %}
                 <form action="" method="post">
                     <select name="action" style="display: none;">
                         <option value="delete">Löschen</option>
