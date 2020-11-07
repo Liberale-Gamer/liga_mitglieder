@@ -201,17 +201,16 @@ def reset():
         user.tokenttl = int(time.time()) + 300
         db.session.commit()
         
-        sender = "LiGa Mitgliederdatenbank <reset@liberale-gamer.gg>"
+        sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
 
        
 
         text = """\
 Hallo {},
 
-Der Link zum zurücksetzen deines Passworts lautet: {}""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/"+"reset/"+user.token) 
-
-
-        mailer.send_email(sender, email, "Password reset", text)
+Der Link zum Zurücksetzen deines Passworts lautet: 
+{}""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token) 
+        mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
     
