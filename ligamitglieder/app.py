@@ -134,9 +134,6 @@ def index():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.host == "localhost:5000":
-        abstimmung_mail = abstimmung_mail_dev
-    print("Development mode, sending motion mails to " + abstimmung_mail)
     error = None
     if current_user.is_authenticated == True:
         return redirect('/home')
@@ -326,6 +323,9 @@ Der nachfolgende Antrag wurde gestellt:<br />
 {antrag_add.text}<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
+        if request.host == "localhost:5000":
+            abstimmung_mail = abstimmung_mail_dev
+            print("Development mode, sending motion mails to " + abstimmung_mail)
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
         receiver=abstimmung_mail, subject=subject, text=text)
         return redirect(url_for('abstimmung_list'))
@@ -380,6 +380,9 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 <br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
+                        if request.host == "localhost:5000":
+                            abstimmung_mail = abstimmung_mail_dev
+                            print("Development mode, sending motion mails to " + abstimmung_mail)
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
                         receiver=abstimmung_mail, subject=subject, text=text)
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
