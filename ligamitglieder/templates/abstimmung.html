@@ -51,6 +51,7 @@
                     <button type="submit" name="votum" value="Ablehnung">Ablehnung</button>
                     <button type="submit" name="votum" value="clear">Votum zurücknehmen</button>
                 </form><br />
+                {% if current_user.rechte == 1 %}
                 <form action="" method="post">
                     <select name="action">
                         {% if zust > abl %}
@@ -62,7 +63,8 @@
                     </select>
                     <input name="end" type="submit" value="Abstimmung beenden">
                 </form>
-                {% else %}
+                {% endif %}
+                {% else if current_user.rechte == 1 %}
                 <form action="" method="post">
                     <select name="action" style="display: none;">
                         <option value="delete">Löschen</option>
