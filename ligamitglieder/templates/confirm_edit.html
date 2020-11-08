@@ -52,7 +52,9 @@
                 Mobil: {{user_old.mobil}} </br>
                 </br>
                 Geburtsdatum: {{geburtsdatum}} </br>
-                Mitglied seit: {{erstellungsdatum}}
+                Mitglied seit: {{erstellungsdatum}} </br>
+                </br>
+                Rechte:{% if user_old.rechte == 2 %} Mitgliederverwaltung {% elif user_old.rechte == 1 %} Vorstand {% else %} Mitglied {% endif %}
 
                 <form action="{{ url_for('confirm_edit') }}" method=post>
 
@@ -64,6 +66,8 @@
 
                     <input type="hidden" name="email" value="{{user.email}}">
                     <input type="hidden" name="mobil" value="{{user.mobil}}">
+
+                    <input type="hidden" name="rechte" value="{{user.rechte}}">
 
                     <input name="confirm_edit" type="submit" value="Änderung bestätigen">
                 </form>
@@ -85,7 +89,10 @@
                 Mobil: {{user.mobil}} </br>
                 </br>
                 Geburtsdatum: {{geburtsdatum}} </br>
-                Mitglied seit: {{erstellungsdatum}}
+                Mitglied seit: {{erstellungsdatum}} </br>
+                </br>
+                Rechte:{% if user.rechte == '2' %} Mitgliederverwaltung {% elif user.rechte == '1' %} Vorstand {% else %} Mitglied {% endif %}
+
             </div>
 
         </div>

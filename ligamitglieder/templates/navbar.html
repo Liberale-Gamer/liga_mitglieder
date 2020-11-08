@@ -16,12 +16,12 @@
             </li>
 
             {% if current_user.is_authenticated %}
-
+            {% if current_user.rechte > 0 %}
             <li class="nav-item">
                 <a class="nav-link {% if request.path == '/abstimmung' %} active {% endif %}" href="{{url_for('abstimmung_list')}}">Abstimmungen</a>
             </li>
 
-            {% if current_user.rechte == 1 %}
+            {% if current_user.rechte > 1 %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mitgliederverwaltung</a>
                 <div class="dropdown-menu" id="navbardrop">
@@ -30,6 +30,7 @@
                     <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
                 </div>
             </li>
+            {% endif %}
             {% endif %}
             
             <li class="nav-item">

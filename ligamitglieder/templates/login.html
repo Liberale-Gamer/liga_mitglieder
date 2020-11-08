@@ -1,5 +1,5 @@
 {% extends 'navbar.html' %} {% block body %} {% if current_user.is_authenticated %}
-<div class="flash">Der aktuelle Benutzer ist {{ current_user.name }}</div> {%endif%} {% if error%}
+<div class="flash">Der aktuelle Benutzer ist {{current_user.vorname}} {{current_user.name}}</div> {%endif%} {% if error%}
 <div class="flash">Fehler: {{error}}</div> {% endif %}
 <div class="logincontainer">
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
@@ -7,7 +7,7 @@
     <div class="loginbox">
         <form action="{% if next == None or next == '' or next == null %} {{ url_for('login') }} {% else %} {{ url_for('login', next=next) }} {% endif %}" method=post>
             <dl>
-                <dt>Benutzername:
+                <dt>E-Mail-Adresse:
 	      <dd><input type="text" name="username">
 	      <dt>Passwort:
 	      <dd><input type="password" name="password">

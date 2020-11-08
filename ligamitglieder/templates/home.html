@@ -4,7 +4,7 @@
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
     <h2>Home</h2>
 
-    <p>Willkommen! Du bist angemeldet als <strong>{{current_user.name}}</strong>.</p>
+    <p>Willkommen! Du bist angemeldet als <strong>{{current_user.vorname}} {{current_user.name}}</strong>.</p>
 
 
 
@@ -17,36 +17,69 @@
         }
     </style>
 
-    <div class="homebox">
-        <form action="{{ url_for('home') }}" method=post>
-            <dl>
-                <h5>Passwort ändern</h5>
-                <div class="block">
-                    <label>Altes Passwort:</label>
-                    <input type="password" name="old_password">
-                </div>
-                <div class="block">
-                    <label>Neues Passwort: </label>
-                    <input type="password" name="new_password">
-                </div>
-                <div class="block">
-                    <label>Neues Passwort bestätigen: </label>
-                    <input type="password" name="confirm_password">
-                </div>
-                <dd><input type="submit" value="Aktualisieren">
-            </dl>
-        </form>
+    <div class="container-fluid">
 
-        <form action="{{ url_for('home') }}" method="post">
-            <dl>
-                <h5>E-Mail-Adresse ändern</h5>
-                <div class="block">
-                    <label>Neue E-Mail-Adresse:</label>
-                    <input type="text" name="email">
-                </div>
-                <dd><input type="submit" value="Aktualisieren">
-            </dl>
-        </form>
+        <div class="row">
+
+            <div class="col homebox">
+                <h4>Deine Mitgliedsdaten</h4>
+                </br>
+                Mitglied Nr. {{current_user.id}} </br>
+                {% if current_user.sex == 0%} Herr {% else %} Frau {% endif %} {{current_user.vorname}} {{current_user.name}} </br>
+                </br>
+                Wohnort: </br>
+                {{current_user.strasse}} {{current_user.hausnummer}} </br>
+                {{current_user.plz}} {{current_user.ort}} </br>
+                </br>
+                Kontaktdaten: </br>
+                E-Mail: {{current_user.email}} </br>
+                Mobil: {{current_user.mobil}} </br>
+                </br>
+                Geburtsdatum: {{geburtsdatum}} </br>
+                Mitglied seit: {{erstellungsdatum}}
+
+            </div>
+
+            <div class="col homebox">
+
+                <h4>Daten ändern:</h4>
+                </br>
+
+                <form action="{{ url_for('home') }}" method="post">
+                    </br>
+                    <input type="text" name="strasse" placeholder="Straße"><input type="text" name="hausnummer" placeholder="Hausnr."> </br>
+                    <input type="text" name="plz" placeholder="PLZ"><input type="text" name="ort" placeholder="Ort"> </br>
+                    </br>
+                    <input type="text" name="email" placeholder="E-Mail"> </br>
+                    <input type="text" name="mobil" placeholder="Handynummer"> </br>
+                    </br>
+                    <input name="change_data" type="submit" value="Aktualisieren">
+                </form>
+                <form action="{{ url_for('home') }}" method=post>
+                    <dl>
+                        <h4>Passwort ändern</h4>
+                        <div class="block">
+                            <label>Altes Passwort:</label>
+                            <input type="password" name="old_password">
+                        </div>
+                        <div class="block">
+                            <label>Neues Passwort: </label>
+                            <input type="password" name="new_password">
+                        </div>
+                        <div class="block">
+                            <label>Neues Passwort bestätigen: </label>
+                            <input type="password" name="confirm_password">
+                        </div>
+                        <dd><input name="change_password" type="submit" value="Passwort ändern">
+                    </dl>
+                </form>
+        
+            </div>
+
+
+        </div>
+
+
     </div>
 
 

@@ -72,6 +72,9 @@ class mitglieder(UserMixin, db.Model):
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
     forum_passwort = db.Column(db.String(30), default="12345")
+    token = db.Column(db.Text, default="")
+    tokenttl = db.Column(db.Integer, default=0)
+    rechte = db.Column(db.Integer, default=0)
     
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -92,15 +95,15 @@ class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
 
 
 
-class vorstand(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(30), unique = True)
-    kuerzel = db.Column(db.String(2))
-    passwort = db.Column(db.String(50))
-    email = db.Column(db.String(50))
-    token = db.Column(db.String(50))
-    tokenttl = db.Column(db.Integer)
-    rechte = db.Column(db.Integer)
+# class vorstand(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key = True)
+#     name = db.Column(db.String(30), unique = True)
+#     kuerzel = db.Column(db.String(2))
+#     passwort = db.Column(db.String(50))
+#     email = db.Column(db.String(50))
+#     token = db.Column(db.String(50))
+#     tokenttl = db.Column(db.Integer)
+#     rechte = db.Column(db.Integer)
     
 #Redirect if trying to access protected page
 login_manager.login_view = "login" 
@@ -110,7 +113,7 @@ app.secret_key = hashlib.sha3_256(str(ran).encode('utf-8')).hexdigest()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return vorstand.query.get(int(user_id))  
+    return mitglieder.query.get(int(user_id))  
     
 @app.route('/')
 def show_entries():
@@ -128,11 +131,11 @@ def index():
 def login():
     error = None
     if current_user.is_authenticated == True:
-        return redirect('/home')
+        return redirect(url_for('home'))
     else:
         pass    
     if request.method == 'POST':
-        user = vorstand.query.filter_by(kuerzel=request.form['username']).first()
+        user = mitglieder.query.filter_by(email=request.form['username']).first()
         if user == None:
             error = 'Dieser Benutzer existiert nicht'
             return render_template('login.html',error=error)
@@ -141,7 +144,7 @@ def login():
             login_user(user,remember=True,duration=timedelta(300))
             if request.args.get('next') != '' and request.args.get('next') != None:
                 return redirect(request.args.get('next'))
-            return render_template('home.html',error=error)
+            return redirect(url_for('home'))
         else:
             error = 'Das Passwort ist falsch'
     else:
@@ -155,15 +158,17 @@ def login():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+    geburtsdatum = format(datetime.fromtimestamp(current_user.geburtsdatum+7200), '%d.%m.%Y')
+    erstellungsdatum = format(datetime.fromtimestamp(current_user.erstellungsdatum), '%d.%m.%Y')
     if request.method == 'POST':
-        if "old_password" in request.form:
+        if "change_password" in request.form:
             password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
             if password == current_user.passwort and request.form['new_password'] == request.form['confirm_password'] and request.form['new_password'] != '':
                 flash('Passwort aktualisiert')
                 new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
                 current_user.passwort = new_pw
                 db.session.commit()
-                return render_template('home.html') 
+                return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum) 
             else:
                 if password != current_user.passwort:
                     flash('Altes Passwort falsch')
@@ -171,14 +176,25 @@ def home():
                     flash('Passwörter stimmen nicht überein')
                 if request.form['new_password'] == '':
                     flash('Bitte gib ein neues Passwort ein')
-        if "email" in request.form:
-            current_user.email = request.form['email']
+        if "change_data" in request.form:
+            if request.form['strasse'] != '':
+                current_user.strasse = request.form['strasse']
+            if request.form['hausnummer'] != '':
+                current_user.hausnummer = request.form['hausnummer']
+            if request.form['plz'] != '':
+                current_user.plz = request.form['plz']
+            if request.form['ort'] != '':
+                current_user.ort = request.form['ort']
+            if request.form['email'] != '':
+                current_user.email = request.form['email']
+            if request.form['mobil'] != '':
+                current_user.mobil = request.form['mobil']
             db.session.commit()
-            flash('E-Mail aktualisiert')
-            return render_template('home.html')
+            flash('Daten aktualisiert')
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
     else:
         pass
-    return render_template('home.html')
+    return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
 
 #Routine for forgotten password
 @app.route('/reset', methods=['GET', 'POST'])
@@ -188,7 +204,7 @@ def reset():
         token = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         token2 = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         
-        user = vorstand.query.filter_by(email=request.form['email']).first()
+        user = mitglieder.query.filter_by(email=request.form['email']).first()
         user.token = token + token2
         user.tokenttl = int(time.time()) + 300
         db.session.commit()
@@ -203,7 +219,7 @@ Hallo {},
 Der Link zum Zurücksetzen deines Passworts lautet: 
 {}
 
-Der Link ist gültig bis zum {}.""".format(user.name,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
+Der Link ist gültig bis zum {}.""".format(user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
         mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
@@ -211,7 +227,7 @@ Der Link ist gültig bis zum {}.""".format(user.name,"https://mitgliederverwaltu
 #Actually reset the password
 @app.route('/reset/<token>', methods=['GET', 'POST'])
 def reset_pw(token):
-    user = vorstand.query.filter_by(token=token).first()
+    user = mitglieder.query.filter_by(token=token).first()
     if user.tokenttl < int(time.time()):
         flash('Dein Token ist abgelaufen')
         return redirect(url_for('login'))
@@ -234,7 +250,7 @@ def reset_pw(token):
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
 def new():
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     antrags_id = request.args.get('antrags_id')
@@ -258,7 +274,7 @@ def new():
 @app.route('/database')
 @login_required
 def database():
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     all_users = mitglieder.query.order_by(-mitglieder.id)
@@ -272,6 +288,9 @@ def database():
 @app.route('/abstimmung', methods=['GET', 'POST'])
 @login_required
 def abstimmung_list():
+    if current_user.rechte < 1:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     subjects=getmail.get_subjects()
     subjects.reverse()
     ids = []
@@ -316,7 +335,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 {antrag_add.text}<br />
 <br />
 <a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
-        if request.host.find("localhost") != -1:
+        if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
@@ -326,6 +345,9 @@ Der nachfolgende Antrag wurde gestellt:<br />
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
 @login_required
 def abstimmung(abstimmung_id):
+    if current_user.rechte < 1:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
@@ -336,7 +358,7 @@ def abstimmung(abstimmung_id):
             if request.method == 'GET':
                 engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
                 with engine.connect() as con:
-                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM vorstand").fetchone()[0]
+                    abstimmungsberechtigte_count = con.execute("SELECT count(id) FROM mitglieder WHERE rechte > 0").fetchone()[0]
                 alle_da = False
                 if abstimmungsberechtigte_count == len(abstimmung['stimmen']):
                     alle_da = True
@@ -373,7 +395,7 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 <br />
 Abgegebene Stimmen:<br />
 {str(abstimmung['stimmen'])}"""
-                        if request.host.find("localhost") != -1:
+                        if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
@@ -387,11 +409,11 @@ Abgegebene Stimmen:<br />
                     return redirect(url_for('abstimmung_list'))
 
                 if request.form['votum'] == 'clear':
-                    if current_user.name in abstimmung['stimmen']:
-                        abstimmung['stimmen'].pop(current_user.name)
+                    if current_user.vorname + ' ' + current_user.name in abstimmung['stimmen']:
+                        abstimmung['stimmen'].pop(current_user.vorname + ' ' + current_user.name)
                         flash('Dein Votum wurde zurückgesetzt')
                 else:
-                    abstimmung['stimmen'][current_user.name] = request.form['votum']
+                    abstimmung['stimmen'][current_user.vorname + ' ' + current_user.name] = request.form['votum']
                     flash('Dein Votum wurde erfasst')
                     engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
                     with engine.connect() as con:
@@ -421,7 +443,7 @@ Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten 
 @app.route('/edit/<user_id>')
 @login_required
 def edit(user_id):
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
@@ -440,7 +462,7 @@ def edit(user_id):
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required
 def send_mail(user_id):
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
@@ -528,7 +550,7 @@ Mobil:  0176 57517450<br />
 @app.route('/confirm_edit',methods=['GET','POST'])
 @login_required
 def confirm_edit():
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     if request.method == 'POST':
@@ -566,6 +588,7 @@ def confirm_edit():
             user.ort = request.form["ort"]
             user.email = request.form["email"]
             user.mobil = request.form["mobil"]
+            user.rechte = request.form["rechte"]
         
             db.session.commit()
         
@@ -576,7 +599,7 @@ def confirm_edit():
 @app.route('/confirm_new',methods=['GET','POST'])
 @login_required
 def confirm_new():
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     if "new" in request.form and request.method == 'POST':
@@ -617,7 +640,7 @@ def confirm_new():
 @app.route('/set_counter', methods=['GET','POST'])
 @login_required
 def set_counter():
-    if current_user.rechte == 0:
+    if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
