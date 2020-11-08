@@ -39,7 +39,7 @@ login_manager.init_app(app)
 class new_user():
   def __init__(self, vorname, name, sex, strasse, hausnummer,\
   plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
-  geburtsdatum_string, erstellungsdatum_string):
+  sonstiges, geburtsdatum_string, erstellungsdatum_string):
     self.vorname = vorname
     self.name = name
     self.sex = sex
@@ -53,6 +53,7 @@ class new_user():
     self.email = email
     self.geburtsdatum_string = geburtsdatum_string
     self.erstellungsdatum_string = erstellungsdatum_string
+    self.sonstiges = sonstiges
 
 class mitglieder(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -68,7 +69,7 @@ class mitglieder(UserMixin, db.Model):
     mobil = db.Column(db.String(30))
     email = db.Column(db.String(50))
     #Ab hier leere Inhalte
-    #sonstiges = db.Column(db.String(30), default="NULL")
+    sonstiges = db.Column(db.Text(4294000000), default="")
     passwort = db.Column(db.String(30), default="12345")
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
@@ -456,14 +457,12 @@ def edit(user_id):
 
     user = mitglieder.query.filter_by(id=user_id).first()
     
-
     geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
     erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
     
-
     session['user_id'] = user_id
         
-    return render_template('edit.html',user = user, geburtsdatum=geburtsdatum,\
+    return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
     erstellungsdatum=erstellungsdatum)
     
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
@@ -617,7 +616,8 @@ def confirm_new():
         new = new_user(request.form["vorname"],request.form["name"], request.form["sex"],\
         request.form["strasse"], request.form["hausnummer"],request.form["plz"],\
         request.form["ort"], geburtsdatum,int(time.time()),\
-        request.form["mobil"], request.form["email"], geburtsdatum_string, erstellungsdatum_string)
+        request.form["mobil"], request.form["email"], request.form["emailtext"],\
+        geburtsdatum_string, erstellungsdatum_string)
         return render_template('confirm_new.html', confirm=1, new=new)
     if "confirm_new" in request.form and request.method == 'POST':
         
@@ -635,6 +635,7 @@ def confirm_new():
         user_add.email = request.form["email"]
         user_add.forum_id = 1
         user_add.forum_username = request.form["vorname"]
+        user_add.sonstiges = request.form["emailtext"]
         
         db.session.add(user_add)
         db.session.commit()
