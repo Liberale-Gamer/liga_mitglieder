@@ -83,6 +83,36 @@ class mitgliederSchema(ma.SQLAlchemyAutoSchema):
         model = mitglieder
         load_instance = True  
 
+class mitglieder_no_sonstiges(UserMixin, db.Model):
+    __tablename__ = 'mitglieder'
+    
+    id = db.Column(db.Integer, primary_key = True)
+    vorname = db.Column(db.String(30)) 
+    name = db.Column(db.String(30))
+    sex = db.Column(db.Integer)
+    strasse = db.Column(db.String(30))  
+    hausnummer = db.Column(db.String(10))
+    plz = db.Column(db.String(30))  
+    ort = db.Column(db.String(30)) 
+    geburtsdatum = db.Column(db.Integer)
+    erstellungsdatum = db.Column(db.Integer)  
+    mobil = db.Column(db.String(30))
+    email = db.Column(db.String(50))
+    #Ab hier leere Inhalte
+    #sonstiges = db.Column(db.Text(4294000000), default="")
+    passwort = db.Column(db.String(30), default="12345")
+    forum_id = db.Column(db.String(30))
+    forum_username = db.Column(db.String(30))
+    forum_passwort = db.Column(db.String(30), default="12345")
+    token = db.Column(db.Text, default="")
+    tokenttl = db.Column(db.Integer, default=0)
+    rechte = db.Column(db.Integer, default=0)
+    
+class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = mitglieder_no_sonstiges
+        load_instance = True  
+
 class abstimmung_intern(UserMixin, db.Model):
     id = db.Column(db.String(30), primary_key = True)
     titel = db.Column(db.String(250))
@@ -285,8 +315,8 @@ def database():
     if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
-    all_users = mitglieder.query.order_by(-mitglieder.id)
-    mitgliederschema = mitgliederSchema(many=True)
+    all_users = mitglieder_no_sonstiges.query.order_by(-mitglieder_no_sonstiges.id)
+    mitgliederschema = mitgliederNoSonstigesSchema(many=True)
     output = mitgliederschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
