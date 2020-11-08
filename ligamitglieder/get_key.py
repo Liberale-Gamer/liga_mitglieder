@@ -22,3 +22,5 @@ def delete(oldtoken):
         tn.write(loginstring.encode('utf-8'))
         tn.write("use sid=1\n".encode('utf-8'))
         tn.write(tokendelete.encode('utf-8'))
+        tn.write("quit\n".encode('utf-8'))
+        tn.read_all()
