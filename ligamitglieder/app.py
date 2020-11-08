@@ -22,6 +22,7 @@ import ast
 import emails
 import files
 import get_key
+import crypto
 
 app = Flask(__name__)
 
@@ -219,18 +220,29 @@ def home():
         if "change_data" in request.form:
             if request.form['strasse'] != '':
                 current_user.strasse = request.form['strasse']
+                flash('Straße aktualisiert')
             if request.form['hausnummer'] != '':
                 current_user.hausnummer = request.form['hausnummer']
+                flash('Hausnummer aktualisiert')
             if request.form['plz'] != '':
                 current_user.plz = request.form['plz']
+                flash('PLZ aktualisiert')
             if request.form['ort'] != '':
                 current_user.ort = request.form['ort']
+                flash('Ort aktualisiert')
             if request.form['email'] != '':
-                current_user.email = request.form['email']
+                sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
+                text = """\
+Hallo {},
+
+Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
+{}""".format(current_user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
+                mailer.send_email(sender, request.form['email'], "E-Mail-Adresse aktualisieren", text)
+                flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
             if request.form['mobil'] != '':
                 current_user.mobil = request.form['mobil']
+                flash('Handynummer aktualisiert')
             db.session.commit()
-            flash('Daten aktualisiert')
             return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
         if "newkey" in request.form:
             current_user.schluessel = get_key.get(current_user.schluessel)
@@ -241,6 +253,14 @@ def home():
         pass
     return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
 
+@app.route('/new_email/<token>')
+@login_required
+def new_email(token):
+    new_email = crypto.decrypt_message(token.encode('utf-8')).decode('utf-8')
+    current_user.email = new_email
+    db.session.commit()
+    flash('E-Mail-Adresse aktualisiert')
+    return redirect(url_for('home'))
 
 @app.route('/docs')
 @login_required
