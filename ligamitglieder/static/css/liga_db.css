@@ -363,3 +363,11 @@ textarea {
     background-color: #e5007d !important;
     color: #ffffff !important;
 }
+
+a.linkinflash {
+    color: #ffed00;
+}
+
+a.linkinflash:hover {
+    color: #cccccc;
+}
