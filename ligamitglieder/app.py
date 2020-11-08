@@ -55,7 +55,41 @@ class new_user():
     self.erstellungsdatum_string = erstellungsdatum_string
     self.sonstiges = sonstiges
 
+
+class mitglieder_no_sonstiges(UserMixin, db.Model):
+    __tablename__ = 'mitglieder'
+
+    id = db.Column(db.Integer, primary_key = True)
+    vorname = db.Column(db.String(30))
+    name = db.Column(db.String(30))
+    sex = db.Column(db.Integer)
+    strasse = db.Column(db.String(30))
+    hausnummer = db.Column(db.String(10))
+    plz = db.Column(db.String(30))
+    ort = db.Column(db.String(30))
+    geburtsdatum = db.Column(db.Integer)
+    erstellungsdatum = db.Column(db.Integer)
+    mobil = db.Column(db.String(30))
+    email = db.Column(db.String(50))
+    #Ab hier leere Inhalte
+    #sonstiges = db.Column(db.Text(4294000000), default="")
+    passwort = db.Column(db.String(30), default="12345")
+    forum_id = db.Column(db.String(30))
+    forum_username = db.Column(db.String(30))
+    forum_passwort = db.Column(db.String(30), default="12345")
+    token = db.Column(db.Text, default="")
+    tokenttl = db.Column(db.Integer, default=0)
+    rechte = db.Column(db.Integer, default=0)
+
+class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = mitglieder_no_sonstiges
+        load_instance = True
+
 class mitglieder(UserMixin, db.Model):
+    __tablename__ = 'mitglieder'
+    __table_args__ = {'extend_existing': True}
+
     id = db.Column(db.Integer, primary_key = True)
     vorname = db.Column(db.String(30)) 
     name = db.Column(db.String(30))
@@ -83,35 +117,6 @@ class mitgliederSchema(ma.SQLAlchemyAutoSchema):
         model = mitglieder
         load_instance = True  
 
-class mitglieder_no_sonstiges(UserMixin, db.Model):
-    __tablename__ = 'mitglieder'
-    
-    id = db.Column(db.Integer, primary_key = True)
-    vorname = db.Column(db.String(30)) 
-    name = db.Column(db.String(30))
-    sex = db.Column(db.Integer)
-    strasse = db.Column(db.String(30))  
-    hausnummer = db.Column(db.String(10))
-    plz = db.Column(db.String(30))  
-    ort = db.Column(db.String(30)) 
-    geburtsdatum = db.Column(db.Integer)
-    erstellungsdatum = db.Column(db.Integer)  
-    mobil = db.Column(db.String(30))
-    email = db.Column(db.String(50))
-    #Ab hier leere Inhalte
-    #sonstiges = db.Column(db.Text(4294000000), default="")
-    passwort = db.Column(db.String(30), default="12345")
-    forum_id = db.Column(db.String(30))
-    forum_username = db.Column(db.String(30))
-    forum_passwort = db.Column(db.String(30), default="12345")
-    token = db.Column(db.Text, default="")
-    tokenttl = db.Column(db.Integer, default=0)
-    rechte = db.Column(db.Integer, default=0)
-    
-class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = mitglieder_no_sonstiges
-        load_instance = True  
 
 class abstimmung_intern(UserMixin, db.Model):
     id = db.Column(db.String(30), primary_key = True)
