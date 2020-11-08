@@ -32,7 +32,7 @@
             Geburtsdatum: {{geburtsdatum}} </br>
             Mitglied seit: {{erstellungsdatum}}<br />
             <br />
-            TeamSpeak-Berechtigungsschlüssel: {{user.schluessel}}
+            TeamSpeak-Berechtigungsschlüssel: <span style="font-size: smaller;">{{user.schluessel}}</span>
 
             <form action="{{ url_for('edit', user_id=user.id) }}" method="post">
               <input name="newkey" type="submit" value="Neuen Schlüssel generieren">

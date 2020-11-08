@@ -15,7 +15,7 @@ def get(oldtoken=None):
         response = tn.read_until(b'\n', 5)
     return response.decode('utf-8')[:-1]
 
-def remove(oldtoken):
+def delete(oldtoken):
     loginstring = 'login serveradmin ' + passwords.ts3 + '\n'
     tokendelete = 'tokendelete token=' + oldtoken + '\n'
     with Telnet('localhost', 10011) as tn:
