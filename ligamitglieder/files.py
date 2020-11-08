@@ -1,6 +1,6 @@
-foldernames = {\
-'protokolle': 'Protokolle'}
+foldernames = {}
+#'protokolle': 'Protokolle'} # Example folder
 
-filenames = {\
-'doc': 'Dokument',\
-'protokolle/protokoll': 'Protokoll'}
+filenames = {}
+#'doc': 'Dokument',\ # Example file in root
+#'protokolle/protokoll': 'Protokoll'} # Example file in folder
