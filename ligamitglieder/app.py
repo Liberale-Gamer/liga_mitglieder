@@ -232,6 +232,11 @@ def home():
             db.session.commit()
             flash('Daten aktualisiert')
             return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
+        if "newkey" in request.form:
+            current_user.schluessel = get_key.get(current_user.schluessel)
+            flash('Neuer Berechtigungsschlüssel generiert')
+            db.session.commit()
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
     else:
         pass
     return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
@@ -680,7 +685,7 @@ def confirm_new():
         user_add.forum_id = 1
         user_add.forum_username = request.form["vorname"]
         user_add.sonstiges = request.form["emailtext"]
-        
+        user_add.schluessel = get_key.get()
         db.session.add(user_add)
         db.session.commit()
         
