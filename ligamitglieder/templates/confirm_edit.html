@@ -29,6 +29,46 @@
         </div>
     </div>
 
+    {% endif %} {% if confirm_delete==1 %}
+    
+    <script type="text/javascript">
+
+        function fallbackCopyTextToClipboard(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            var successful = document.execCommand("copy");
+            var msg = successful ? "successful" : "unsuccessful";
+            console.log("Fallback: Copying text command was " + msg);
+        } catch (err) {
+            console.error("Fallback: Oops, unable to copy", err);
+        }
+
+        document.body.removeChild(textArea);
+        }
+        function copyTextToClipboard(text) {
+        if (!navigator.clipboard) {
+            fallbackCopyTextToClipboard(text);
+            return;
+        }
+        navigator.clipboard.writeText(text).then(
+            function() {
+            console.log("Async: Copying to clipboard was successful!");
+            },
+            function(err) {
+            console.error("Async: Could not copy text: ", err);
+            }
+        );
+        }
+
+        function copyText(name) {
+            copyTextToClipboard("Hallo " + name + ",\n\ndeine Austrittserklärung ist bei uns angekommen. Wir bestätigen dir hiermit deinen Austritt aus dem Liberale Gamer e.V. Wir bedauern deinen Entschluss, wünschen dir aber für deine weitere Zeit alles Gute!\n\nViele Grüße\n\nMarvin Ruder");
+        }
+    </script>
 
     {% endif %} {% if edit==1 %}
     <h3 style="padding:15px;">Änderung bestätigen</h3>

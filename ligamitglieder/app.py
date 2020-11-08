@@ -561,9 +561,10 @@ def confirm_edit():
             return render_template('confirm_edit.html', user=user,delete=1, geburtsdatum=geburtsdatum,\
     erstellungsdatum=erstellungsdatum)
         if "confirm_delete" in request.form:
+            vorname = user.vorname
             db.session.delete(user)
             db.session.commit()
-            flash('Mitglied gelöscht')
+            flash('Mitglied gelöscht. <a onclick="copyText(\'' + vorname + '\')" class="linkinflash">Text für Mail kopieren</a>')
             return render_template('confirm_edit.html', confirm_delete=1, user=user)
         if "aktualisieren" in request.form:
             user_old = copy.copy(user)
