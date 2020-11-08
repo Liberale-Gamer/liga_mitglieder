@@ -81,6 +81,7 @@ class mitglieder_no_sonstiges(UserMixin, db.Model):
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
+    schluessel = db.Column(db.String(250))
 
 class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -112,6 +113,7 @@ class mitglieder(UserMixin, db.Model):
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
+    schluessel = db.Column(db.String(250))
     
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -504,7 +506,8 @@ def edit(user_id):
     if request.method == 'POST':
         user = mitglieder.query.filter_by(id=user_id).first()
         user.schluessel = get_key.get(user.schluessel)
-        return redirect(url_for('edit', user_id = user_id))
+        db.session.commit()
+        return redirect(url_for('edit',user_id=str(user_id)))
     
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required

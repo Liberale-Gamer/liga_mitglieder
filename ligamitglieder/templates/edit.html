@@ -34,7 +34,7 @@
             <br />
             TeamSpeak-Berechtigungsschlüssel: {{user.schluessel}}
 
-            <form action="{{ url_for('edit') }}" method="post">
+            <form action="{{ url_for('edit', user_id=user.id) }}" method="post">
               <input name="newkey" type="submit" value="Neuen Schlüssel vergeben">
             </form>
 
