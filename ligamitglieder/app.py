@@ -21,6 +21,7 @@ import re
 import ast
 import emails
 import files
+import get_key
 
 app = Flask(__name__)
 
@@ -483,22 +484,27 @@ Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten 
     flash('Abstimmung nicht gefunden')
     return redirect(url_for('abstimmung_list'))
     
-@app.route('/edit/<user_id>')
+@app.route('/edit/<user_id>', methods=['GET', 'POST'])
 @login_required
 def edit(user_id):
     if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
-    user = mitglieder.query.filter_by(id=user_id).first()
-    
-    geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
-    erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
-    
-    session['user_id'] = user_id
+    if request.method == 'GET':
+        user = mitglieder.query.filter_by(id=user_id).first()
         
-    return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
-    erstellungsdatum=erstellungsdatum)
+        geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
+        erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
+        
+        session['user_id'] = user_id
+            
+        return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
+        erstellungsdatum=erstellungsdatum)
+    if request.method == 'POST':
+        user = mitglieder.query.filter_by(id=user_id).first()
+        user.schluessel = get_key.get(user.schluessel)
+        return redirect(url_for('edit', user_id = user_id))
     
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required

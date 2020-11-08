@@ -30,7 +30,13 @@
             Mobil: {{user.mobil}} </br>
             </br>
             Geburtsdatum: {{geburtsdatum}} </br>
-            Mitglied seit: {{erstellungsdatum}}
+            Mitglied seit: {{erstellungsdatum}}<br />
+            <br />
+            TeamSpeak-Berechtigungsschlüssel: {{user.schluessel}}
+
+            <form action="{{ url_for('edit') }}" method="post">
+              <input name="newkey" type="submit" value="Neuen Schlüssel vergeben">
+            </form>
 
             <form action="{{ url_for('confirm_edit') }}" method="post">
                 <input name="delete" type="submit" value="Mitglied löschen">
