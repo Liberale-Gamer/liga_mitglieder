@@ -20,7 +20,6 @@
             <div class="col homebox">
                 {% for folderpath, foldername in foldermap.items() %}
                     <h4>{{foldername}}</h4>
-                    </br>
                     {% for path, name in filemap.items() %}
                         {% if path.find(folderpath) == 0 %}<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
                     {% endfor %}
