@@ -230,13 +230,13 @@ def home():
             if request.form['ort'] != '':
                 current_user.ort = request.form['ort']
                 flash('Ort aktualisiert')
-           if request.form['email'] != '':
+            if request.form['email'] != '':
                 sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
                 text = """\
 Hallo {},
 
 Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
-{}""".format(user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
+{}""".format(current_user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
                 mailer.send_email(sender, request.form['email'], "E-Mail-Adresse aktualisieren", text)
                 flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
             if request.form['mobil'] != '':
@@ -256,8 +256,9 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet:
 @app.route('/new_email/<token>')
 @login_required
 def new_email(token):
-    new_email = crypto.decrypt_message(token).decode('utf-8')
+    new_email = crypto.decrypt_message(token.encode('utf-8')).decode('utf-8')
     current_user.email = new_email
+    db.session.commit()
     flash('E-Mail-Adresse aktualisiert')
     return redirect(url_for('home'))
 
