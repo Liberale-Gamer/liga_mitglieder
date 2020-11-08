@@ -616,6 +616,7 @@ def confirm_edit():
             return render_template('confirm_edit.html', user=user,delete=1, geburtsdatum=geburtsdatum,\
     erstellungsdatum=erstellungsdatum)
         if "confirm_delete" in request.form:
+            get_key.delete(user.schluessel)
             vorname = user.vorname
             db.session.delete(user)
             db.session.commit()
