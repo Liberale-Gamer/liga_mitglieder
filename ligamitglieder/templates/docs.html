@@ -2,7 +2,7 @@
 
 <div class="homecontainer">
     <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
-    <h2>Dateien</h2>
+    <h2>Dokumente</h2>
 
     <!-- Pretty Form -->
     <style>
@@ -22,12 +22,12 @@
                     <h4>{{foldername}}</h4>
                     </br>
                     {% for path, name in filemap.items() %}
-                        {% if path.find(folderpath) == 0 }<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
+                        {% if path.find(folderpath) == 0 %}<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
                     {% endfor %}
                 {% endfor %}
                 <h4>Weitere Dokumente</h4>
                 {% for path, name in filemap.items() %}
-                    {% if path.find('/') == -1 }<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
+                    {% if path.find('/') == -1 %}<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
                 {% endfor %}
 
             </div>
