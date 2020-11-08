@@ -1,0 +1,43 @@
+{% extends 'navbar.html' %} {% block body %}
+
+<div class="homecontainer">
+    <img src="/static/img/logo.png" style="width: 150px; height: 150px; margin: 30px;">
+    <h2>Dokumente</h2>
+
+    <!-- Pretty Form -->
+    <style>
+        label {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+        }
+    </style>
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col homebox">
+                {% for folderpath, foldername in foldermap.items() %}
+                    <h4>{{foldername}}</h4>
+                    {% for path, name in filemap.items() %}
+                        {% if path.find(folderpath) == 0 %}<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                <h4>Weitere Dokumente</h4>
+                {% for path, name in filemap.items() %}
+                    {% if path.find('/') == -1 %}<p><a href="/static/docs/{{path}}">{{name}}</a></p> {% endif %}
+                {% endfor %}
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

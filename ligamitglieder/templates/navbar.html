@@ -11,11 +11,15 @@
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link {% if request.path == '/login' or request.path == '/home' %} active {% endif %}" href={{url_for('login')}}>
-        {% if current_user.is_authenticated %} Home {% else %} Login {% endif %}
+                    {% if current_user.is_authenticated %} Home {% else %} Login {% endif %}
                 </a>
             </li>
 
             {% if current_user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/docs' %} active {% endif %}" href="{{url_for('docs')}}">Dokumente</a>
+            </li>
+            
             {% if current_user.rechte > 0 %}
             <li class="nav-item">
                 <a class="nav-link {% if request.path == '/abstimmung' %} active {% endif %}" href="{{url_for('abstimmung_list')}}">Abstimmungen</a>

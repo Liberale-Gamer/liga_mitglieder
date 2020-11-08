@@ -20,6 +20,7 @@ import sendmail, getmail
 import re
 import ast
 import emails
+import files
 
 app = Flask(__name__)
 
@@ -195,6 +196,12 @@ def home():
     else:
         pass
     return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
+
+
+@app.route('/docs')
+@login_required
+def docs():
+    return render_template('docs.html', filemap=files.filenames, foldermap=files.foldernames)
 
 #Routine for forgotten password
 @app.route('/reset', methods=['GET', 'POST'])
