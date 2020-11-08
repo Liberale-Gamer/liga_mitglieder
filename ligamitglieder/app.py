@@ -21,6 +21,7 @@ import re
 import ast
 import emails
 import files
+import get_key
 
 app = Flask(__name__)
 
@@ -80,6 +81,7 @@ class mitglieder_no_sonstiges(UserMixin, db.Model):
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
+    schluessel = db.Column(db.String(250))
 
 class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -111,6 +113,7 @@ class mitglieder(UserMixin, db.Model):
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
+    schluessel = db.Column(db.String(250))
     
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -228,6 +231,11 @@ def home():
                 current_user.mobil = request.form['mobil']
             db.session.commit()
             flash('Daten aktualisiert')
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
+        if "newkey" in request.form:
+            current_user.schluessel = get_key.get(current_user.schluessel)
+            flash('Neuer Berechtigungsschlüssel generiert')
+            db.session.commit()
             return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
     else:
         pass
@@ -483,22 +491,28 @@ Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten 
     flash('Abstimmung nicht gefunden')
     return redirect(url_for('abstimmung_list'))
     
-@app.route('/edit/<user_id>')
+@app.route('/edit/<user_id>', methods=['GET', 'POST'])
 @login_required
 def edit(user_id):
     if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
 
-    user = mitglieder.query.filter_by(id=user_id).first()
-    
-    geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
-    erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
-    
-    session['user_id'] = user_id
+    if request.method == 'GET':
+        user = mitglieder.query.filter_by(id=user_id).first()
         
-    return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
-    erstellungsdatum=erstellungsdatum)
+        geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
+        erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
+        
+        session['user_id'] = user_id
+            
+        return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
+        erstellungsdatum=erstellungsdatum)
+    if request.method == 'POST':
+        user = mitglieder.query.filter_by(id=user_id).first()
+        user.schluessel = get_key.get(user.schluessel)
+        db.session.commit()
+        return redirect(url_for('edit',user_id=str(user_id)))
     
 @app.route('/send_mail/<user_id>', methods=['GET', 'POST'])
 @login_required
@@ -602,6 +616,7 @@ def confirm_edit():
             return render_template('confirm_edit.html', user=user,delete=1, geburtsdatum=geburtsdatum,\
     erstellungsdatum=erstellungsdatum)
         if "confirm_delete" in request.form:
+            get_key.delete(user.schluessel)
             vorname = user.vorname
             db.session.delete(user)
             db.session.commit()
@@ -671,7 +686,7 @@ def confirm_new():
         user_add.forum_id = 1
         user_add.forum_username = request.form["vorname"]
         user_add.sonstiges = request.form["emailtext"]
-        
+        user_add.schluessel = get_key.get()
         db.session.add(user_add)
         db.session.commit()
         

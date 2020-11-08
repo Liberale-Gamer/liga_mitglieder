@@ -36,9 +36,14 @@
                 Mobil: {{current_user.mobil}} </br>
                 </br>
                 Geburtsdatum: {{geburtsdatum}} </br>
-                Mitglied seit: {{erstellungsdatum}}
+                Mitglied seit: {{erstellungsdatum}}</br>
+                </br>
+                TeamSpeak-Berechtigungsschlüssel: <span style="font-size: smaller;">{{current_user.schluessel}}</span>
 
-            </div>
+                <form action="{{ url_for('home') }}" method="post">
+                  <input name="newkey" type="submit" value="Neuen Schlüssel generieren">
+                </form>
+                </div>
 
             <div class="col homebox">
 
@@ -46,7 +51,6 @@
                 </br>
 
                 <form action="{{ url_for('home') }}" method="post">
-                    </br>
                     <input type="text" name="strasse" placeholder="Straße"><input type="text" name="hausnummer" placeholder="Hausnr."> </br>
                     <input type="text" name="plz" placeholder="PLZ"><input type="text" name="ort" placeholder="Ort"> </br>
                     </br>
