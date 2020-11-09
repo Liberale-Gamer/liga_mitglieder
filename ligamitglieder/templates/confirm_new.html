@@ -19,7 +19,8 @@
             Mobil: {{new.mobil}} </br>
             </br>
             Geburtsdatum: {{new.geburtsdatum_string}} </br>
-            Mitglied seit: {{new.erstellungsdatum_string}}
+            Mitglied seit: {{new.erstellungsdatum_string}}<br />
+            Beitrag bezahlt seit: {{new.payed_till}}
 
         </div>
     </div>
@@ -41,6 +42,7 @@
         <input type="hidden" name="sex" value="{{new.sex}}">
         <input type="hidden" name="geburtsdatum" value="{{new.geburtsdatum}}">
         <input type="hidden" name="erstellungsdatum" value="{{new.erstellungsdatum}}">
+        <input type="hidden" name="payed_till" value="{{new.payed_till}}">
 
         <textarea name="emailtext" style="display:none;">{{new.sonstiges}}</textarea>
 
