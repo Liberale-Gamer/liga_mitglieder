@@ -31,8 +31,13 @@
             </br>
             Geburtsdatum: {{geburtsdatum}} </br>
             Mitglied seit: {{erstellungsdatum}}<br />
+            Betrag bezahlt bis: {{payed_till}}<br />
             <br />
             TeamSpeak-Berechtigungsschlüssel: <span style="font-size: smaller;">{{user.schluessel}}</span>
+
+            <form action="{{ url_for('confirm_edit') }}" method="post">
+              <input name="payed" type="submit" value="Beitrag eingegangen">
+            </form>
 
             <form action="{{ url_for('edit', user_id=user.id) }}" method="post">
               <input name="newkey" type="submit" value="Neuen Schlüssel generieren">
