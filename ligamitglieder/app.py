@@ -255,9 +255,9 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet:
         pass
     return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
 
-@app.route('/send_member_mail')
+@app.route('/send_member_email')
 @login_required
-def send_member_mail:
+def send_member_email():
     if current_user.rechte < 2:
         flash('Keine Berechtigung')
     else:
