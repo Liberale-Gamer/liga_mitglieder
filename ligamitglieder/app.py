@@ -268,7 +268,7 @@ def send_member_email():
         email_string = "mailto:"
         for email in email_list:
             email_string += email[0] + ','
-        flash('<a href="' + email_string[:-1] + '">E-Mail senden</a>')
+        flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
     return redirect(url_for('home'))
     
 
