@@ -39,24 +39,24 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 class new_user():
-def __init__(self, vorname, name, sex, strasse, hausnummer,\
+    def __init__(self, vorname, name, sex, strasse, hausnummer,\
 plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
 sonstiges, geburtsdatum_string, erstellungsdatum_string, payed_till):
-    self.vorname = vorname
-    self.name = name
-    self.sex = sex
-    self.strasse = strasse
-    self.hausnummer = hausnummer
-    self.plz = plz
-    self.ort = ort
-    self.geburtsdatum = geburtsdatum
-    self.erstellungsdatum = erstellungsdatum
-    self.mobil = mobil
-    self.email = email
-    self.geburtsdatum_string = geburtsdatum_string
-    self.erstellungsdatum_string = erstellungsdatum_string
-    self.sonstiges = sonstiges
-    self.payed_till = payed_till
+        self.vorname = vorname
+        self.name = name
+        self.sex = sex
+        self.strasse = strasse
+        self.hausnummer = hausnummer
+        self.plz = plz
+        self.ort = ort
+        self.geburtsdatum = geburtsdatum
+        self.erstellungsdatum = erstellungsdatum
+        self.mobil = mobil
+        self.email = email
+        self.geburtsdatum_string = geburtsdatum_string
+        self.erstellungsdatum_string = erstellungsdatum_string
+        self.sonstiges = sonstiges
+        self.payed_till = payed_till
 
 
 class mitglieder_no_sonstiges(UserMixin, db.Model):
