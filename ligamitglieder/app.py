@@ -265,7 +265,7 @@ def send_member_email():
         with engine.connect() as con:
             email_result = con.execute("SELECT email FROM mitglieder")
         email_list = [[value for column, value in rowproxy.items()] for rowproxy in email_result]
-        email_string = "mailto:"
+        email_string = "mailto:info@liberale-gamer.gg?bcc="
         for email in email_list:
             email_string += email[0] + ','
         flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
