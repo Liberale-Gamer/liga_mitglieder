@@ -34,6 +34,10 @@
                     <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
                 </div>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('send_member_email')}}">Mitglieder-E-Mail senden</a>
+            </li>
             {% endif %}
             {% endif %}
             

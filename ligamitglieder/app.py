@@ -39,9 +39,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 class new_user():
-  def __init__(self, vorname, name, sex, strasse, hausnummer,\
-  plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
-  sonstiges, geburtsdatum_string, erstellungsdatum_string, payed_till):
+def __init__(self, vorname, name, sex, strasse, hausnummer,\
+plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
+sonstiges, geburtsdatum_string, erstellungsdatum_string, payed_till):
     self.vorname = vorname
     self.name = name
     self.sex = sex
@@ -61,7 +61,6 @@ class new_user():
 
 class mitglieder_no_sonstiges(UserMixin, db.Model):
     __tablename__ = 'mitglieder'
-
     id = db.Column(db.Integer, primary_key = True)
     vorname = db.Column(db.String(30))
     name = db.Column(db.String(30))
@@ -94,7 +93,6 @@ class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
 class mitglieder(UserMixin, db.Model):
     __tablename__ = 'mitglieder'
     __table_args__ = {'extend_existing': True}
-
     id = db.Column(db.Integer, primary_key = True)
     vorname = db.Column(db.String(30)) 
     name = db.Column(db.String(30))
@@ -256,6 +254,24 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet:
     else:
         pass
     return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+
+@app.route('/send_member_mail')
+@login_required
+def send_member_mail:
+    if current_user.rechte < 2:
+        flash('Keine Berechtigung')
+    else:
+        engine = create_engine('mysql+pymysql://{}:{}@localhost/{}'.format(sqlconfig.sql_config.user,sqlconfig.sql_config.pw,sqlconfig.sql_config.db))
+        with engine.connect() as con:
+            email_result = con.execute("SELECT email FROM mitglieder")
+        email_list = [[value for column, value in rowproxy.items()] for rowproxy in email_result]
+        email_string = "mailto:"
+        for email in email_list:
+            email_string += email[0] + ','
+        flash('<a href="' + email_string[:-1] + '">E-Mail senden</a>')
+    return redirect(url_for('home'))
+    
+
 
 @app.route('/new_email/<token>')
 @login_required
