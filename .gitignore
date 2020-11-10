@@ -134,3 +134,4 @@ dmypy.json
 ligamitglieder_V0.1
 ligamitglieder/static/docs
 ligamitglieder/secret.key
+ligamitglieder/files.py
