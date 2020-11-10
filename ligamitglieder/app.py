@@ -250,7 +250,7 @@ def home():
 Hallo {},
 
 Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
-{}""".format(current_user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
+{}""".format(current_user.vorname,"https://intern.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
                 mailer.send_email(sender, request.form['email'], "E-Mail-Adresse aktualisieren", text)
                 flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
             if request.form['mobil'] != '':
@@ -336,7 +336,7 @@ Hallo {},
 Der Link zum Zurücksetzen deines Passworts lautet: 
 {}
 
-Der Link ist gültig bis zum {}.""".format(user.vorname,"https://mitgliederverwaltung.liberale-gamer.gg/reset/"+user.token, tokenttl) 
+Der Link ist gültig bis zum {}.""".format(user.vorname,"https://intern.liberale-gamer.gg/reset/"+user.token, tokenttl) 
         mailer.send_email(sender, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
@@ -451,7 +451,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
 <br />
 {antrag_add.text}<br />
 <br />
-<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
+<a href="https://intern.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
@@ -547,7 +547,7 @@ Abgegebene Stimmen:<br />
                         text = f"""
 Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten abgestimmt.<br />
 <br />
-<a href="https://mitgliederverwaltung.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt Abstimmung beenden</a>"""
+<a href="https://intern.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt Abstimmung beenden</a>"""
                         sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
                         receiver=receiver, subject=subject, text=text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
