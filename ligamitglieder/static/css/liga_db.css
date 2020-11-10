@@ -285,6 +285,14 @@ button:hover {
     background-color: #009ee3;
 }
 
+button.navbar-toggler > span {
+    background-image: url('https://mdbootstrap.com/img/svg/hamburger2.svg?color=009ee3') !important;
+}
+
+button.navbar-toggler:hover > span {
+    background-image: url('https://mdbootstrap.com/img/svg/hamburger2.svg?color=ffffff') !important;
+}
+
 input,
 textarea {
     border-color: transparent;
