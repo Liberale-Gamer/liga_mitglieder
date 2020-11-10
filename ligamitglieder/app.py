@@ -38,6 +38,17 @@ ma = Marshmallow(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+#After how many seconds of inactivity a user is logged out
+session_ttl = 300 #e.g. 5 minutes
+
+#Before each request, check if session is alive.
+#If it is, reset the inacitivity timer
+@app.before_request
+def before_request():
+    flask.session.permanent = True
+    app.permanent_session_lifetime = timedelta(session_ttl)
+    flask.session.modified = True
+
 class new_user():
     def __init__(self, vorname, name, sex, strasse, hausnummer,\
 plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
@@ -183,7 +194,7 @@ def login():
             return render_template('login.html',error=error)
         password = hashlib.sha3_256(str(request.form['password']).encode('utf-8')).hexdigest()
         if password == user.passwort:
-            login_user(user,remember=True,duration=timedelta(300))
+            login_user(user,remember=False,duration=timedelta(300))
             if request.args.get('next') != '' and request.args.get('next') != None:
                 return redirect(request.args.get('next'))
             return redirect(url_for('home'))
