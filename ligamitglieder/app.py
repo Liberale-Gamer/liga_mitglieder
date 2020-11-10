@@ -295,7 +295,7 @@ def status():
             text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
             mailer.send_email(sender, emails.it, "Dienst offline", text)
         else:
-            status_map[service_name] = "<span style='color: #009ee3;'>online</span>"
+            status_map[service_name] = "<span style='color: #000000;'>online</span>"
     return render_template('status.html', status=status_map)
 
 
