@@ -666,13 +666,18 @@ def confirm_edit():
             return render_template('confirm_edit.html', confirm_delete=1, user=user)
         if "aktualisieren" in request.form:
             user_old = copy.copy(user)
+            if current_user.id == user.id and str(current_user.rechte) != request.form['rechte']:
+                current_user.rechte = request.form['rechte']
+                db.session.commit()
+                flash('Eigene Berechtigungen aktualisiert')
+                return redirect(url_for('home'))
             for item in user.__dict__:      
                 try:
                     if request.form[item] == "":
                         continue
                     if request.form[item] == "-":
                         vars(user)[item] = ""
-                    elif vars(user)[item] != request.form[item]:
+                    elif str(vars(user)[item]) != request.form[item]:
                         vars(user)[item] = request.form[item]
                 except:
                     pass        
