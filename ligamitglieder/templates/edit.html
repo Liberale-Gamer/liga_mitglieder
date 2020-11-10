@@ -71,6 +71,9 @@
                   <option value="1" {% if user.rechte == 1 %} selected {% endif %}>Vorstand</option>
                   <option value="2" {% if user.rechte == 2 %} selected {% endif %}>Mitgliederverwaltung</option>
                 </select>
+                {% if current_user.id == user.id %}
+                <p><strong>Hinweis: </strong>Änderungen an den eigenen Rechten werden sofort übernommen und sind nicht umkehrbar.</p>
+                {% endif %}
                 <input name="aktualisieren" type="submit" value="Aktualisieren">
             </form>
 
