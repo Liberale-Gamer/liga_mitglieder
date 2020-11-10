@@ -23,6 +23,7 @@ import emails
 import files
 import get_key
 import crypto
+import os
 
 app = Flask(__name__)
 
@@ -271,6 +272,20 @@ def send_member_email():
         flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
     return redirect(url_for('home'))
     
+@app.route('/status')
+@login_required
+def status():
+    status_map = {}
+    for service_name in ['ts3', 'mc_service', 'sharelatex', 'ttt', 'jicofo', 'openslides']:
+        status_code = os.system('service ' + service_name + ' status')
+        if status_code != 0:
+            status_map[service_name] = "<span style='color: #e5007d;'>offline – Admin ist informiert</span>"
+            sender = "Dein freundliches LiGa-Benachrichtigungssystem <reset@liberale-gamer.gg>"
+            text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
+            mailer.send_email(sender, emails.it, "Service offline", text)
+        else:
+            status_map[service_name] = "<span style='color: #e5007d;'>online</span>"
+    return render_template('status.html', status=status_map)
 
 
 @app.route('/new_email/<token>')
