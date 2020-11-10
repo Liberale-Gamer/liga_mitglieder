@@ -16,13 +16,20 @@
             </li>
 
             {% if current_user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == '/docs' %} active {% endif %}" href="{{url_for('docs')}}">Dokumente</a>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mitglieder</a>
+                <div class="dropdown-menu" id="navbardrop">
+                    <a class="dropdown-item {% if request.path == '/docs' %} active {% endif %}" href="{{url_for('docs')}}">Dokumente</a>
+                </div>
             </li>
             
             {% if current_user.rechte > 0 %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == '/abstimmung' %} active {% endif %}" href="{{url_for('abstimmung_list')}}">Abstimmungen</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vorstand</a>
+                <div class="dropdown-menu" id="navbardrop">
+                    <a class="dropdown-item {% if request.path == '/abstimmung' %} active {% endif %}" href="{{url_for('abstimmung_list')}}">Abstimmungen</a>
+                </div>
             </li>
 
             {% if current_user.rechte > 1 %}
@@ -32,12 +39,10 @@
                     <a class="dropdown-item {% if request.path == '/database' %} active {% endif %}" href="{{url_for('database')}}">Mitgliederdatenbank</a>
                     <a class="dropdown-item {% if request.path == '/new' %} active {% endif %}" href="{{url_for('new')}}">Neues Mitglied</a>
                     <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
+                    <a class="dropdown-item" href="{{url_for('send_member_email')}}">Rundmail senden</a>
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('send_member_email')}}">Rundmail senden</a>
-            </li>
             {% endif %}
             {% endif %}
             
