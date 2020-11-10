@@ -279,7 +279,7 @@ def status():
     for service_name in ['ts3', 'mc_server', 'sharelatex', 'ttt', 'jicofo', 'openslides']:
         status_code = os.system('service ' + service_name + ' status')
         if status_code != 0:
-            status_map[service_name] = "<span style='color: #e5007d;'>offline – Admin ist informiert</span>"
+            status_map[service_name] = "<span style='color: #e5007d;'>offline #technikeristinformiert</span>"
             sender = "Dein freundliches LiGa-Benachrichtigungssystem <reset@liberale-gamer.gg>"
             text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
             mailer.send_email(sender, emails.it, "Dienst offline", text)
