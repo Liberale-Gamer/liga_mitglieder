@@ -88,10 +88,10 @@ class mitglieder_no_sonstiges(UserMixin, db.Model):
     email = db.Column(db.String(50))
     #Ab hier leere Inhalte
     #sonstiges = db.Column(db.Text(4294000000), default="")
-    passwort = db.Column(db.String(30), default="12345")
+    passwort = db.Column(db.String(30), default="")
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
-    forum_passwort = db.Column(db.String(30), default="12345")
+    forum_passwort = db.Column(db.String(30), default="")
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
@@ -120,10 +120,10 @@ class mitglieder(UserMixin, db.Model):
     email = db.Column(db.String(50))
     #Ab hier leere Inhalte
     sonstiges = db.Column(db.Text(4294000000), default="")
-    passwort = db.Column(db.String(30), default="12345")
+    passwort = db.Column(db.String(30), default="")
     forum_id = db.Column(db.String(30))
     forum_username = db.Column(db.String(30))
-    forum_passwort = db.Column(db.String(30), default="12345")
+    forum_passwort = db.Column(db.String(30), default="")
     token = db.Column(db.Text, default="")
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
@@ -625,6 +625,9 @@ Geburtsdatum: {geburtsdatum}<br />
 <br />
 Mitgliedsnummer: {user_id}<br />
 <br />
+Ist etwas falsch? Kein Problem! Deine Mitgliedsdaten kannst du selbst anpassen, in unserem Mitgliedersystem unter <a href="https://intern.liberale-gamer.gg">https://intern.liberale-gamer.gg</a>. Dein Passwort musst du über die „Passwort vergessen“-Funktion einmalig neu setzen.<br />
+Im Mitgliedersystem hast du außerdem Zugriff auf vereinsinterne Dokumente und kannst den Status unserer Gameserver einsehen. Außerdem findest du dort Einladungslinks zu all unseren WhatsApp-Gruppen.<br />
+<br />
 Hier noch ein paar hilfreiche Links rund um die LiGa:<br />
 <br />
 Unsere offiziellen Social-Media-Kanäle (gerne teilen und liken):<br />
@@ -635,9 +638,7 @@ Unsere offiziellen Social-Media-Kanäle (gerne teilen und liken):<br />
 Unsere verbandsinternen Dokumente wie Beschlüsse, Satzung oder Geschäftsordnung dokumentieren wir in unserem Wiki: <a href="https://wiki.liberale-gamer.gg">https://wiki.liberale-gamer.gg</a><br />
 <br />
 Unsere geschlossene Facebook-Gruppe: <a href="https://www.facebook.com/groups/433296140360035/">https://www.facebook.com/groups/433296140360035/</a><br />
-Unserer geschlossenen WhatsApp-Gruppe kann ich dich hinzufügen, wenn du mir dafür auf WhatsApp eine kurze Nachricht schreibst &ndash; mit <a href="https://api.whatsapp.com/send?phone=4917657517450&text=Hallo+Marvin%2C+bitte+f%C3%BCge+mich+der+LiGa-WhatsApp-Gruppe+hinzu%21+{url_vorname}+{url_name}+%28Mitgliedsnummer+{user_id}%29%2E%20Ich+bin+damit+einverstanden%2C+dass+mit+Hinzuf%C3%BCgen+in+diese+Gruppe+meine+Handynummer+an+WhatsApp+und+alle+Mitglieder+in+der+Gruppe+weitergegeben+wird%2E">diesem Link</a> geht das ganz einfach. Dazu ein notwendiger Hinweis zum Datenschutz: Wenn du uns mitteilst, dass du zu unserer LiGa-WhatsApp-Gruppe hinzugefügt werden möchtest, erklärst du dich damit einverstanden, dass mit Hinzufügen in diese Gruppe deine Handynummer an WhatsApp und alle Mitglieder in der Gruppe weitergegeben wird.<br />
-<br />
-Noch ein kurzer Hinweis zu der WhatsApp-Gruppe: Diese ist ausschließlich für Vereins- und Gaming-Themen gedacht. Du findest in der Gruppenbeschreibung aber auch einen Link zur LiGa-Talk-Gruppe, in der über alles Mögliche diskutiert werden kann. Auch haben wir weitere Gruppen speziell für einzelne Spiele eingerichtet. Eine Liste mit Einladungslinks dazu findest du ebenfalls in der Gruppenbeschreibung.<br />
+Die Links zu unseren WhatsApp-Gruppen findest du wie erwähnt in unserem Mitgliedersystem.<br />
 <br />
 Falls du irgendwelche Fragen hast, kannst du dich jederzeit gerne an mich wenden.<br />
 <br />
