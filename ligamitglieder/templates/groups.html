@@ -23,13 +23,13 @@
 
         <div class="homebox" style="padding-top: 10px; padding-bottom: 10px;">
             <h4>Allgemeine Gruppen</h4>
-            {% for name, link in main_groups %}
-                <p><a href="{{link}}">{{name}}</a></p>
+            {% for group in main_groups %}
+                <p><a href="{{main_groups[group]}}">{{group}}</a></p>
             {% endfor %}
             <br />
             <h4>Gaming-Gruppen</h4>
-            {% for name, link in gaming_groups %}
-            <p><a href="{{link}}">{{name}}</a></p>
+            {% for group in gaming_groups %}
+	    <p><a href="{{gaming_groups[group]}}">{{group}}</a></p>
             {% endfor %}
         </div>
 

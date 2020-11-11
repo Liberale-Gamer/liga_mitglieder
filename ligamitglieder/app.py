@@ -24,7 +24,7 @@ import files
 import get_key
 import crypto
 import os
-import groups
+import grouplinks
 
 app = Flask(__name__)
 
@@ -287,7 +287,7 @@ def send_member_email():
 @app.route('/groups')
 @login_required
 def groups():
-    return render_template('groups.html', main_groups=groups.main_groups, gaming_groups=groups.gaming_groups)
+    return render_template('groups.html', main_groups=grouplinks.main_groups, gaming_groups=grouplinks.gaming_groups)
 
 
 @app.route('/status')
