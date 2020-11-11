@@ -21,6 +21,7 @@
                 <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mitglieder</a>
                 <div class="dropdown-menu" id="navbardrop">
                     <a class="dropdown-item {% if request.path == '/docs' %} active {% endif %}" href="{{url_for('docs')}}">Dokumente</a>
+                    <a class="dropdown-item {% if request.path == '/groups' %} active {% endif %}" href="{{url_for('groups')}}">WhatsApp-Gruppen</a>
                     <a class="dropdown-item {% if request.path == '/status' %} active {% endif %}" href="{{url_for('status')}}">Server-Status</a>
                 </div>
             </li>
