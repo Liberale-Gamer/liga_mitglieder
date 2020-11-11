@@ -330,7 +330,7 @@ def reset():
         
         user = mitglieder.query.filter_by(email=request.form['email']).first()
         user.token = token + token2
-        user.tokenttl = int(time.time()) + 300
+        user.tokenttl = int(time.time()) + 900
         db.session.commit()
         
         sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
