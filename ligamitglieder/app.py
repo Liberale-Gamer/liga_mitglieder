@@ -24,6 +24,7 @@ import files
 import get_key
 import crypto
 import os
+import grouplinks
 
 app = Flask(__name__)
 
@@ -282,7 +283,13 @@ def send_member_email():
             email_string += email[0] + ','
         flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
     return redirect(url_for('home'))
-    
+
+@app.route('/groups')
+@login_required
+def groups():
+    return render_template('groups.html', main_groups=grouplinks.main_groups, gaming_groups=grouplinks.gaming_groups)
+
+
 @app.route('/status')
 @login_required
 def status():
