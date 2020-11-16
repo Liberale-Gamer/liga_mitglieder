@@ -425,8 +425,16 @@ def abstimmung_list():
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)
     abstimmungen = ast.literal_eval(output)
+    zust = {}
+    enth = {}
+    abl = {}
+    for abstimmung in abstimmungen:
+        abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
+        zust[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Zustimmung')
+        enth[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Enthaltung')
+        abl[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
     if request.method == 'GET':
-        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
+        return render_template('abstimmung_list.html', abstimmungen=abstimmungen, zust=zust, enth=enth, abl=abl, ids_subjects=ids_subjects, imap_antrag=None, name="")
     if request.method == 'POST':
         if 'antrags_id' in request.form:
             if request.form["antrags_id"].isnumeric():
@@ -434,9 +442,9 @@ def abstimmung_list():
                 for subject in subjects:
                     if subject.find(request.form["antrags_id"]) != -1:
                         name=subject[subject.find("] ") + 2:]
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"], redact = True), antrags_id=request.form["antrags_id"], name=name)
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, zust=zust, enth=enth, abl=abl, ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(request.form["antrags_id"], redact = True), antrags_id=request.form["antrags_id"], name=name)
             else:
-                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, ids_subjects=ids_subjects, imap_antrag=None, name="")
+                return render_template('abstimmung_list.html', abstimmungen=abstimmungen, zust=zust, enth=enth, abl=abl, ids_subjects=ids_subjects, imap_antrag=None, name="")
         antrag_add = abstimmung_intern()
         if request.form['titel'][0:request.form['titel'].find(' ')].isnumeric():
             antrag_add.id = request.form['titel'][0:request.form['titel'].find(' ')]
