@@ -28,7 +28,7 @@
                     {% for abstimmung in abstimmungen %} {% if abstimmung.get('status') == 1 %}
                     <tr>
                         <td><a href="/abstimmung/{{abstimmung.get('id')}}">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a>&emsp;</td>
-                        <td><span style="color: #009ee3">{{zust[abstimmung.get('id')]}}</span> / <span style="color: #ffed00">{{enth[abstimmung.get('id')]}}</span> / <span style="color: #e5007d">{{abl[abstimmung.get('id')]}}</span></td>
+                        <td style="white-space: nowrap;"><span style="color: #009ee3">{{zust[abstimmung.get('id')]}}</span> / <span style="color: #ffed00">{{enth[abstimmung.get('id')]}}</span> / <span style="color: #e5007d">{{abl[abstimmung.get('id')]}}</span></td>
                     </tr>
                     {% endif %} {% endfor %}
                 </table>
@@ -37,7 +37,7 @@
                     {% for abstimmung in abstimmungen %} {% if abstimmung.get('status') == 0 %}
                     <tr>
                         <td><a href="/abstimmung/{{abstimmung.get('id')}}" style="color: #7f7f7f">[{{abstimmung.get('id')}}] {{abstimmung.get('titel')}}</a>&emsp;</td>
-                        <td><span style="color: #009ee3">{{zust[abstimmung.get('id')]}}</span> / <span style="color: #ffed00">{{enth[abstimmung.get('id')]}}</span> / <span style="color: #e5007d">{{abl[abstimmung.get('id')]}}</span></td>
+                        <td style="white-space: nowrap;"><span style="color: #009ee3">{{zust[abstimmung.get('id')]}}</span> / <span style="color: #ffed00">{{enth[abstimmung.get('id')]}}</span> / <span style="color: #e5007d">{{abl[abstimmung.get('id')]}}</span></td>
                     </tr>
                     {% endif %} {% endfor %}
                 </table>
