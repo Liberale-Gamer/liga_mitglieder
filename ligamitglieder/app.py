@@ -429,6 +429,7 @@ def abstimmung_list():
     enth = {}
     abl = {}
     for abstimmung in abstimmungen:
+        abstimmung['stimmen'] = ast.literal_eval(abstimmung.get('stimmen'))
         zust[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Zustimmung')
         enth[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Enthaltung')
         abl[abstimmung.get('id')] = sum(1 for value in abstimmung.get('stimmen').values() if value == 'Ablehnung')
