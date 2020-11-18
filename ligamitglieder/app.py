@@ -526,7 +526,9 @@ Der nachfolgende Antrag wurde {request.form['action']}:<br />
 {abstimmung['text']}<br />
 <br />
 Abgegebene Stimmen:<br />
-{str(abstimmung['stimmen'])}"""
+{str(abstimmung['stimmen'])}<br />
+<br />
+Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {current_user.name}."""
                         if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
