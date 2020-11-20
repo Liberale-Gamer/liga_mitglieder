@@ -44,6 +44,7 @@
             </div>
             <div class="col homebox">
                 <h3>Neue Abstimmung</h3>
+                {% if ids_subjects %}
                 <form action="/abstimmung" method="post">
                     <select name="antrags_id">
                     {% for id, antrag in ids_subjects %}
@@ -51,7 +52,7 @@
                     {% endfor %}
                     </select>
                     <button name="get_antrag" type="submit">Antrag abrufen</button>
-                </form><br />
+                </form><br /> {% endif %}
                 <form action="/abstimmung" method="post" style="width: inherit;">
                     <input type="text" name="titel" placeholder="Antragstitel" {% if name !="" %} value="{{antrags_id}} Mitgliedsantrag {{name}}" {% endif %}> </br>
                     <p>Der Vorstand wolle beschließen:</p>
