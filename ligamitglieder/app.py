@@ -383,7 +383,10 @@ def new():
     ids = []
     for subject in subjects:
         ids.append(re.findall('\d+', subject)[0])
-    ids_subjects = zip(ids, subjects)
+    if ids and subjects:
+        ids_subjects = zip(ids, subjects)
+    else:
+        ids_subjects = None
     if request.method == 'GET':
         if antrags_id != None:
             return render_template('new.html', ids_subjects=ids_subjects, imap_antrag=getmail.get_mail(antrags_id), antrags_id=antrags_id)
@@ -420,7 +423,10 @@ def abstimmung_list():
     ids = []
     for subject in subjects:
         ids.append(re.findall('\d+', subject)[0])
-    ids_subjects = zip(ids, subjects)
+    if ids and subjects:
+        ids_subjects = zip(ids, subjects)
+    else:
+        ids_subjects = None
     all_abstimmungen = abstimmung_intern.query
     abstimmungschema = abstimmung_internSchema(many=True)
     output = abstimmungschema.dumps(all_abstimmungen)

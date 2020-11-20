@@ -25,6 +25,7 @@
         </div>
 
         <div class="col homebox centering">
+            {% if ids_subjects %}
             <form action="/new" method="post">
                 <select name="antrags_id">
                 {% for id, antrag in ids_subjects %}
@@ -32,7 +33,7 @@
                 {% endfor %}
                 </select>
                 <button name="get_antrag" type="submit">Antrag abrufen</button>
-	        </form><br />
+            </form><br /> {% endif %}
             <script>
                 function find_data(textfield, element_name) {
                     start = textfield.search(element_name);
