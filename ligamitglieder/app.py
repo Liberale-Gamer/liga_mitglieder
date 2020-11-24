@@ -329,6 +329,9 @@ def reset():
         token2 = hashlib.sha3_256(str(np.random.randint(999999999999999)).encode('utf-8')).hexdigest()
         
         user = mitglieder.query.filter_by(email=request.form['email']).first()
+        if user == None:
+            flash('Diese E-Mail-Adresse ist keinem Mitglied zugeordnet.')
+            return render_template('reset.html')
         user.token = token + token2
         user.tokenttl = int(time.time()) + 900
         db.session.commit()
