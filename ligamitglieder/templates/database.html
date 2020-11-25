@@ -112,9 +112,9 @@
             headerFilter: "input",
             formatter: function(cell, formatterParams, onRendered) {
                 if (cell.getValue() == 2) {
-                    s = "Mitgliederverwaltung"
+                    return "Mitgliederverwaltung";
                 } else if (cell.getValue() == 1) {
-                    s = "Vorstand"
+                    return "Vorstand";
                 } else {
                     return "Mitglied";
                 }
