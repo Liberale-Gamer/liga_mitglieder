@@ -70,6 +70,12 @@
             field: "ort",
             headerFilter: "input"
         }, {
+            title: "Handynummer",
+            field: "mobil"
+        }, {
+            title: "E-Mail",
+            field: "email"
+        }, {
             title: "Geb.-Datum",
             field: "geburtsdatum",
             sorter: "number",
@@ -101,11 +107,18 @@
                 timezone: "Germany/Berlin",
             }
         }, {
-            title: "Handynummer",
-            field: "mobil"
-        }, {
-            title: "E-Mail",
-            field: "email"
+            title: "Rechte",
+            field: "rechte",
+            headerFilter: "input",
+            formatter: function(cell, formatterParams, onRendered) {
+                if (cell.getValue() == 2) {
+                    return "Mitgliederverwaltung";
+                } else if (cell.getValue() == 1) {
+                    return "Vorstand";
+                } else {
+                    return "Mitglied";
+                }
+            }
         }],
         rowClick: function(e, row) {
             window.location.href = "/edit/" + row.getData().id;
@@ -139,7 +152,6 @@
             sheetName: "LiGa-Mitglieder"
         });
     });
-
 </script>
 
 {% endblock %}
