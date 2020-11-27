@@ -990,3 +990,6 @@ def logout():
     logout_user()
     flash('Du wurdest ausgeloggt')
     return redirect(url_for('login'))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', ssl_context='adhoc', debug=True)
