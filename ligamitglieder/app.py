@@ -237,7 +237,7 @@ def webauthn_begin_activate():
     session.pop('register_id', None)
     session.pop('challenge', None)
 
-    session['register_username'] = current_user.email
+    session['register_username'] = current_user.id
     session['register_display_name'] = current_user.vorname + " " + current_user.name
 
     challenge = util.generate_challenge(32)
@@ -252,7 +252,7 @@ def webauthn_begin_activate():
     session['register_ukey'] = ukey
 
     make_credential_options = webauthn.WebAuthnMakeCredentialOptions(
-        challenge, RP_NAME, RP_ID, ukey, current_user.email, current_user.vorname + " " + current_user.name,
+        challenge, RP_NAME, RP_ID, ukey, current_user.id, current_user.vorname + " " + current_user.name,
         ORIGIN)
 
     return jsonify(make_credential_options.registration_dict)
@@ -261,7 +261,7 @@ def webauthn_begin_activate():
 def webauthn_begin_assertion():
     username = request.form.get('login_username')
 
-    user = mitglieder.query.filter_by(email=username).first()
+    user = mitglieder.query.filter_by(id=username).first()
 
     if not user:
         return make_response(jsonify({'fail': 'User does not exist.'}), 401)
@@ -277,7 +277,7 @@ def webauthn_begin_assertion():
     session['challenge'] = challenge.rstrip('=')
 
     webauthn_user = webauthn.WebAuthnUser(
-        user.ukey, user.email, user.vorname + " " + user.name, "",
+        user.ukey, user.id, user.vorname + " " + user.name, "",
         user.credential_id, user.pub_key, 0, RP_ID)
 
     webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
@@ -356,7 +356,7 @@ def verify_assertion():
         return make_response(jsonify({'fail': 'User does not exist.'}), 401)
 
     webauthn_user = webauthn.WebAuthnUser(
-        user.ukey, user.email, user.vorname + " " + user.name, "",
+        user.ukey, user.id, user.vorname + " " + user.name, "",
         user.credential_id, user.pub_key, 0, RP_ID)
 
     webauthn_assertion_response = webauthn.WebAuthnAssertionResponse(
@@ -426,6 +426,13 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet:
         if "newkey" in request.form:
             current_user.schluessel = get_key.get(current_user.schluessel)
             flash('Neuer Berechtigungsschlüssel generiert')
+            db.session.commit()
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+        if "removetoken" in request.form:
+            current_user.ukey = ""
+            current_user.credential_id = ""
+            current_user.pub_key = ""
+            flash('Sicherheitsschlüssel entfernt')
             db.session.commit()
             return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
     else:

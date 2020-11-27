@@ -80,12 +80,17 @@
                         <dd><input name="change_password" type="submit" value="Passwort ändern">
                     </dl>
                 </form>
+                {% if current_user.ukey == None or current_user.ukey == "" %}
                 <form id="register-form" name="register" method="get">
-                    <input style="display: none;" name="register_username" value="{{current_user.email}}"></input>
+                    <input style="display: none;" name="register_username" value="{{current_user.id}}"></input>
                     <input style="display: none;" name="register_display_name" value="{{current_user.vorname}} {{current_user.name}}"></input>
                     <button id="register" type="submit">Sicherheitsschlüssel verknüpfen</button>
                 </form>
-
+                {% else %}
+                <form action="{{ url_for('home') }}" method="post">
+                    <input name="removetoken" type="submit" value="Sicherheitsschlüssel entfernen">
+                </form>
+                {% endif %}
             </div>
 
 
