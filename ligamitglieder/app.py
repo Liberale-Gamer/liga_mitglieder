@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from flask import Flask , request, render_template, session, flash, redirect, url_for, g, jsonify
+from flask import Flask, request, render_template, session, flash, redirect, url_for, g, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -24,7 +24,10 @@ import files
 import get_key
 import crypto
 import os
+import sys
 import grouplinks
+import util
+from context import webauthn
 
 app = Flask(__name__)
 
@@ -35,10 +38,22 @@ sqlconfig.sql_config.db)
 
 db = SQLAlchemy(app)
 
+sk = os.environ.get('FLASK_SECRET_KEY')
+
 ma = Marshmallow(app)
+app.secret_key = sk if sk else os.urandom(40)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+RP_ID = 'liberale-gamer.gg'
+RP_NAME = 'LiGa-Mitgliedersystem'
+ORIGIN = 'https://intern.liberale-gamer.gg'
+
+# Trust anchors (trusted attestation roots) should be
+# placed in TRUST_ANCHOR_DIR.
+TRUST_ANCHOR_DIR = 'trusted_attestation_roots'
+
 
 # After how many seconds of inactivity a user is logged out
 session_ttl = 5 # e.g. 5 minutes
@@ -97,6 +112,9 @@ class mitglieder_no_sonstiges(UserMixin, db.Model):
     rechte = db.Column(db.Integer, default=0)
     schluessel = db.Column(db.String(250))
     payed_till = db.Column(db.Integer, default=1554076800)
+    ukey = db.Column(db.String(20), nullable=False)
+    credential_id = db.Column(db.String(250), nullable=False)
+    pub_key = db.Column(db.String(65), nullable=True)
 
 class mitgliederNoSonstigesSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -129,6 +147,9 @@ class mitglieder(UserMixin, db.Model):
     rechte = db.Column(db.Integer, default=0)
     schluessel = db.Column(db.String(250))
     payed_till = db.Column(db.Integer, default=1554076800)
+    ukey = db.Column(db.String(20), nullable=False)
+    credential_id = db.Column(db.String(250), nullable=False)
+    pub_key = db.Column(db.String(65), nullable=True)
     
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -209,7 +230,150 @@ def login():
         return render_template('login.html',error=error,next=request.args.get('next'),null=request.args.get('null'))
     return render_template('login.html',error=error)
 
+@app.route('/webauthn_begin_activate', methods=['POST'])
+def webauthn_begin_activate():
+    #clear session variables prior to starting a new registration
+    session.pop('register_ukey', None)
+    session.pop('register_id', None)
+    session.pop('challenge', None)
+
+    session['register_username'] = current_user.id
+    session['register_display_name'] = current_user.vorname + " " + current_user.name
+
+    challenge = util.generate_challenge(32)
+    ukey = util.generate_ukey()
+
+    # We strip the saved challenge of padding, so that we can do a byte
+    # comparison on the URL-safe-without-padding challenge we get back
+    # from the browser.
+    # We will still pass the padded version down to the browser so that the JS
+    # can decode the challenge into binary without too much trouble.
+    session['challenge'] = challenge.rstrip('=')
+    session['register_ukey'] = ukey
+
+    make_credential_options = webauthn.WebAuthnMakeCredentialOptions(
+        challenge, RP_NAME, RP_ID, ukey, current_user.id, current_user.vorname + " " + current_user.name,
+        ORIGIN)
+
+    return jsonify(make_credential_options.registration_dict)
+
+@app.route('/webauthn_begin_assertion', methods=['POST'])
+def webauthn_begin_assertion():
+    username = request.form.get('login_username')
+
+    user = mitglieder.query.filter_by(id=username).first()
+
+    if not user:
+        return make_response(jsonify({'fail': 'User does not exist.'}), 401)
+    if not user.credential_id:
+        return make_response(jsonify({'fail': 'Unknown credential ID.'}), 401)
+
+    session.pop('challenge', None)
+
+    challenge = util.generate_challenge(32)
+
+    # We strip the padding from the challenge stored in the session
+    # for the reasons outlined in the comment in webauthn_begin_activate.
+    session['challenge'] = challenge.rstrip('=')
+
+    webauthn_user = webauthn.WebAuthnUser(
+        user.ukey, user.id, user.vorname + " " + user.name, "",
+        user.credential_id, user.pub_key, 0, RP_ID)
+
+    webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
+        webauthn_user, challenge)
+
+    return jsonify(webauthn_assertion_options.assertion_dict)
+
+@app.route('/verify_credential_info', methods=['POST'])
+def verify_credential_info():
+    challenge = session['challenge']
+    username = session['register_username']
+    display_name = session['register_display_name']
+    ukey = session['register_ukey']
+
+    registration_response = request.form
+    trust_anchor_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), TRUST_ANCHOR_DIR)
+    trusted_attestation_cert_required = True
+    self_attestation_permitted = True
+    none_attestation_permitted = True
+
+    webauthn_registration_response = webauthn.WebAuthnRegistrationResponse(
+        RP_ID,
+        ORIGIN,
+        registration_response,
+        challenge,
+        trust_anchor_dir,
+        trusted_attestation_cert_required,
+        self_attestation_permitted,
+        none_attestation_permitted,
+        uv_required=False)  # User Verification
+
+    try:
+        webauthn_credential = webauthn_registration_response.verify()
+    except Exception as e:
+        return jsonify({'fail': 'Registration failed. Error: {}'.format(e)})
+
+    # Step 17.
+    #
+    # Check that the credentialId is not yet registered to any other user.
+    # If registration is requested for a credential that is already registered
+    # to a different user, the Relying Party SHOULD fail this registration
+    # ceremony, or it MAY decide to accept the registration, e.g. while deleting
+    # the older registration.
+    credential_id_exists = mitglieder.query.filter_by(
+        credential_id=webauthn_credential.credential_id).first()
+    if credential_id_exists:
+        return make_response(
+            jsonify({
+                'fail': 'Credential ID already exists.'
+            }), 401)
+
+    if sys.version_info >= (3, 0):
+        webauthn_credential.credential_id = str(
+            webauthn_credential.credential_id, "utf-8")
+        webauthn_credential.public_key = str(
+            webauthn_credential.public_key, "utf-8")
+    current_user.ukey = ukey
+    current_user.pub_key=webauthn_credential.public_key
+    current_user.credential_id=webauthn_credential.credential_id
     
+    db.session.commit()
+
+    flash('Erfolgreich registriert als {}.'.format(username))
+
+    return jsonify({'success': 'User successfully registered.'})
+
+@app.route('/verify_assertion', methods=['POST'])
+def verify_assertion():
+    challenge = session.get('challenge')
+    assertion_response = request.form
+    credential_id = assertion_response.get('id')
+
+    user = mitglieder.query.filter_by(credential_id=credential_id).first()
+    if not user:
+        return make_response(jsonify({'fail': 'User does not exist.'}), 401)
+
+    webauthn_user = webauthn.WebAuthnUser(
+        user.ukey, user.id, user.vorname + " " + user.name, "",
+        user.credential_id, user.pub_key, 0, RP_ID)
+
+    webauthn_assertion_response = webauthn.WebAuthnAssertionResponse(
+        webauthn_user,
+        assertion_response,
+        challenge,
+        ORIGIN,
+        uv_required=False)  # User Verification
+
+    login_user(user,remember=False,duration=timedelta(minutes=session_ttl))
+
+    return jsonify({
+        'success':
+        'Successfully authenticated as {}'.format(user.vorname + " " + user.name)
+    })
+
+
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -262,6 +426,13 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet:
         if "newkey" in request.form:
             current_user.schluessel = get_key.get(current_user.schluessel)
             flash('Neuer Berechtigungsschlüssel generiert')
+            db.session.commit()
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+        if "removetoken" in request.form:
+            current_user.ukey = ""
+            current_user.credential_id = ""
+            current_user.pub_key = ""
+            flash('Sicherheitsschlüssel entfernt')
             db.session.commit()
             return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
     else:
