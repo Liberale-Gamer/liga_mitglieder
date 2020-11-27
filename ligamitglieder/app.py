@@ -261,9 +261,6 @@ def webauthn_begin_activate():
 def webauthn_begin_assertion():
     username = request.form.get('login_username')
 
-    if not util.validate_username(username):
-        return make_response(jsonify({'fail': 'Invalid username.'}), 401)
-
     user = mitglieder.query.filter_by(email=username).first()
 
     if not user:
