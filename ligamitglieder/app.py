@@ -356,8 +356,8 @@ def verify_assertion():
         return make_response(jsonify({'fail': 'User does not exist.'}), 401)
 
     webauthn_user = webauthn.WebAuthnUser(
-        user.ukey, user.username, user.display_name, user.icon_url,
-        user.credential_id, user.pub_key, user.sign_count, user.rp_id)
+        user.ukey, user.email, user.vorname + " " + user.name, "",
+        user.credential_id, user.pub_key, 0, RP_ID)
 
     webauthn_assertion_response = webauthn.WebAuthnAssertionResponse(
         webauthn_user,
@@ -370,7 +370,7 @@ def verify_assertion():
 
     return jsonify({
         'success':
-        'Successfully authenticated as {}'.format(user.username)
+        'Successfully authenticated as {}'.format(user.vorname + " " + user.name)
     })
 
 
