@@ -46,9 +46,9 @@ app.secret_key = sk if sk else os.urandom(40)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-RP_ID = 'localhost'
-RP_NAME = 'webauthn demo localhost'
-ORIGIN = 'https://localhost:5000'
+RP_ID = 'liberale-gamer.gg'
+RP_NAME = 'LiGa-Mitgliedersystem'
+ORIGIN = 'https://intern.liberale-gamer.gg'
 
 # Trust anchors (trusted attestation roots) should be
 # placed in TRUST_ANCHOR_DIR.
@@ -1004,6 +1004,3 @@ def logout():
     logout_user()
     flash('Du wurdest ausgeloggt')
     return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', ssl_context='adhoc', debug=True)
