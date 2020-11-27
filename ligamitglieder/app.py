@@ -259,26 +259,34 @@ def webauthn_begin_activate():
 
 @app.route('/webauthn_begin_assertion', methods=['POST'])
 def webauthn_begin_assertion():
-    print(request.args)
-    print(session)
-    # session.pop('challenge', None)
+    username = request.form.get('login_username')
 
-    # challenge = util.generate_challenge(32)
+    if not util.validate_username(username):
+        return make_response(jsonify({'fail': 'Invalid username.'}), 401)
 
-    # # We strip the padding from the challenge stored in the session
-    # # for the reasons outlined in the comment in webauthn_begin_activate.
-    # session['challenge'] = challenge.rstrip('=')
+    user = mitglieder.query.filter_by(email=username).first()
 
-    # user = mitglieder.query.filter_by(credential_id=credential_id).first()
+    if not user:
+        return make_response(jsonify({'fail': 'User does not exist.'}), 401)
+    if not user.credential_id:
+        return make_response(jsonify({'fail': 'Unknown credential ID.'}), 401)
 
-    # webauthn_user = webauthn.WebAuthnUser(
-    #     current_user.ukey, current_user.email, current_user.vorname + " " + current_user.name, "",
-    #     current_user.credential_id, current_user.pub_key, 0, current_user.RP_ID)
+    session.pop('challenge', None)
 
-    # webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
-    #     webauthn_user, challenge)
-    return None
-    # return jsonify(webauthn_assertion_options.assertion_dict)
+    challenge = util.generate_challenge(32)
+
+    # We strip the padding from the challenge stored in the session
+    # for the reasons outlined in the comment in webauthn_begin_activate.
+    session['challenge'] = challenge.rstrip('=')
+
+    webauthn_user = webauthn.WebAuthnUser(
+        user.ukey, user.email, user.vorname + " " + user.name, "",
+        user.credential_id, user.pub_key, 0, RP_ID)
+
+    webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
+        webauthn_user, challenge)
+
+    return jsonify(webauthn_assertion_options.assertion_dict)
 
 @app.route('/verify_credential_info', methods=['POST'])
 def verify_credential_info():
