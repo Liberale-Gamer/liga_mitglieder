@@ -966,6 +966,9 @@ def confirm_new():
         user_add.forum_username = request.form["vorname"]
         user_add.sonstiges = request.form["emailtext"]
         user_add.schluessel = get_key.get()
+        user_add.ukey = ""
+        user_add.credential_id = ""
+        user_add.pub_key = ""
         db.session.add(user_add)
         db.session.commit()
         
