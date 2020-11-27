@@ -1,22 +1,22 @@
 function b64enc(buf) {
     return base64js.fromByteArray(buf)
-                   .replace(/\+/g, "-")
-                   .replace(/\//g, "_")
-                   .replace(/=/g, "");
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=/g, "");
 }
 
 function b64RawEnc(buf) {
     return base64js.fromByteArray(buf)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_");
 }
 
 function hexEncode(buf) {
     return Array.from(buf)
-                .map(function(x) {
-                    return ("0" + x.toString(16)).substr(-2);
-				})
-                .join("");
+        .map(function(x) {
+            return ("0" + x.toString(16)).substr(-2);
+        })
+        .join("");
 }
 
 async function fetch_json(url, options) {
@@ -35,7 +35,7 @@ async function fetch_json(url, options) {
  * Callback after the registration form is submitted.
  * @param {Event} e 
  */
-const didClickRegister = async (e) => {
+const didClickRegister = async(e) => {
     e.preventDefault();
 
     // gather the data in the form
@@ -53,7 +53,7 @@ const didClickRegister = async (e) => {
     // convert certain members of the PublicKeyCredentialCreateOptions into
     // byte arrays as expected by the spec.
     const publicKeyCredentialCreateOptions = transformCredentialCreateOptions(credentialCreateOptionsFromServer);
-    
+
     // request the authenticator(s) to create a new credential keypair.
     let credential;
     try {
@@ -76,7 +76,7 @@ const didClickRegister = async (e) => {
     } catch (err) {
         return console.error("Server validation of credential failed:", err);
     }
-    
+
     // reload the page after a successful result
     window.location.reload();
 }
@@ -86,10 +86,9 @@ const didClickRegister = async (e) => {
  * formData of the registration form
  * @param {FormData} formData 
  */
-const getCredentialRequestOptionsFromServer = async (formData) => {
+const getCredentialRequestOptionsFromServer = async(formData) => {
     return await fetch_json(
-        "/webauthn_begin_assertion",
-        {
+        "/webauthn_begin_assertion", {
             method: "POST",
             body: formData
         }
@@ -97,22 +96,20 @@ const getCredentialRequestOptionsFromServer = async (formData) => {
 }
 
 const transformCredentialRequestOptions = (credentialRequestOptionsFromServer) => {
-    let {challenge, allowCredentials} = credentialRequestOptionsFromServer;
+    let { challenge, allowCredentials } = credentialRequestOptionsFromServer;
 
     challenge = Uint8Array.from(
         atob(challenge.replace(/\_/g, "/").replace(/\-/g, "+")), c => c.charCodeAt(0));
 
     allowCredentials = allowCredentials.map(credentialDescriptor => {
-        let {id} = credentialDescriptor;
+        let { id } = credentialDescriptor;
         id = id.replace(/\_/g, "/").replace(/\-/g, "+");
         id = Uint8Array.from(atob(id), c => c.charCodeAt(0));
-        return Object.assign({}, credentialDescriptor, {id});
+        return Object.assign({}, credentialDescriptor, { id });
     });
 
-    const transformedCredentialRequestOptions = Object.assign(
-        {},
-        credentialRequestOptionsFromServer,
-        {challenge, allowCredentials});
+    const transformedCredentialRequestOptions = Object.assign({},
+        credentialRequestOptionsFromServer, { challenge, allowCredentials });
 
     return transformedCredentialRequestOptions;
 };
@@ -123,10 +120,9 @@ const transformCredentialRequestOptions = (credentialRequestOptionsFromServer) =
  * formData of the registration form
  * @param {FormData} formData 
  */
-const getCredentialCreateOptionsFromServer = async (formData) => {
+const getCredentialCreateOptionsFromServer = async(formData) => {
     return await fetch_json(
-        "/webauthn_begin_activate",
-        {
+        "/webauthn_begin_activate", {
             method: "POST",
             body: formData
         }
@@ -139,24 +135,22 @@ const getCredentialCreateOptionsFromServer = async (formData) => {
  * @param {Object} credentialCreateOptionsFromServer 
  */
 const transformCredentialCreateOptions = (credentialCreateOptionsFromServer) => {
-    let {challenge, user} = credentialCreateOptionsFromServer;
+    let { challenge, user } = credentialCreateOptionsFromServer;
     user.id = Uint8Array.from(
         atob(credentialCreateOptionsFromServer.user.id
             .replace(/\_/g, "/")
             .replace(/\-/g, "+")
-            ), 
+        ),
         c => c.charCodeAt(0));
 
     challenge = Uint8Array.from(
         atob(credentialCreateOptionsFromServer.challenge
             .replace(/\_/g, "/")
             .replace(/\-/g, "+")
-            ),
+        ),
         c => c.charCodeAt(0));
-    
-    const transformedCredentialCreateOptions = Object.assign(
-            {}, credentialCreateOptionsFromServer,
-            {challenge, user});
+
+    const transformedCredentialCreateOptions = Object.assign({}, credentialCreateOptionsFromServer, { challenge, user });
 
     return transformedCredentialCreateOptions;
 }
@@ -172,7 +166,7 @@ const transformCredentialCreateOptions = (credentialCreateOptionsFromServer) => 
  * Callback executed after submitting login form
  * @param {Event} e 
  */
-const didClickLogin = async (e) => {
+const didClickLogin = async(e) => {
     e.preventDefault();
     // gather the data in the form
     const form = document.querySelector('#login-form');
@@ -229,7 +223,7 @@ const transformNewAssertionForServer = (newAssertion) => {
         newAssertion.response.clientDataJSON);
     const rawId = new Uint8Array(
         newAssertion.rawId);
-    
+
     const registrationClientExtensions = newAssertion.getClientExtensionResults();
 
     return {
@@ -246,17 +240,17 @@ const transformNewAssertionForServer = (newAssertion) => {
  * Posts the new credential data to the server for validation and storage.
  * @param {Object} credentialDataForServer 
  */
-const postNewAssertionToServer = async (credentialDataForServer) => {
+const postNewAssertionToServer = async(credentialDataForServer) => {
     const formData = new FormData();
     Object.entries(credentialDataForServer).forEach(([key, value]) => {
         formData.set(key, value);
     });
-    
+
     return await fetch_json(
         "/verify_credential_info", {
-        method: "POST",
-        body: formData
-    });
+            method: "POST",
+            body: formData
+        });
 }
 
 /**
@@ -285,21 +279,29 @@ const transformAssertionForServer = (newAssertion) => {
  * Post the assertion to the server for validation and logging the user in. 
  * @param {Object} assertionDataForServer 
  */
-const postAssertionToServer = async (assertionDataForServer) => {
+const postAssertionToServer = async(assertionDataForServer) => {
     const formData = new FormData();
     Object.entries(assertionDataForServer).forEach(([key, value]) => {
         formData.set(key, value);
     });
-    
+
     return await fetch_json(
         "/verify_assertion", {
-        method: "POST",
-        body: formData
-    });
+            method: "POST",
+            body: formData
+        });
 }
 
 
 document.addEventListener("DOMContentLoaded", e => {
-    document.querySelector('#register').addEventListener('click', didClickRegister);
-    document.querySelector('#login').addEventListener('click', didClickLogin);
+    try {
+        document.querySelector('#register').addEventListener('click', didClickRegister);
+    } catch (err) {
+        console.info("Registering is not available on this page.");
+    }
+    try {
+        document.querySelector('#login').addEventListener('click', didClickLogin);
+    } catch (err) {
+        console.info("Logging in is not available on this page.");
+    }
 });

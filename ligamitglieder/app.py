@@ -259,24 +259,26 @@ def webauthn_begin_activate():
 
 @app.route('/webauthn_begin_assertion', methods=['POST'])
 def webauthn_begin_assertion():
-    username = request.form.get('login_username')
+    print(request.args)
+    print(session)
+    # session.pop('challenge', None)
 
-    session.pop('challenge', None)
+    # challenge = util.generate_challenge(32)
 
-    challenge = util.generate_challenge(32)
+    # # We strip the padding from the challenge stored in the session
+    # # for the reasons outlined in the comment in webauthn_begin_activate.
+    # session['challenge'] = challenge.rstrip('=')
 
-    # We strip the padding from the challenge stored in the session
-    # for the reasons outlined in the comment in webauthn_begin_activate.
-    session['challenge'] = challenge.rstrip('=')
+    # user = mitglieder.query.filter_by(credential_id=credential_id).first()
 
-    webauthn_user = webauthn.WebAuthnUser(
-        current_user.ukey, current_user.email, current_user.vorname + " " + current_user.name, "",
-        current_user.credential_id, current_user.pub_key, 0, current_user.RP_ID)
+    # webauthn_user = webauthn.WebAuthnUser(
+    #     current_user.ukey, current_user.email, current_user.vorname + " " + current_user.name, "",
+    #     current_user.credential_id, current_user.pub_key, 0, current_user.RP_ID)
 
-    webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
-        webauthn_user, challenge)
-
-    return jsonify(webauthn_assertion_options.assertion_dict)
+    # webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
+    #     webauthn_user, challenge)
+    return None
+    # return jsonify(webauthn_assertion_options.assertion_dict)
 
 @app.route('/verify_credential_info', methods=['POST'])
 def verify_credential_info():
