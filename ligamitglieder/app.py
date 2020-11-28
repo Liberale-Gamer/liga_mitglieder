@@ -221,10 +221,12 @@ def login():
             login_user(user,remember=False,duration=timedelta(minutes=session_ttl))
             if request.args.get('next') != '' and request.args.get('next') != None:
                 if current_user.ukey != None or current_user.ukey != "":
-                    return make_response(redirect(request.args.get('next'))).set_cookie('id', user.id, max_age=60*60*24*365*2)
+                    response = make_response(redirect(request.args.get('next')))
+                    return response.set_cookie('id', user.id, max_age=60*60*24*365*2)
                 return redirect(request.args.get('next'))
             if current_user.ukey != None or current_user.ukey != "":
-                return make_response(redirect(url_for('home'))).set_cookie('id', str(user.id), max_age=60*60*24*365*2)
+                response = make_response(redirect(url_for('home')))
+                return response.set_cookie('id', str(user.id), max_age=60*60*24*365*2)
             return redirect(url_for('home'))
         else:
             error = 'Das Passwort ist falsch'
