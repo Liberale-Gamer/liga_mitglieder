@@ -19,7 +19,7 @@
       <form id="login-form" name="login" method="get">
         <dl>
           <dt>Mitgliedsnummer:
-        <dd><input name="login_username"></input>
+        <dd><input name="login_username" {% if mitgliedsnummer != None and mitgliedsnummer != '' %} value={{mitgliedsnummer}}{% endif %}></input>
           <dd><button id="login" type="submit">Mit WebAuthn anmelden</button>
           </dl></form>
   </div>  
