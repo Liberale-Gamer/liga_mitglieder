@@ -205,21 +205,26 @@ def index():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    mitgliedsnummer = request.cookies.get('userID')
     error = None
     if current_user.is_authenticated == True:
+        if current_user.ukey != None or current_user.ukey != "":
+            return redirect(url_for('home')).set_cookie('id', current_user.id, max_age=60*60*24*365*2)
         return redirect(url_for('home'))
-    else:
-        pass    
     if request.method == 'POST':
         user = mitglieder.query.filter_by(email=request.form['username']).first()
         if user == None:
             error = 'Dieser Benutzer existiert nicht'
-            return render_template('login.html',error=error)
+            return render_template('login.html',error=error,mitgliedsnummer=mitgliedsnummer)
         password = hashlib.sha3_256(str(request.form['password']).encode('utf-8')).hexdigest()
         if password == user.passwort:
             login_user(user,remember=False,duration=timedelta(minutes=session_ttl))
             if request.args.get('next') != '' and request.args.get('next') != None:
+                if current_user.ukey != None or current_user.ukey != "":
+                    return redirect(request.args.get('next')).set_cookie('id', user.id, max_age=60*60*24*365*2)
                 return redirect(request.args.get('next'))
+            if current_user.ukey != None or current_user.ukey != "":
+                return redirect(url_for('home')).set_cookie('id', user.id, max_age=60*60*24*365*2)
             return redirect(url_for('home'))
         else:
             error = 'Das Passwort ist falsch'
@@ -227,8 +232,8 @@ def login():
         password = None
         pass
     if request.args.get('next') != '' and request.args.get('next') != None:
-        return render_template('login.html',error=error,next=request.args.get('next'),null=request.args.get('null'))
-    return render_template('login.html',error=error)
+        return render_template('login.html',error=error,mitgliedsnummer=mitgliedsnummer,next=request.args.get('next'),null=request.args.get('null'))
+    return render_template('login.html',error=error,mitgliedsnummer=mitgliedsnummer)
 
 @app.route('/webauthn_begin_activate', methods=['POST'])
 def webauthn_begin_activate():
