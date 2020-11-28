@@ -205,12 +205,13 @@ def index():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    mitgliedsnummer = request.cookies.get('userID')
+    mitgliedsnummer = request.cookies.get('id')
     error = None
     if current_user.is_authenticated == True:
+        response = make_response(redirect(url_for('home')))
         if current_user.ukey != None or current_user.ukey != "":
-            return make_response(redirect(url_for('home'))).set_cookie('id', str(current_user.id), max_age=60*60*24*365*2)
-        return redirect(url_for('home'))
+            response.set_cookie('id', str(current_user.id).encode('utf-8'), max_age=60*60*24*365*2)
+        return response
     if request.method == 'POST':
         user = mitglieder.query.filter_by(email=request.form['username']).first()
         if user == None:
@@ -220,14 +221,12 @@ def login():
         if password == user.passwort:
             login_user(user,remember=False,duration=timedelta(minutes=session_ttl))
             if request.args.get('next') != '' and request.args.get('next') != None:
-                if current_user.ukey != None or current_user.ukey != "":
-                    response = make_response(redirect(request.args.get('next')))
-                    return response.set_cookie('id', user.id, max_age=60*60*24*365*2)
-                return redirect(request.args.get('next'))
-            if current_user.ukey != None or current_user.ukey != "":
+                response = make_response(redirect(request.args.get('next')))
+            else:
                 response = make_response(redirect(url_for('home')))
-                return response.set_cookie('id', str(user.id), max_age=60*60*24*365*2)
-            return redirect(url_for('home'))
+            if current_user.ukey != None or current_user.ukey != "":
+                response.set_cookie('id', str(current_user.id).encode('utf-8'), max_age=60*60*24*365*2)
+            return response
         else:
             error = 'Das Passwort ist falsch'
     else:
