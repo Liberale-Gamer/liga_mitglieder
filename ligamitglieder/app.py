@@ -9,7 +9,6 @@ from flask_marshmallow import Marshmallow
 from marshmallow_sqlalchemy import SQLAlchemySchema
 import hashlib
 import numpy as np
-import mailer
 import time
 from datetime import datetime , timedelta
 import json
@@ -150,7 +149,7 @@ class mitglieder(UserMixin, db.Model):
     ukey = db.Column(db.String(20), nullable=False)
     credential_id = db.Column(db.String(250), nullable=False)
     pub_key = db.Column(db.String(65), nullable=True)
-    
+
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = mitglieder
@@ -163,7 +162,7 @@ class abstimmung_intern(UserMixin, db.Model):
     text = db.Column(db.Text(4294000000))
     stimmen = db.Column(db.String(250), default="NULL")
     status = db.Column(db.Integer)
-    
+
 class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = abstimmung_intern
@@ -180,7 +179,7 @@ class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
 #     token = db.Column(db.String(50))
 #     tokenttl = db.Column(db.Integer)
 #     rechte = db.Column(db.Integer)
-    
+
 #Redirect if trying to access protected page
 login_manager.login_view = "login" 
 #Secret session key (TODO: RANDOMIZE)
@@ -419,13 +418,13 @@ def home():
                 current_user.ort = request.form['ort']
                 flash('Ort aktualisiert')
             if request.form['email'] != '':
-                sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
+                sender_name = "LiGa-Mitgliederdatenbank"
                 text = """\
-Hallo {},
-
-Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
+Hallo {},<br/>
+<br/>
+Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: <br/>
 {}""".format(current_user.vorname,"https://intern.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
-                mailer.send_email(sender, request.form['email'], "E-Mail-Adresse aktualisieren", text)
+                sendmail.send_email(sender_name, request.form['email'], "E-Mail-Adresse aktualisieren", text)
                 flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
             if request.form['mobil'] != '':
                 current_user.mobil = request.form['mobil']
@@ -464,6 +463,76 @@ def send_member_email():
         flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
     return redirect(url_for('home'))
 
+@app.route('/send_individual_email', methods=['GET', 'POST'])
+@login_required
+def send_individual_email():
+    if current_user.rechte < 2:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+    if request.method == 'GET':
+        return render_template('send_individual_email.html', hasbeentested=False)
+    if request.method == 'POST':
+        betreff=request.form['betreff']
+        text=request.form['text']
+        receivers = []
+        if 'me' in request.form:
+            receivers = [current_user]
+        if 'board' in request.form:
+            receivers = mitglieder.query.filter(mitglieder.rechte > 0)
+        if 'allmembers'in request.form:
+            receivers = mitglieder.query.order_by(mitglieder.id)
+        if receivers != []:
+            for receiver in receivers:
+                anrede = ""
+                geschlecht = ""
+                if receiver.sex == 0:
+                    anrede = "Herr"
+                    geschlecht = "männlich"
+                if receiver.sex == 1:
+                    anrede = "Frau"
+                    geschlecht = "weiblich"
+                individual_betreff = betreff\
+                    .replace("[id]", str(receiver.id))\
+                    .replace("[vorname]", receiver.vorname)\
+                    .replace("[name]", receiver.name)\
+                    .replace("[anrede]", anrede)\
+                    .replace("[geschlecht]", geschlecht)\
+                    .replace("[strasse]", receiver.strasse)\
+                    .replace("[hausnummer]", receiver.hausnummer)\
+                    .replace("[plz]", receiver.plz)\
+                    .replace("[ort]", receiver.ort)\
+                    .replace("[geburtsdatum]", format(datetime.fromtimestamp(receiver.geburtsdatum+7200), '%d.%m.%Y'))\
+                    .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
+                    .replace("[mobil]", receiver.mobil)\
+                    .replace("[email]", receiver.email)\
+                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
+                individual_text = text\
+                    .replace("\n", "<br />\n")\
+                    .replace("[id]", str(receiver.id))\
+                    .replace("[vorname]", receiver.vorname)\
+                    .replace("[name]", receiver.name)\
+                    .replace("[anrede]", anrede)\
+                    .replace("[geschlecht]", geschlecht)\
+                    .replace("[strasse]", receiver.strasse)\
+                    .replace("[hausnummer]", receiver.hausnummer)\
+                    .replace("[plz]", receiver.plz)\
+                    .replace("[ort]", receiver.ort)\
+                    .replace("[geburtsdatum]", format(datetime.fromtimestamp(receiver.geburtsdatum+7200), '%d.%m.%Y'))\
+                    .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
+                    .replace("[mobil]", receiver.mobil)\
+                    .replace("[email]", receiver.email)\
+                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
+                sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
+                receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', individual_betreff, individual_text, 
+                replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
+                flash("E-Mail gesendet an " + receiver.email)
+
+        if 'me' in request.form or 'board' in request.form:
+            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text)
+        return render_template('send_individual_email.html', hasbeentested=False)
+
+
+
 @app.route('/groups')
 @login_required
 def groups():
@@ -478,9 +547,9 @@ def status():
         status_code = os.system('service ' + service_name + ' status')
         if status_code != 0:
             status_map[service_name] = "<span style='color: #e5007d;'>offline #technikeristinformiert</span>"
-            sender = "Dein freundliches LiGa-Benachrichtigungssystem <reset@liberale-gamer.gg>"
-            text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
-            mailer.send_email(sender, emails.it, "Dienst offline", text)
+            sender_name = "Dein freundliches LiGa-Benachrichtigungssystem"
+            text = """Der Dienst „{}“ scheint offline zu sein.<br/>Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
+            sendmail.send_email(sender_name, emails.it, "Dienst offline", text)
         else:
             status_map[service_name] = "<span style='color: #000000;'>online</span>"
     return render_template('status.html', status=status_map)
@@ -516,18 +585,18 @@ def reset():
         user.tokenttl = int(time.time()) + 900
         db.session.commit()
         
-        sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
+        sender_name = "LiGa-Mitgliederdatenbank"
 
         tokenttl = format(datetime.fromtimestamp(user.tokenttl), '%d.%m.%Y um %H:%M Uhr')
 
         text = """\
-Hallo {},
-
-Der Link zum Zurücksetzen deines Passworts lautet: 
-{}
-
+Hallo {},<br/>
+<br/>
+Der Link zum Zurücksetzen deines Passworts lautet: <br/>
+{}<br/>
+<br/>
 Der Link ist gültig bis zum {}.""".format(user.vorname,"https://intern.liberale-gamer.gg/reset/"+user.token, tokenttl) 
-        mailer.send_email(sender, email, "Passwort zurücksetzen", text)
+        sendmail.send_email(sender_name, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
     
@@ -592,7 +661,6 @@ def database():
     output = mitgliederschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
-    #return output
 
 
 @app.route('/abstimmung', methods=['GET', 'POST'])
@@ -649,18 +717,17 @@ def abstimmung_list():
         subject = f"Neuer Antrag: {antrag_add.titel}"
         antrag_add.text = antrag_add.text.replace('\n', '<br>')
         text = f"""
-Der nachfolgende Antrag wurde gestellt:<br />
-<br />
-<strong>{antrag_add.titel}</strong><br />
-<br />
-{antrag_add.text}<br />
-<br />
+Der nachfolgende Antrag wurde gestellt:
+
+<strong>{antrag_add.titel}</strong>
+
+{antrag_add.text}
+
 <a href="https://intern.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
-        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-        receiver=emails.vorstand, subject=subject, text=text)
+        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text.replace("\n", "<br />\n"))
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
@@ -704,25 +771,23 @@ def abstimmung(abstimmung_id):
                         flash('Antrag gelöscht')
                     else:
                         subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
-                        abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
                         abstimmung['stimmen'] = str(abstimmung['stimmen'])\
-                        .replace(',', '<br>').replace('{', '').replace('}', '')
+                        .replace(',', '\n').replace('{', '').replace('}', '')
                         text = f"""
-Der nachfolgende Antrag wurde {request.form['action']}:<br />
-<br />
-<strong>{abstimmung['titel']}</strong><br />
-<br />
-{abstimmung['text']}<br />
-<br />
-Abgegebene Stimmen:<br />
-{str(abstimmung['stimmen'])}<br />
-<br />
+Der nachfolgende Antrag wurde {request.form['action']}:
+
+<strong>{abstimmung['titel']}</strong>
+
+{abstimmung['text']}
+
+Abgegebene Stimmen:
+{str(abstimmung['stimmen'])}
+
 Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {current_user.name}."""
                         if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
-                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=emails.vorstand, subject=subject, text=text)
+                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text.replace("\n", "<br />\n"))
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
@@ -754,8 +819,7 @@ Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {cur
 Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten abgestimmt.<br />
 <br />
 <a href="https://intern.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt Abstimmung beenden</a>"""
-                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=receiver, subject=subject, text=text)                        
+                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', receiver, subject, text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                 abstimmung_changes.stimmen = str(abstimmung['stimmen'])
                 db.session.commit()
@@ -810,7 +874,7 @@ def send_mail(user_id):
     text = f"""\
 Hallo {user.vorname},<br />
 <br />
-ich bin Marvin von den Liberalen Gamern und möchte dich bei uns herzlich willkommen heißen!<br />
+ich bin {current_user.vorname} von den Liberalen Gamern und möchte dich bei uns herzlich willkommen heißen!<br />
 <br />
 Wir haben dich mit den folgenden Daten in unser Mitgliederverzeichnis aufgenommen &ndash; schau einmal, ob alles richtig ist:<br />
 <br />
@@ -843,30 +907,24 @@ Falls du irgendwelche Fragen hast, kannst du dich jederzeit gerne an mich wenden
 <br />
 Liebe Grüße<br />
 <br />
-Marvin Ruder<br />
+{current_user.vorname} {current_user.name}<br />
 <br />
 <br />
 ————————————————————————————————<br />
 <br />
 Liberale Gamer e.V.<br />
 <br />
-Marvin Ruder<br />
+{current_user.vorname} {current_user.name}<br />
 Mitgliederbetreuung<br />
 <br />
-Tel.:   06224 9266995<br />
-Fax:    06224 9282579<br />
-Mobil:  0176 57517450<br />
+Mobil:  {current_user.mobil}<br />
 <br />
-<a href="mailto:marvin.ruder@liberale-gamer.gg">marvin.ruder@liberale-gamer.gg</a><br />
+<a href="mailto:{current_user.email}">{current_user.email}</a><br />
 <a href="https://www.liberale-gamer.gg">www.liberale-gamer.gg</a><br />"""
 
-    url_receiver = urllib.parse.quote_plus(receiver)
-    url_subject = urllib.parse.quote_plus(subject)
-    url_text = urllib.parse.quote_plus(text)
-    link = f"mailto:{url_receiver}?subject={url_subject}&body={url_text}"
     if request.method == 'GET':
         return render_template('send_mail.html',user = user, geburtsdatum=geburtsdatum,\
-        erstellungsdatum=erstellungsdatum, text=text, subject=subject, link=link)
+        erstellungsdatum=erstellungsdatum, text=text, subject=subject)
     
     if request.method == 'POST':
         if "send" in request.form:

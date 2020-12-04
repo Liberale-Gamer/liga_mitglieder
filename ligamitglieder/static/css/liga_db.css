@@ -281,15 +281,20 @@ button:hover {
     background-color: #e5007d;
 }
 
+input[type=submit]:disabled,
+button:disabled {
+    background-color: #7fcef1;
+}
+
 #tabulator-col-title {
     background-color: #009ee3;
 }
 
-button.navbar-toggler > span {
+button.navbar-toggler>span {
     background-image: url('https://mdbootstrap.com/img/svg/hamburger2.svg?color=009ee3') !important;
 }
 
-button.navbar-toggler:hover > span {
+button.navbar-toggler:hover>span {
     background-image: url('https://mdbootstrap.com/img/svg/hamburger2.svg?color=ffffff') !important;
 }
 

@@ -7,12 +7,12 @@ import passwords
 
 port = 465  # For SSL
 mail_server = "liberale-gamer.gg"
-login = "mitgliedsantrag@liberale-gamer.gg"
-password = passwords.mitgliedsantrag
+login = "intern@liberale-gamer.gg"
+password = passwords.mail_intern
 
-def send_email(sender, receiver, subject, text, replyto=None):
+def send_email(sender_name, receiver, subject, text, replyto=None):
 	message = MIMEMultipart('alternative')
-	message['from'] = sender
+	message['from'] = sender_name + " <" + login + ">"
 	message['to'] = receiver
 	if replyto != None:
 		message['reply-to'] = replyto
