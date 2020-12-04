@@ -208,7 +208,10 @@ def login():
     mitgliedsnummer = request.cookies.get('id')
     error = None
     if current_user.is_authenticated == True:
-        response = make_response(redirect(url_for('home')))
+        if request.args.get('next') != '' and request.args.get('next') != None:
+            response = make_response(redirect(request.args.get('next')))
+        else:
+            response = make_response(redirect(url_for('home')))
         if current_user.ukey != None or current_user.ukey != "":
             response.set_cookie('id', str(current_user.id).encode('utf-8'), max_age=60*60*24*365*2)
         return response
