@@ -492,8 +492,7 @@ def send_individual_email():
                     anrede = "Frau"
                     geschlecht = "weiblich"
                 individual_betreff = betreff\
-                    .replace("\n", "<br />\n")\
-                    .replace("[id]", receiver.id)\
+                    .replace("[id]", str(receiver.id))\
                     .replace("[vorname]", receiver.vorname)\
                     .replace("[name]", receiver.name)\
                     .replace("[anrede]", anrede)\
@@ -509,10 +508,11 @@ def send_individual_email():
                     .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
                 individual_text = text\
                     .replace("\n", "<br />\n")\
-                    .replace("[id]", receiver.id)\
+                    .replace("[id]", str(receiver.id))\
                     .replace("[vorname]", receiver.vorname)\
                     .replace("[name]", receiver.name)\
-                    .replace("[sex]", receiver.sex)\
+                    .replace("[anrede]", anrede)\
+                    .replace("[geschlecht]", geschlecht)\
                     .replace("[strasse]", receiver.strasse)\
                     .replace("[hausnummer]", receiver.hausnummer)\
                     .replace("[plz]", receiver.plz)\
