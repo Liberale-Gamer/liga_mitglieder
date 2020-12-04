@@ -137,3 +137,4 @@ ligamitglieder/static/docs
 ligamitglieder/secret.key
 ligamitglieder/files.py
 ligamitglieder/grouplinks.py
+ligamitglieder/logs
