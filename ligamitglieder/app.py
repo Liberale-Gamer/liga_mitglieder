@@ -9,7 +9,6 @@ from flask_marshmallow import Marshmallow
 from marshmallow_sqlalchemy import SQLAlchemySchema
 import hashlib
 import numpy as np
-import mailer
 import time
 from datetime import datetime , timedelta
 import json
@@ -150,7 +149,7 @@ class mitglieder(UserMixin, db.Model):
     ukey = db.Column(db.String(20), nullable=False)
     credential_id = db.Column(db.String(250), nullable=False)
     pub_key = db.Column(db.String(65), nullable=True)
-    
+
 class mitgliederSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = mitglieder
@@ -163,7 +162,7 @@ class abstimmung_intern(UserMixin, db.Model):
     text = db.Column(db.Text(4294000000))
     stimmen = db.Column(db.String(250), default="NULL")
     status = db.Column(db.Integer)
-    
+
 class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = abstimmung_intern
@@ -180,7 +179,7 @@ class abstimmung_internSchema(ma.SQLAlchemyAutoSchema):
 #     token = db.Column(db.String(50))
 #     tokenttl = db.Column(db.Integer)
 #     rechte = db.Column(db.Integer)
-    
+
 #Redirect if trying to access protected page
 login_manager.login_view = "login" 
 #Secret session key (TODO: RANDOMIZE)
@@ -419,13 +418,13 @@ def home():
                 current_user.ort = request.form['ort']
                 flash('Ort aktualisiert')
             if request.form['email'] != '':
-                sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
+                sender_name = "LiGa-Mitgliederdatenbank"
                 text = """\
 Hallo {},
 
 Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
 {}""".format(current_user.vorname,"https://intern.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
-                mailer.send_email(sender, request.form['email'], "E-Mail-Adresse aktualisieren", text)
+                sendmail.send_email(sender_name, request.form['email'], "E-Mail-Adresse aktualisieren", text)
                 flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
             if request.form['mobil'] != '':
                 current_user.mobil = request.form['mobil']
@@ -494,9 +493,9 @@ def status():
         status_code = os.system('service ' + service_name + ' status')
         if status_code != 0:
             status_map[service_name] = "<span style='color: #e5007d;'>offline #technikeristinformiert</span>"
-            sender = "Dein freundliches LiGa-Benachrichtigungssystem <reset@liberale-gamer.gg>"
+            sender_name = "Dein freundliches LiGa-Benachrichtigungssystem"
             text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
-            mailer.send_email(sender, emails.it, "Dienst offline", text)
+            sendmail.send_email(sender_name, emails.it, "Dienst offline", text)
         else:
             status_map[service_name] = "<span style='color: #000000;'>online</span>"
     return render_template('status.html', status=status_map)
@@ -532,7 +531,7 @@ def reset():
         user.tokenttl = int(time.time()) + 900
         db.session.commit()
         
-        sender = "LiGa-Mitgliederdatenbank <reset@liberale-gamer.gg>"
+        sender_name = "LiGa-Mitgliederdatenbank"
 
         tokenttl = format(datetime.fromtimestamp(user.tokenttl), '%d.%m.%Y um %H:%M Uhr')
 
@@ -543,7 +542,7 @@ Der Link zum Zurücksetzen deines Passworts lautet:
 {}
 
 Der Link ist gültig bis zum {}.""".format(user.vorname,"https://intern.liberale-gamer.gg/reset/"+user.token, tokenttl) 
-        mailer.send_email(sender, email, "Passwort zurücksetzen", text)
+        sendmail.send_email(sender_name, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
     return render_template('reset.html')
     
@@ -608,7 +607,6 @@ def database():
     output = mitgliederschema.dumps(all_users)
     data_json = jsonify({'name' : output})
     return render_template('database.html',output = output)
-    #return output
 
 
 @app.route('/abstimmung', methods=['GET', 'POST'])
@@ -675,8 +673,7 @@ Der nachfolgende Antrag wurde gestellt:<br />
         if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
-        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-        receiver=emails.vorstand, subject=subject, text=text)
+        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text)
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
@@ -737,8 +734,7 @@ Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {cur
                         if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
-                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=emails.vorstand, subject=subject, text=text)
+                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text)
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
@@ -770,8 +766,7 @@ Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {cur
 Zum Antrag „<strong>{abstimmung['titel']}</strong>“ haben alle Berechtigten abgestimmt.<br />
 <br />
 <a href="https://intern.liberale-gamer.gg/abstimmung/{abstimmung['id']}">Jetzt Abstimmung beenden</a>"""
-                        sendmail.send_email(sender='Dein freundliches LiGa-Benachrichtigungssystem <mitgliedsantrag@liberale-gamer.gg>',\
-                        receiver=receiver, subject=subject, text=text)                        
+                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', receiver, subject, text)                        
                 abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                 abstimmung_changes.stimmen = str(abstimmung['stimmen'])
                 db.session.commit()
