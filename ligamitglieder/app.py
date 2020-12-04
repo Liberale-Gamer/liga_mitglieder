@@ -484,14 +484,13 @@ def send_individual_email():
         if receivers != []:
             for receiver in receivers:
                 # TODO process text, betreff
-                sendmail.send_mail(current_user.vorname + ' ' + current_user.name, 
+                sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
                 receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', betreff, text, 
                 replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
+                flash("E-Mail gesendet an " + receiver.email)
 
         if 'me' in request.form or 'board' in request.form:
             return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text)
-        if 'allmembers' in request.form:
-            return render_template('send_individual_email.html', hasbeentested=False, betreff=betreff, text=text)
         return render_template('send_individual_email.html', hasbeentested=False)
 
 
