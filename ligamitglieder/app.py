@@ -483,12 +483,21 @@ def send_individual_email():
             receivers = mitglieder.query.order_by(mitglieder.id)
         if receivers != []:
             for receiver in receivers:
+                anrede = ""
+                geschlecht = ""
+                if receiver.sex == 0:
+                    anrede = "Herr"
+                    geschlecht = "männlich"
+                if receiver.sex == 1:
+                    anrede = "Frau"
+                    geschlecht = "weiblich"
                 individual_betreff = betreff\
                     .replace("\n", "<br />\n")\
                     .replace("[id]", receiver.id)\
                     .replace("[vorname]", receiver.vorname)\
                     .replace("[name]", receiver.name)\
-                    .replace("[sex]", receiver.sex)\
+                    .replace("[anrede]", anrede)\
+                    .replace("[geschlecht]", geschlecht)\
                     .replace("[strasse]", receiver.strasse)\
                     .replace("[hausnummer]", receiver.hausnummer)\
                     .replace("[plz]", receiver.plz)\
