@@ -472,10 +472,27 @@ def send_individual_email():
     if request.method == 'GET':
         return render_template('send_individual_email.html', hasbeentested=False)
     if request.method == 'POST':
+        betreff=request.form['betreff']
+        text=request.form['text']
+        receivers = []
+        if 'me' in request.form:
+            receivers = [current_user]
+        if 'board' in request.form:
+            receivers = mitglieder.query.filter(mitglieder.rechte > 0)
+        if 'allmembers'in request.form:
+            receivers = mitglieder.query.order_by(mitglieder.id)
+        if receivers != []:
+            for receiver in receivers:
+                # TODO process text, betreff
+                sendmail.send_mail(current_user.vorname + ' ' + current_user.name, 
+                receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', betreff, text, 
+                replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
+
         if 'me' in request.form or 'board' in request.form:
-            return render_template('send_individual_email.html', hasbeentested=True, betreff=request.form['betreff'], text=request.form['text'])
-        else:
-            return render_template('send_individual_email.html', hasbeentested=False, betreff=request.form['betreff'], text=request.form['text'])
+            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text)
+        if 'allmembers' in request.form:
+            return render_template('send_individual_email.html', hasbeentested=False, betreff=betreff, text=text)
+        return render_template('send_individual_email.html', hasbeentested=False)
 
 
 
@@ -871,13 +888,9 @@ Mobil:  0176 57517450<br />
 <a href="mailto:marvin.ruder@liberale-gamer.gg">marvin.ruder@liberale-gamer.gg</a><br />
 <a href="https://www.liberale-gamer.gg">www.liberale-gamer.gg</a><br />"""
 
-    url_receiver = urllib.parse.quote_plus(receiver)
-    url_subject = urllib.parse.quote_plus(subject)
-    url_text = urllib.parse.quote_plus(text)
-    link = f"mailto:{url_receiver}?subject={url_subject}&body={url_text}"
     if request.method == 'GET':
         return render_template('send_mail.html',user = user, geburtsdatum=geburtsdatum,\
-        erstellungsdatum=erstellungsdatum, text=text, subject=subject, link=link)
+        erstellungsdatum=erstellungsdatum, text=text, subject=subject)
     
     if request.method == 'POST':
         if "send" in request.form:
