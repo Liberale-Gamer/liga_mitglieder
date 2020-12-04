@@ -420,9 +420,9 @@ def home():
             if request.form['email'] != '':
                 sender_name = "LiGa-Mitgliederdatenbank"
                 text = """\
-Hallo {},
-
-Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: 
+Hallo {},<br/>
+<br/>
+Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: <br/>
 {}""".format(current_user.vorname,"https://intern.liberale-gamer.gg/new_email/"+crypto.encrypt_message(request.form['email']).decode('utf-8')) 
                 sendmail.send_email(sender_name, request.form['email'], "E-Mail-Adresse aktualisieren", text)
                 flash('Eine E-Mail wurde gesendet an {}. Bitte klicke auf den Link darin, um deine E-Mail-Adresse zu aktualisieren.'.format(request.form['email']))
@@ -494,7 +494,7 @@ def status():
         if status_code != 0:
             status_map[service_name] = "<span style='color: #e5007d;'>offline #technikeristinformiert</span>"
             sender_name = "Dein freundliches LiGa-Benachrichtigungssystem"
-            text = """Der Dienst „{}“ scheint offline zu sein. Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
+            text = """Der Dienst „{}“ scheint offline zu sein.<br/>Mitglied Nr. {} hat dies entdeckt.""".format(service_name, current_user.id) 
             sendmail.send_email(sender_name, emails.it, "Dienst offline", text)
         else:
             status_map[service_name] = "<span style='color: #000000;'>online</span>"
@@ -536,11 +536,11 @@ def reset():
         tokenttl = format(datetime.fromtimestamp(user.tokenttl), '%d.%m.%Y um %H:%M Uhr')
 
         text = """\
-Hallo {},
-
-Der Link zum Zurücksetzen deines Passworts lautet: 
-{}
-
+Hallo {},<br/>
+<br/>
+Der Link zum Zurücksetzen deines Passworts lautet: <br/>
+{}<br/>
+<br/>
 Der Link ist gültig bis zum {}.""".format(user.vorname,"https://intern.liberale-gamer.gg/reset/"+user.token, tokenttl) 
         sendmail.send_email(sender_name, email, "Passwort zurücksetzen", text)
         flash('E-Mail wurde gesendet an {}'.format(email))
