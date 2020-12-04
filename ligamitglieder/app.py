@@ -461,6 +461,22 @@ def send_member_email():
         flash('<a href="' + email_string[:-1] + '" class="linkinflash">E-Mail senden</a>')
     return redirect(url_for('home'))
 
+@app.route('/send_individual_email', methods=['GET', 'POST'])
+@login_required
+def send_member_email():
+    if current_user.rechte < 2:
+        flash('Keine Berechtigung')
+        return redirect(url_for('home'))
+    if request.method == 'GET':
+        return render_template('send_individual_mail.html', hasbeentested=False)
+    if request.method == 'POST':
+        if 'me' in request.form or 'board' in request.form:
+            return render_template('send_individual_mail.html', hasbeentested=True)
+        else:
+            return render_template('send_individual_mail.html', hasbeentested=False)
+
+
+
 @app.route('/groups')
 @login_required
 def groups():

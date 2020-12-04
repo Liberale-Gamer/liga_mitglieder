@@ -1,7 +1,7 @@
 {% extends 'base.html'%} {% block nav %}
 <!-- MENU -->
 <nav class="navbar  navbar-default  navbar-expand-lg">
-	<a class="navbar-brand" href="{{url_for('index')}}" style="font-size:18px !important"><img src="/static/img/controller.png" style="height: 42px; width: auto;"/></a>
+    <a class="navbar-brand" href="{{url_for('index')}}" style="font-size:18px !important"><img src="/static/img/controller.png" style="height: 42px; width: auto;" /></a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link {% if request.path == '/login' or request.path == '/home' %} active {% endif %}" href={{url_for('login')}}>
+                <a class="nav-link {% if request.path == '/login' or request.path == '/home' %} active {% endif %}" href={{url_for( 'login')}}>
                     {% if current_user.is_authenticated %} Home {% else %} Login {% endif %}
                 </a>
             </li>
@@ -25,7 +25,7 @@
                     <a class="dropdown-item {% if request.path == '/status' %} active {% endif %}" href="{{url_for('status')}}">Server-Status</a>
                 </div>
             </li>
-            
+
             {% if current_user.rechte > 0 %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vorstand</a>
@@ -42,12 +42,12 @@
                     <a class="dropdown-item {% if request.path == '/new' %} active {% endif %}" href="{{url_for('new')}}">Neues Mitglied</a>
                     <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
                     <a class="dropdown-item" href="{{url_for('send_member_email')}}">Rundmail senden</a>
+                    <a class="dropdown-item {% if request.path == '/send_individual_mail' %} active {% endif %}" href="{{url_for('send_individual_mail')}}">Individuelle Rundmail senden</a>
                 </div>
             </li>
 
-            {% endif %}
-            {% endif %}
-            
+            {% endif %} {% endif %}
+
             <li class="nav-item">
                 <a class="nav-link {% if request.path == '/logout' %} active {% endif %}" href="{{url_for('logout')}}">Abmelden</a>
             </li>
