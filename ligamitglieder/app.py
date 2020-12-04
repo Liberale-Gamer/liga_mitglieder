@@ -483,11 +483,38 @@ def send_individual_email():
             receivers = mitglieder.query.order_by(mitglieder.id)
         if receivers != []:
             for receiver in receivers:
-                # TODO process text, betreff
-                text = text\
-                    .replace("\n", "<br />\n")
+                individual_betreff = betreff\
+                    .replace("\n", "<br />\n")\
+                    .replace("[id]", receiver.id)\
+                    .replace("[vorname]", receiver.vorname)\
+                    .replace("[name]", receiver.name)\
+                    .replace("[sex]", receiver.sex)\
+                    .replace("[strasse]", receiver.strasse)\
+                    .replace("[hausnummer]", receiver.hausnummer)\
+                    .replace("[plz]", receiver.plz)\
+                    .replace("[ort]", receiver.ort)\
+                    .replace("[geburtsdatum]", format(datetime.fromtimestamp(receiver.geburtsdatum+7200), '%d.%m.%Y'))\
+                    .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
+                    .replace("[mobil]", receiver.mobil)\
+                    .replace("[email]", receiver.email)\
+                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
+                individual_text = text\
+                    .replace("\n", "<br />\n")\
+                    .replace("[id]", receiver.id)\
+                    .replace("[vorname]", receiver.vorname)\
+                    .replace("[name]", receiver.name)\
+                    .replace("[sex]", receiver.sex)\
+                    .replace("[strasse]", receiver.strasse)\
+                    .replace("[hausnummer]", receiver.hausnummer)\
+                    .replace("[plz]", receiver.plz)\
+                    .replace("[ort]", receiver.ort)\
+                    .replace("[geburtsdatum]", format(datetime.fromtimestamp(receiver.geburtsdatum+7200), '%d.%m.%Y'))\
+                    .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
+                    .replace("[mobil]", receiver.mobil)\
+                    .replace("[email]", receiver.email)\
+                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
                 sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
-                receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', betreff, text, 
+                receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', individual_betreff, individual_text, 
                 replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
                 flash("E-Mail gesendet an " + receiver.email)
 
@@ -838,7 +865,7 @@ def send_mail(user_id):
     text = f"""\
 Hallo {user.vorname},<br />
 <br />
-ich bin Marvin von den Liberalen Gamern und möchte dich bei uns herzlich willkommen heißen!<br />
+ich bin {current_user.vorname} von den Liberalen Gamern und möchte dich bei uns herzlich willkommen heißen!<br />
 <br />
 Wir haben dich mit den folgenden Daten in unser Mitgliederverzeichnis aufgenommen &ndash; schau einmal, ob alles richtig ist:<br />
 <br />
@@ -871,21 +898,19 @@ Falls du irgendwelche Fragen hast, kannst du dich jederzeit gerne an mich wenden
 <br />
 Liebe Grüße<br />
 <br />
-Marvin Ruder<br />
+{current_user.vorname} {current_user.name}<br />
 <br />
 <br />
 ————————————————————————————————<br />
 <br />
 Liberale Gamer e.V.<br />
 <br />
-Marvin Ruder<br />
+{current_user.vorname} {current_user.name}<br />
 Mitgliederbetreuung<br />
 <br />
-Tel.:   06224 9266995<br />
-Fax:    06224 9282579<br />
-Mobil:  0176 57517450<br />
+Mobil:  {current_user.mobil}<br />
 <br />
-<a href="mailto:marvin.ruder@liberale-gamer.gg">marvin.ruder@liberale-gamer.gg</a><br />
+<a href="mailto:{current_user.email}">{current_user.email}</a><br />
 <a href="https://www.liberale-gamer.gg">www.liberale-gamer.gg</a><br />"""
 
     if request.method == 'GET':

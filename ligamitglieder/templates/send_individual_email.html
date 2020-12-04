@@ -23,6 +23,8 @@
         <div class="row">
             <div class="col homebox">
                 <h3>Neue Rundmail</h3>
+                <p>Du kannst die folgenden Felder verwenden:</p>
+                <p>[id], [vorname], [name], [sex], [strasse], [hausnummer], [plz], [ort], [geburtsdatum], [erstellungsdatum], [mobil], [email], [payed_till]</p>
                 <form action="/send_individual_email" method="post" style="width: inherit;">
                     <input type="text" style="width: inherit;" name="betreff" placeholder="Betreff" value="{{betreff}}" required> </br>
                     <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Text" required>{{text}}</textarea><br />
