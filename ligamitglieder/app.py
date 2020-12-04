@@ -470,7 +470,20 @@ def send_individual_email():
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
     if request.method == 'GET':
-        return render_template('send_individual_email.html', hasbeentested=False)
+        text=f"""
+
+————————————————————————————————
+
+Liberale Gamer e.V.
+
+{current_user.vorname} {current_user.name}
+
+Mobil:  {current_user.mobil}
+
+<a href="mailto:{current_user.email}">{current_user.email}</a>
+<a href="https://www.liberale-gamer.gg">www.liberale-gamer.gg</a>
+"""
+        return render_template('send_individual_email.html', hasbeentested=False, text=text)
     if request.method == 'POST':
         betreff=request.form['betreff']
         text=request.form['text']
