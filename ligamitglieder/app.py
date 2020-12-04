@@ -463,7 +463,7 @@ def send_member_email():
 
 @app.route('/send_individual_email', methods=['GET', 'POST'])
 @login_required
-def send_member_email():
+def send_individual_email():
     if current_user.rechte < 2:
         flash('Keine Berechtigung')
         return redirect(url_for('home'))
