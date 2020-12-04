@@ -471,9 +471,9 @@ def send_individual_email():
         return render_template('send_individual_email.html', hasbeentested=False)
     if request.method == 'POST':
         if 'me' in request.form or 'board' in request.form:
-            return render_template('send_individual_email.html', hasbeentested=True)
+            return render_template('send_individual_email.html', hasbeentested=True, betreff=request.form['betreff'], text=request.form['text'])
         else:
-            return render_template('send_individual_email.html', hasbeentested=False)
+            return render_template('send_individual_email.html', hasbeentested=False, betreff=request.form['betreff'], text=request.form['text'])
 
 
 

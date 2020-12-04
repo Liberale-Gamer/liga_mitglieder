@@ -24,8 +24,8 @@
             <div class="col homebox">
                 <h3>Neue Rundmail</h3>
                 <form action="/send_individual_email" method="post" style="width: inherit;">
-                    <input type="text" name="betreff" placeholder="Betreff" required> </br>
-                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Text" required></textarea><br />
+                    <input type="text" style="width: inherit;" name="betreff" placeholder="Betreff" value="{{betreff}}" required> </br>
+                    <textarea style="width: inherit;" id="text" name="text" cols="50" rows="11" placeholder="Text" required>{{text}}</textarea><br />
                     <input name="me" type="submit" value="An mich senden">
                     <input name="board" type="submit" value="An den Vorstand senden">
                     <input name="allmembers" type="submit" value="An alle Mitglieder senden" {% if not hasbeentested %} disabled {% endif %}>
