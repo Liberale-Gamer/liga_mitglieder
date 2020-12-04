@@ -42,7 +42,7 @@
                     <a class="dropdown-item {% if request.path == '/new' %} active {% endif %}" href="{{url_for('new')}}">Neues Mitglied</a>
                     <a class="dropdown-item {% if request.path == '/set_counter' %} active {% endif %}" href="{{url_for('set_counter')}}">Zähler für Mitgliedsnummer setzen</a>
                     <a class="dropdown-item" href="{{url_for('send_member_email')}}">Rundmail senden</a>
-                    <a class="dropdown-item {% if request.path == '/send_individual_mail' %} active {% endif %}" href="{{url_for('send_individual_mail')}}">Individuelle Rundmail senden</a>
+                    <a class="dropdown-item {% if request.path == '/send_individual_email' %} active {% endif %}" href="{{url_for('send_individual_email')}}">Individuelle Rundmail senden</a>
                 </div>
             </li>
 
