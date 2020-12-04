@@ -484,6 +484,8 @@ def send_individual_email():
         if receivers != []:
             for receiver in receivers:
                 # TODO process text, betreff
+                text = text\
+                    .replace("\n", "<br />\n")
                 sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
                 receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', betreff, text, 
                 replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
@@ -679,17 +681,17 @@ def abstimmung_list():
         subject = f"Neuer Antrag: {antrag_add.titel}"
         antrag_add.text = antrag_add.text.replace('\n', '<br>')
         text = f"""
-Der nachfolgende Antrag wurde gestellt:<br />
-<br />
-<strong>{antrag_add.titel}</strong><br />
-<br />
-{antrag_add.text}<br />
-<br />
+Der nachfolgende Antrag wurde gestellt:
+
+<strong>{antrag_add.titel}</strong>
+
+{antrag_add.text}
+
 <a href="https://intern.liberale-gamer.gg/abstimmung/{antrag_add.id}">Jetzt abstimmen</a>"""
         if request.host.find("7997") == -1:
             emails.vorstand = emails.developer
             print("Development mode, sending motion mails to " + emails.vorstand)
-        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text)
+        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text.replace("\n", "<br />\n"))
         return redirect(url_for('abstimmung_list'))
     
 @app.route('/abstimmung/<abstimmung_id>', methods=['GET', 'POST'])
@@ -733,24 +735,23 @@ def abstimmung(abstimmung_id):
                         flash('Antrag gelöscht')
                     else:
                         subject = f"Antrag {request.form['action']}: {abstimmung['titel']}"
-                        abstimmung['text'] = abstimmung['text'].replace('\n', '<br>')
                         abstimmung['stimmen'] = str(abstimmung['stimmen'])\
-                        .replace(',', '<br>').replace('{', '').replace('}', '')
+                        .replace(',', '\n').replace('{', '').replace('}', '')
                         text = f"""
-Der nachfolgende Antrag wurde {request.form['action']}:<br />
-<br />
-<strong>{abstimmung['titel']}</strong><br />
-<br />
-{abstimmung['text']}<br />
-<br />
-Abgegebene Stimmen:<br />
-{str(abstimmung['stimmen'])}<br />
-<br />
+Der nachfolgende Antrag wurde {request.form['action']}:
+
+<strong>{abstimmung['titel']}</strong>
+
+{abstimmung['text']}
+
+Abgegebene Stimmen:
+{str(abstimmung['stimmen'])}
+
 Die Feststellung des Stimmergebnisses erfolgte durch {current_user.vorname} {current_user.name}."""
                         if request.host.find("7997") == -1:
                             emails.vorstand = emails.developer
                             print("Development mode, sending motion mails to " + emails.vorstand)
-                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text)
+                        sendmail.send_email('Dein freundliches LiGa-Benachrichtigungssystem', emails.vorstand, subject, text.replace("\n", "<br />\n"))
                         abstimmung_changes = abstimmung_intern.query.filter_by(id=abstimmung_id).first()
                         abstimmung_changes.status = 0
                         db.session.commit()
