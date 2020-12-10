@@ -68,7 +68,7 @@ def before_request():
 class new_user():
     def __init__(self, vorname, name, sex, strasse, hausnummer,\
 plz, ort, geburtsdatum, erstellungsdatum, mobil, email,\
-sonstiges, geburtsdatum_string, payed_till):
+sonstiges, geburtsdatum_string, erstellungsdatum_string, payed_till):
         self.vorname = vorname
         self.name = name
         self.sex = sex
@@ -1008,7 +1008,7 @@ def confirm_new():
         request.form["strasse"], request.form["hausnummer"],request.form["plz"],\
         request.form["ort"], geburtsdatum,int(time.time()),\
         request.form["mobil"], request.form["email"], request.form["emailtext"],\
-        geburtsdatum_string, erstellungsdatum_string, "", payed_till)
+        geburtsdatum_string, erstellungsdatum_string, payed_till)
         return render_template('confirm_new.html', confirm=1, new=new)
     if "confirm_new" in request.form and request.method == 'POST':
         
