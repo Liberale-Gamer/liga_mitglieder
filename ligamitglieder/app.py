@@ -1022,7 +1022,7 @@ def confirm_new():
         user_add.ort = request.form["ort"]
         user_add.geburtsdatum = request.form["geburtsdatum"]
         user_add.erstellungsdatum = request.form["erstellungsdatum"]
-        user_add.payed_till = request.form["erstellungsdatum"]
+        user_add.payed_till = request.form["payed_till"]
         user_add.mobil = request.form["mobil"]
         user_add.email = request.form["email"]
         user_add.forum_id = 1
