@@ -30,17 +30,15 @@
             Mobil: {{user.mobil}} </br>
             </br>
             Geburtsdatum: {{geburtsdatum}} </br>
-            Mitglied seit: {{erstellungsdatum}}<br />
-            Betrag bezahlt bis: {{payed_till}}<br />
-            <br />
-            TeamSpeak-Berechtigungsschlüssel: <span style="font-size: smaller;">{{user.schluessel}}</span>
+            Mitglied seit: {{erstellungsdatum}}<br /> Betrag bezahlt bis: {{user.payed_till}}<br />
+            <br /> TeamSpeak-Berechtigungsschlüssel: <span style="font-size: smaller;">{{user.schluessel}}</span>
 
             <form action="{{ url_for('confirm_edit') }}" method="post">
-              <input name="payed" type="submit" value="Beitrag eingegangen">
+                <input name="payed" type="submit" value="Beitrag eingegangen">
             </form>
 
             <form action="{{ url_for('edit', user_id=user.id) }}" method="post">
-              <input name="newkey" type="submit" value="Neuen Schlüssel generieren">
+                <input name="newkey" type="submit" value="Neuen Schlüssel generieren">
             </form>
 
             <form action="{{ url_for('confirm_edit') }}" method="post">
@@ -70,8 +68,7 @@
                   <option value="0" {% if user.rechte == 0 %} selected {% endif %}>Mitglied</option>
                   <option value="1" {% if user.rechte == 1 %} selected {% endif %}>Vorstand</option>
                   <option value="2" {% if user.rechte == 2 %} selected {% endif %}>Mitgliederverwaltung</option>
-                </select>
-                {% if current_user.id == user.id %}
+                </select> {% if current_user.id == user.id %}
                 <p><strong>Hinweis: </strong>Änderungen an den eigenen Rechten werden sofort übernommen und sind nicht umkehrbar.</p>
                 {% endif %}
                 <input name="aktualisieren" type="submit" value="Aktualisieren">

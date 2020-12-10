@@ -10,7 +10,7 @@ from marshmallow_sqlalchemy import SQLAlchemySchema
 import hashlib
 import numpy as np
 import time
-from datetime import datetime , timedelta
+from datetime import datetime, timedelta
 import json
 import copy
 import sqlconfig
@@ -110,7 +110,7 @@ class mitglieder_no_sonstiges(UserMixin, db.Model):
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
     schluessel = db.Column(db.String(250))
-    payed_till = db.Column(db.Integer, default=1554076800)
+    payed_till = db.Column(db.Integer, default=2018)
     ukey = db.Column(db.String(20), nullable=False)
     credential_id = db.Column(db.String(250), nullable=False)
     pub_key = db.Column(db.String(65), nullable=True)
@@ -145,7 +145,7 @@ class mitglieder(UserMixin, db.Model):
     tokenttl = db.Column(db.Integer, default=0)
     rechte = db.Column(db.Integer, default=0)
     schluessel = db.Column(db.String(250))
-    payed_till = db.Column(db.Integer, default=1554076800)
+    payed_till = db.Column(db.Integer, default=2018)
     ukey = db.Column(db.String(20), nullable=False)
     credential_id = db.Column(db.String(250), nullable=False)
     pub_key = db.Column(db.String(65), nullable=True)
@@ -387,7 +387,6 @@ def verify_assertion():
 def home():
     geburtsdatum = format(datetime.fromtimestamp(current_user.geburtsdatum+7200), '%d.%m.%Y')
     erstellungsdatum = format(datetime.fromtimestamp(current_user.erstellungsdatum), '%d.%m.%Y')
-    payed_till = format(datetime.fromtimestamp(current_user.payed_till), '%d.%m.%Y')
     if request.method == 'POST':
         if "change_password" in request.form:
             password = hashlib.sha3_256(str(request.form['old_password']).encode('utf-8')).hexdigest()
@@ -396,7 +395,7 @@ def home():
                 new_pw = hashlib.sha3_256(str(request.form['new_password']).encode('utf-8')).hexdigest()
                 current_user.passwort = new_pw
                 db.session.commit()
-                return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till) 
+                return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum) 
             else:
                 if password != current_user.passwort:
                     flash('Altes Passwort falsch')
@@ -435,17 +434,17 @@ Der Link zum Aktualisieren deiner E-Mail-Adresse lautet: <br/>
             current_user.schluessel = get_key.get(current_user.schluessel)
             flash('Neuer Berechtigungsschlüssel generiert')
             db.session.commit()
-            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
         if "removetoken" in request.form:
             current_user.ukey = ""
             current_user.credential_id = ""
             current_user.pub_key = ""
             flash('Sicherheitsschlüssel entfernt')
             db.session.commit()
-            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+            return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
     else:
         pass
-    return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+    return render_template('home.html', geburtsdatum=geburtsdatum, erstellungsdatum=erstellungsdatum)
 
 @app.route('/send_member_email')
 @login_required
@@ -505,7 +504,7 @@ def send_individual_email():
                     .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
                     .replace("[mobil]", receiver.mobil)\
                     .replace("[email]", receiver.email)\
-                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
+                    .replace("[payed_till]", str(receiver.payed_till))
                 individual_text = text\
                     .replace("\n", "<br />\n")\
                     .replace("[id]", str(receiver.id))\
@@ -521,7 +520,7 @@ def send_individual_email():
                     .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
                     .replace("[mobil]", receiver.mobil)\
                     .replace("[email]", receiver.email)\
-                    .replace("[payed_till]", format(datetime.fromtimestamp(receiver.payed_till), '%d.%m.%Y'))
+                    .replace("[payed_till]", str(receiver.payed_till))
                 sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
                 receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', individual_betreff, individual_text, 
                 replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
@@ -839,12 +838,11 @@ def edit(user_id):
         
         geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
         erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
-        payed_till = format(datetime.fromtimestamp(user.payed_till), '%d.%m.%Y')
         
         session['user_id'] = user_id
             
         return render_template('edit.html', user = user, geburtsdatum=geburtsdatum,\
-        erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+        erstellungsdatum=erstellungsdatum)
     if request.method == 'POST':
         user = mitglieder.query.filter_by(id=user_id).first()
         user.schluessel = get_key.get(user.schluessel)
@@ -944,10 +942,9 @@ def confirm_edit():
         user = mitglieder.query.filter_by(id=session["user_id"]).first()
         geburtsdatum = format(datetime.fromtimestamp(user.geburtsdatum+7200), '%d.%m.%Y')
         erstellungsdatum = format(datetime.fromtimestamp(user.erstellungsdatum), '%d.%m.%Y')
-        payed_till = format(datetime.fromtimestamp(user.payed_till), '%d.%m.%Y')
         if "delete" in request.form:
             return render_template('confirm_edit.html', user=user,delete=1, geburtsdatum=geburtsdatum,\
-            erstellungsdatum=erstellungsdatum, payed_till=payed_till)
+            erstellungsdatum=erstellungsdatum)
         if "confirm_delete" in request.form:
             get_key.delete(user.schluessel)
             vorname = user.vorname
@@ -973,14 +970,12 @@ def confirm_edit():
                 except:
                     pass        
             return render_template('confirm_edit.html', edit=1, user_old=user_old,user=user, geburtsdatum=geburtsdatum,\
-            erstellungsdatum=erstellungsdatum, payed_till=payed_till, payed_till_old=payed_till)      
+            erstellungsdatum=erstellungsdatum)      
         if "payed" in request.form:
             user_old = copy.copy(user)
-            payed_till_old = copy.copy(payed_till)
-            user.payed_till += int(365.2425 * 24 * 60 * 60)
-            payed_till = format(datetime.fromtimestamp(user.payed_till), '%d.%m.%Y')
+            user.payed_till += 1
             return render_template('confirm_edit.html', edit=1, user_old=user_old,user=user, geburtsdatum=geburtsdatum,\
-            erstellungsdatum=erstellungsdatum, payed_till=payed_till, payed_till_old = payed_till_old)      
+            erstellungsdatum=erstellungsdatum)      
         if "confirm_edit" in request.form:
             user.name = request.form["name"]
             user.vorname = request.form["vorname"]
@@ -1008,11 +1003,12 @@ def confirm_new():
         geburtsdatum = int(time.mktime(datetime.strptime(request.form["geburtsdatum"], "%Y-%m-%d").timetuple()))+7200
         geburtsdatum_string = format(datetime.fromtimestamp(geburtsdatum), '%d.%m.%Y')
         erstellungsdatum_string = format(datetime.fromtimestamp(int(time.time())), '%d.%m.%Y')
+        payed_till = datetime.now().year - 1
         new = new_user(request.form["vorname"],request.form["name"], request.form["sex"],\
         request.form["strasse"], request.form["hausnummer"],request.form["plz"],\
         request.form["ort"], geburtsdatum,int(time.time()),\
         request.form["mobil"], request.form["email"], request.form["emailtext"],\
-        geburtsdatum_string, erstellungsdatum_string, erstellungsdatum_string)
+        geburtsdatum_string, erstellungsdatum_string, payed_till)
         return render_template('confirm_new.html', confirm=1, new=new)
     if "confirm_new" in request.form and request.method == 'POST':
         
@@ -1026,7 +1022,7 @@ def confirm_new():
         user_add.ort = request.form["ort"]
         user_add.geburtsdatum = request.form["geburtsdatum"]
         user_add.erstellungsdatum = request.form["erstellungsdatum"]
-        user_add.payed_till = request.form["erstellungsdatum"]
+        user_add.payed_till = request.form["payed_till"]
         user_add.mobil = request.form["mobil"]
         user_add.email = request.form["email"]
         user_add.forum_id = 1
