@@ -474,12 +474,18 @@ def send_individual_email():
         betreff=request.form['betreff']
         text=request.form['text']
         receivers = []
+        if request.form["paid_filter"] == "this_unpaid":
+            paid_till = datetime.now().year
+        elif request.form["paid_filter"] == "last_unpaid":
+            paid_till = datetime.now().year - 1
+        else:
+            paid_till = 1e9
         if 'me' in request.form:
             receivers = [current_user]
         if 'board' in request.form:
-            receivers = mitglieder.query.filter(mitglieder.rechte > 0)
+            receivers = mitglieder.query.filter(mitglieder.rechte > 0).filter(mitglieder.payed_till < paid_till)
         if 'allmembers'in request.form:
-            receivers = mitglieder.query.order_by(mitglieder.id)
+            receivers = mitglieder.query.order_by(mitglieder.id).filter(mitglieder.payed_till < paid_till)
         if receivers != []:
             for receiver in receivers:
                 anrede = ""

@@ -31,6 +31,11 @@
                     <input name="me" type="submit" value="An mich senden">
                     <input name="board" type="submit" value="An den Vorstand senden">
                     <input name="allmembers" type="submit" value="An alle Mitglieder senden" {% if not hasbeentested %} disabled {% endif %}>
+                    <select name="paid_filter">
+                        <option value="all">alle</option>
+                        <option value="this_unpaid">dieses Jahr nicht bezahlt</option>
+                        <option value="last_unpaid">letztes Jahr nicht bezahlt</option>
+                    </select>
                 </form>
             </div>
         </div>
