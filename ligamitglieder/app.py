@@ -494,7 +494,7 @@ def send_individual_email():
                 receivers = receivers.filter(mitglieder.email.ilike(domain))
             if domain_whattodo == "exclude":
                 receivers = receivers.filter(mitglieder.email.notilike(domain))
-        if receivers == []:
+        if receivers != []:
             for receiver in receivers:
                 anrede = ""
                 geschlecht = ""
