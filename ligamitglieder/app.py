@@ -474,7 +474,7 @@ def send_individual_email():
         betreff=request.form['betreff']
         text=request.form['text']
         domain=request.form['domain']
-        domain_whattodo=request.form['domain']
+        domain_whattodo=request.form['domain_whattodo']
         paid_filter=request.form["paid_filter"]
         receivers = []
         if paid_filter == "this_unpaid":
