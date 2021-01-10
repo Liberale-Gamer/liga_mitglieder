@@ -473,10 +473,13 @@ def send_individual_email():
     if request.method == 'POST':
         betreff=request.form['betreff']
         text=request.form['text']
+        domain=request.form['domain']
+        domain_whattodo=request.form['domain_whattodo']
+        paid_filter=request.form["paid_filter"]
         receivers = []
-        if request.form["paid_filter"] == "this_unpaid":
+        if paid_filter == "this_unpaid":
             paid_till = datetime.now().year
-        elif request.form["paid_filter"] == "last_unpaid":
+        elif paid_filter == "last_unpaid":
             paid_till = datetime.now().year - 1
         else:
             paid_till = 1e9
@@ -484,8 +487,13 @@ def send_individual_email():
             receivers = [current_user]
         if 'board' in request.form:
             receivers = mitglieder.query.filter(mitglieder.rechte > 0).filter(mitglieder.payed_till < paid_till)
-        if 'allmembers'in request.form:
+        if 'allmembers' in request.form:
             receivers = mitglieder.query.order_by(mitglieder.id).filter(mitglieder.payed_till < paid_till)
+        if domain != "" and domain != None:
+            if domain_whattodo == "include":
+                receivers = receivers.filter(mitglieder.email.ilike("%" + domain))
+            if domain_whattodo == "exclude":
+                receivers = receivers.filter(mitglieder.email.notilike("%" + domain))
         if receivers != []:
             for receiver in receivers:
                 anrede = ""
@@ -533,7 +541,7 @@ def send_individual_email():
                 flash("E-Mail gesendet an " + receiver.email)
 
         if 'me' in request.form or 'board' in request.form:
-            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text)
+            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text, paid_filter=paid_filter, domain=domain, domain_whattodo=domain_whattodo)
         return render_template('send_individual_email.html', hasbeentested=False)
 
 
