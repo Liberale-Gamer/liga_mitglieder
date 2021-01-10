@@ -491,9 +491,9 @@ def send_individual_email():
             receivers = mitglieder.query.order_by(mitglieder.id).filter(mitglieder.payed_till < paid_till)
         if domain != "" and domain != None:
             if domain_whattodo == "include":
-                receivers = receivers.filter(mitglieder.email.ilike(domain))
+                receivers = receivers.filter(mitglieder.email.ilike("%" + domain))
             if domain_whattodo == "exclude":
-                receivers = receivers.filter(mitglieder.email.notilike(domain))
+                receivers = receivers.filter(mitglieder.email.notilike("%" + domain))
         if receivers != []:
             for receiver in receivers:
                 anrede = ""
