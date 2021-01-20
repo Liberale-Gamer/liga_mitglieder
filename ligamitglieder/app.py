@@ -534,8 +534,8 @@ def send_individual_email():
                     .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
                     .replace("[mobil]", receiver.mobil)\
                     .replace("[email]", receiver.email)\
-                    .replace("[payed_till]", str(receiver.payed_till))
-                sendmail.send_email(current_user.vorname + ' ' + current_user.name, 
+                    .replace("[payed_till]", str(receiver.payed_till))    
+                sendmail.send_email('Liberale Gamer', 
                 receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', individual_betreff, individual_text, 
                 replyto=current_user.vorname + ' ' + current_user.name + '<' + current_user.email + '>')
                 flash("E-Mail gesendet an " + receiver.email)
