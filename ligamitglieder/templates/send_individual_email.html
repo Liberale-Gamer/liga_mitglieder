@@ -28,7 +28,7 @@
                 <form action="/send_individual_email" method="post" style="width: inherit;">
                     Absender:&nbsp;
                     <select name="sender" style="width: inherit;">
-                        <option value="liga" {% if sender == 'liga' %} selected {% endif %}>Liberale Gamer &lt;info@liberale-gamer.gg&gt;</info></option>
+                        <option value="liga" {% if sender == 'liga' %} selected {% endif %}>Liberale Gamer &lt;it@liberale-gamer.gg&gt;</info></option>
                         <option value="user" {% if sender == 'user' %} selected {% endif %}>{{current_user.vorname}} {{current_user.name}} &lt;{{current_user.email}}&gt;</option>
                     </select><br />
                     <input type="text" style="width: inherit;" name="betreff" placeholder="Betreff" value="{{betreff}}" required> </br>
