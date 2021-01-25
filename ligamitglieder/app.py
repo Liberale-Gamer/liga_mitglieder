@@ -476,6 +476,7 @@ def send_individual_email():
         domain=request.form['domain']
         domain_whattodo=request.form['domain_whattodo']
         paid_filter=request.form["paid_filter"]
+        sender=request.form["sender"]
         receivers = []
         if paid_filter == "this_unpaid":
             paid_till = datetime.now().year
@@ -534,14 +535,20 @@ def send_individual_email():
                     .replace("[erstellungsdatum]", format(datetime.fromtimestamp(receiver.erstellungsdatum), '%d.%m.%Y'))\
                     .replace("[mobil]", receiver.mobil)\
                     .replace("[email]", receiver.email)\
-                    .replace("[payed_till]", str(receiver.payed_till))    
-                sendmail.send_email('Liberale Gamer', 
+                    .replace("[payed_till]", str(receiver.payed_till))
+                if sender == "user":
+                    sender_name = current_user.vorname + " " + current_user.name
+                    sender_email = current_user.email
+                else:
+                    sender_name = "Liberale Gamer"
+                    sender_email = emails.it
+                sendmail.send_email(sender_name, 
                 receiver.vorname + ' ' + receiver.name + '<' + receiver.email + '>', individual_betreff, individual_text, 
-                replyto='Liberale Gamer'  + '<' + current_user.email + '>')
+                replyto=sender_name + '<' + sender_email + '>')
                 flash("E-Mail gesendet an " + receiver.email)
 
         if 'me' in request.form or 'board' in request.form:
-            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text, paid_filter=paid_filter, domain=domain, domain_whattodo=domain_whattodo)
+            return render_template('send_individual_email.html', hasbeentested=True, betreff=betreff, text=text, paid_filter=paid_filter, domain=domain, domain_whattodo=domain_whattodo, sender=sender)
         return render_template('send_individual_email.html', hasbeentested=False)
 
 
